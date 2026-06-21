@@ -207,6 +207,8 @@ window.AS = {
   "prop_gangway": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_023632_a52b90d0-eaae-4016-bb0f-2c84224d03ea.png",
   "prop_shiptower": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_023636_5ac4f0f1-7ca9-49b6-91ff-0b16d4186283.png",
   "shotta_enrage": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_023702_2e89094a-22a8-4bdd-aae8-c5fddb3ee055.png",
+  "ship_deck_bg": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030020_e3d32453-be95-4297-b4e0-4dfd6d4b82f9.png",
+  "ship_bow": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030025_c0e1c10f-93a4-44ec-b990-90f4bdd9ca7f.png",
 };
 
 </script>
@@ -284,6 +286,12 @@ window.STR = {
   ],
   block_learned: "GUARD LEARNED — hold B to spin the blade",
   djump_learned: "DOUBLE JUMP — press jump again in mid-air",
+  level2_board: [
+    {s:"", t:"The freighter looms over the pier, its hull lost in the rain far above.", n:""},
+    {s:"DUPREE", t:"That's her. The whole shipment's aboard. Step on deck and the quiet's over — it's all their ground up there.", n:""},
+    {s:"NINJACLAAT", t:"Then I stop being quiet.", n:""},
+    {s:"DUPREE", t:"Shotta runs that deck for Don Gorgon. Go end it.", n:""}
+  ],
   level2_clear: "LEVEL 2 CLEAR",
   level2_clear_sub: "Shotta's gun goes silent. The harbour belongs to the shadows now — and the road to Kingston opens.",
   level2_outro: [
@@ -414,7 +422,7 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 "lt_idle","lt_walk","lt_walk2","lt_attack","lt_attack2","lt_death","lt_cast","lt_enrage","lt_walk1","lt_walk2","lt_walk3","lt_walk4",
 "palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage"];
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
-["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship"].forEach(k=>loadImage(k,AS[k]));
+["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow"].forEach(k=>loadImage(k,AS[k]));
 loadSound("music_level1",AS.music_level1,{loop:true,vol:0.42});
 loadSound("music_lt",AS.music_lt,{loop:true,vol:0.4});
 loadSound("music_level2",AS.music_level2,{loop:true,vol:0.4});
@@ -482,6 +490,7 @@ function drawSpriteWH(key,x,yB,W,H,faceLeft,alpha){ const s=sprites[key]; if(!s)
 const GROUND_Y=474, HERO_H=120, G=0.62, JUMP_V=-13.6; let LEVEL_W=4400, level=1, levelSel=1, searchlights=[], gaps=[], shadows=[];
 const SHIP_X=3770, DECK_Y=GROUND_Y-150;
 let shipDeck=null;
+let seg=1, fadeT=0, boarded=false;
 let cam={x:0}, shake=0, hitstop=0, flash=0, now=0;
 let scene=null, blockTutDone=false, djumpTutDone=false;
 function overGap(x){ for(const g of gaps){ if(x>g.x1&&x<g.x2)return true; } return false; }
@@ -729,10 +738,9 @@ function tryTakedown(){ if(player.attacking||player.dashT>0||!player.onGround)re
   }
   return false;
 }
-function buildHarbour(){ LEVEL_W=8300;
+function buildHarbour(){ LEVEL_W=3500; seg=1; boarded=false; fadeT=0;
   player.hasDash=true; player.has3combo=true; player.hasDoubleJump=false; player.hasBlock=false; player.cine=0;
-  blockTutDone=false; djumpTutDone=false; scene=null;
-  const DK=DECK_Y;
+  blockTutDone=false; djumpTutDone=false; scene=null; shipDeck=null;
   platforms=[
     {x:560,w:96,top:GROUND_Y-58,sprite:"prop_oildrum",cover:1},
     {x:1080,w:300,top:GROUND_Y-138,stack:1,rows:1},
@@ -740,28 +748,39 @@ function buildHarbour(){ LEVEL_W=8300;
     {x:2360,w:96,top:GROUND_Y-60,sprite:"prop_crate",cover:1,floodcover:1},
     {x:2760,w:520,top:GROUND_Y-250,sprite:"prop_warehouse2",roof:1},
     {x:3180,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    {x:3560,w:150,top:GROUND_Y-80,sprite:"prop_crate"},
-    {x:5990,w:4580,top:DK,deck:1},
-    {x:4500,w:300,top:DK-138,stack:1,rows:1,deckprop:1},
-    {x:5600,w:96,top:DK-60,sprite:"prop_crate",cover:1,deckprop:1,floodcover:1},
-    {x:6650,w:300,top:DK-138,stack:1,rows:1,deckprop:1},
-    {x:7250,w:88,top:DK-58,sprite:"prop_barrel",cover:1,deckprop:1},
   ];
-  shipDeck={x0:3700,x1:8280,y:DK};
-  gaps=[{x1:1500,x2:1720},{x1:3450,x2:8300}];
+  gaps=[{x1:1500,x2:1720}];
   shadows=[];
   waves=[
     [["goonA",780,"dormant"]],
     [["goonB",1180,"patrol"]],
     [["dog",2050],["blade",2450,"aggro"]],
     [["goonA",3060,"patrol"]],
-    [["gunner",4350,"aggro","deck"],["blade",4750,"aggro","deck"]],
-    [["bruiser",5400,"aggro","deck"],["dog",5750,null,"deck"]],
-    [["gunner",6500,"aggro","deck"],["goonB",6850,"patrol","deck"],["blade",7050,"aggro","deck"]],
-    [["shotta",7800,null,"deck"]],
   ];
-  pickups=[{x:2760,y:GROUND_Y-282,vy:null,kind:"herb",val:1,t:0},{x:5990,y:DK-44,vy:null,kind:"herb",val:1,t:0}];
-  searchlights=[{x:2300,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0},{x:5560,sy:DK-180,gy:DK,range:220,half:54,t:1.4,sp:0.012,alarmCd:0}];
+  pickups=[{x:2760,y:GROUND_Y-282,vy:null,kind:"herb",val:1,t:0}];
+  searchlights=[{x:2300,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0}];
+  waveIdx=0; spawnWave();
+}
+function buildShipDeck(){ LEVEL_W=5200; seg=2; cam.x=0;
+  player.x=120; player.y=GROUND_Y; player.vx=0; player.vy=0; player.onGround=true; player._safe=120; player._safeY=GROUND_Y;
+  enemies=[]; projectiles=[]; pickups=[]; particles=[]; floaters=[]; ghosts=[]; slashArcs=[]; searchlights=[];
+  blockTutDone=true; djumpTutDone=true; scene=null; shipDeck=null;
+  platforms=[
+    {x:700,w:96,top:GROUND_Y-58,sprite:"prop_crate",cover:1},
+    {x:1500,w:300,top:GROUND_Y-138,stack:1,rows:1},
+    {x:2200,w:96,top:GROUND_Y-60,sprite:"prop_barrel",cover:1,floodcover:1},
+    {x:3100,w:300,top:GROUND_Y-138,stack:1,rows:1},
+    {x:3900,w:96,top:GROUND_Y-58,sprite:"prop_crate",cover:1},
+  ];
+  gaps=[]; shadows=[];
+  waves=[
+    [["gunner",900,"aggro"],["blade",1300,"aggro"]],
+    [["bruiser",2000,"aggro"],["goonB",2300,"patrol"]],
+    [["gunner",3000,"aggro"],["blade",3300,"aggro"],["dog",3500]],
+    [["shotta",4700]],
+  ];
+  pickups=[{x:1500,y:GROUND_Y-170,vy:null,kind:"herb",val:1,t:0},{x:3100,y:GROUND_Y-170,vy:null,kind:"herb",val:1,t:0}];
+  searchlights=[{x:2200,sy:GROUND_Y-200,gy:GROUND_Y,range:220,half:54,t:0.6,sp:0.012,alarmCd:0}];
   waveIdx=0; spawnWave();
 }
 function updateSearchlights(){ for(const L of searchlights){ L.t+=L.sp; if(L.alarmCd>0)L.alarmCd--; const aim=L.x+Math.sin(L.t)*L.range;
@@ -876,12 +895,21 @@ function wrapText(t,x,y,maxW,lh){const words=t.split(" ");let line="",yy=y;for(c
 /* ---------- render world ---------- */
 function drawParallax(key,factor,gap,w){ const im=images[key]; if(!im)return; const h=w*im.height/im.width, yTop=VH-h-gap; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w; bx<VW+w; bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),yTop); if(level!==2 && (((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,h); ctx.restore(); } }
 function drawParallaxCover(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%w; if(off<0)off+=w; for(let bx=-w; bx<VW+w; bx+=w){ ctx.drawImage(im, Math.round(bx-off), 0, w, VH); } }
+function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w;bx<VW+w;bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),0); if((((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,VH); ctx.restore(); } }
 function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   g.addColorStop(0,"#0a1326");g.addColorStop(0.6,"#0c1a2b");g.addColorStop(1,"#0a141d");
   ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
   if(level!==2){ drawParallax("bg_far",0.2,40,VW*1.2); drawParallax("bg_beach",0.5,0,VW*1.4); }
-  else { drawParallaxCover("bg_harbour",0.5,VW*1.5); }
-  { const gim=(level===2&&images.dock_ground)?images.dock_ground:images.ground; if(gim){const tw=160,th=128,sx=-(((cam.x%tw)+tw)%tw);for(let x=sx-tw;x<VW+tw;x+=tw)for(let yy=GROUND_Y;yy<VH+th;yy+=th)ctx.drawImage(gim,x,yy,tw,th);} else {ctx.fillStyle="#16202c";ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);} }
+  else if(seg===2){ drawBgMirror(images.ship_deck_bg?"ship_deck_bg":"bg_harbour",0.5,VW*1.5); }
+  else { drawBgMirror("bg_harbour",0.5,VW*1.4); }
+  if(level===2&&seg===2){ const tw=80,sx=-(((cam.x%tw)+tw)%tw);
+    const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH); dg.addColorStop(0,"#3a4651"); dg.addColorStop(1,"#1c242c"); ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);
+    ctx.fillStyle="rgba(12,16,20,0.5)"; for(let x=sx;x<VW+tw;x+=tw)ctx.fillRect(x,GROUND_Y,2,VH-GROUND_Y);
+    ctx.fillStyle="rgba(120,150,170,0.12)"; for(let yy=GROUND_Y+18;yy<VH;yy+=22)ctx.fillRect(0,yy,VW,1);
+    ctx.fillStyle="#566472"; ctx.fillRect(0,GROUND_Y,VW,5);
+    ctx.fillStyle="rgba(150,180,200,0.25)"; for(let x=sx+12;x<VW+tw;x+=tw){ctx.beginPath();ctx.arc(x,GROUND_Y+11,1.6,0,7);ctx.fill();}
+  } else { const gim=(level===2&&images.dock_ground)?images.dock_ground:images.ground; if(gim){const tw=160,th=128,sx=-(((cam.x%tw)+tw)%tw);for(let x=sx-tw;x<VW+tw;x+=tw)for(let yy=GROUND_Y;yy<VH+th;yy+=th)ctx.drawImage(gim,x,yy,tw,th);} else {ctx.fillStyle="#16202c";ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);} }
+  if(level===2&&seg===1&&images.ship_bow){ const bw=860,bx=3240-cam.x; if(bx<VW+40&&bx+bw>-40)ctx.drawImage(images.ship_bow,bx,0,bw,GROUND_Y+34); }
   for(const gp of gaps){ const x1=gp.x1-cam.x,x2=gp.x2-cam.x; if(x2<-30||x1>VW+30)continue; ctx.save();
     const L=Math.max(x1,-20),R=Math.min(x2,VW+20);
     const wg=ctx.createLinearGradient(0,GROUND_Y,0,VH); wg.addColorStop(0,"#0b1c28"); wg.addColorStop(1,"#04101a"); ctx.fillStyle=wg; ctx.fillRect(L,GROUND_Y,R-L,VH-GROUND_Y);
@@ -890,18 +918,7 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
     if(x1>-20){ctx.fillStyle="#1c2733"; ctx.fillRect(x1-10,GROUND_Y-6,10,10);} if(x2<VW+20){ctx.fillStyle="#1c2733"; ctx.fillRect(x2,GROUND_Y-6,10,10);}
     ctx.restore(); }
   ctx.fillStyle="rgba(0,0,0,0.25)";ctx.fillRect(0,GROUND_Y,VW,4); }
-function drawShip(){ if(level!==2||!shipDeck)return; const d=shipDeck, wl=GROUND_Y+30;
-  const x0=d.x0-cam.x, x1=d.x1-cam.x, hy=d.y+4;
-  if(x1>-240&&x0<VW+240){ ctx.save();
-    const hg=ctx.createLinearGradient(0,hy,0,wl); hg.addColorStop(0,"#333d48"); hg.addColorStop(0.72,"#212833"); hg.addColorStop(1,"#321610");
-    ctx.beginPath(); ctx.moveTo(x0-80,hy); ctx.lineTo(x1+14,hy); ctx.lineTo(x1+14,wl); ctx.lineTo(x0-30,wl); ctx.closePath(); ctx.fillStyle=hg; ctx.fill();
-    ctx.fillStyle="#7a2a22"; ctx.beginPath(); ctx.moveTo(x0-46,wl-7); ctx.lineTo(x1+14,wl-7); ctx.lineTo(x1+14,wl); ctx.lineTo(x0-34,wl); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="rgba(255,206,120,0.55)"; for(let px=x0+24;px<x1-6;px+=68){ if(px<-20||px>VW+20)continue; ctx.beginPath(); ctx.arc(px,hy+30,4.5,0,7); ctx.fill(); }
-    ctx.fillStyle="rgba(12,16,20,0.45)"; for(let px=x0;px<x1;px+=120){ if(px<-10||px>VW+10)continue; ctx.fillRect(px,hy,2,wl-hy); }
-    ctx.restore(); }
-  if(sprites.prop_gangway){ const gx=3420-cam.x, gtop=d.y-10, gh=GROUND_Y-(d.y-10), gw=300; if(gx<VW+40&&gx+gw>-40)ctx.drawImage(sprites.prop_gangway.cv,gx,gtop,gw,gh); }
-  if(sprites.prop_shiptower){ const s=sprites.prop_shiptower, H=250, W=s.w*(H/s.h), tx=(d.x1-300)-cam.x; if(tx>-W-20&&tx<VW+W+20)drawSpriteWH("prop_shiptower",tx,d.y+2,W,H,false,1); }
-}
+function drawShip(){}
 function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-pf.w/2-360||x>VW+pf.w/2+360)continue;
   const baseY=pf.deckprop?DECK_Y:GROUND_Y;
   if(pf.deck){ const left=x-pf.w/2, top=pf.top, slab=34;
@@ -992,12 +1009,14 @@ function step(){
   if(state==="gameover"){ if(pressed.has("confirm"))startGame(); return; }
   if(state==="clear"){ if(pressed.has("confirm"))setState("title"); return; }
   if(state==="paused"){ if(pressed.has("pause")||pressed.has("confirm"))setState("play"); return; }
+  if(state==="shipfade"){ fadeT--; if(fadeT===36){ buildShipDeck(); player.cine=0; player.iframe=120; } if(fadeT<=0){ setState("play"); } return; }
   if(state==="play"){
     if(pressed.has("pause")){setState("paused");return;}
     if(hitstop>0){hitstop--;return;}
     if(level===2){ if(scene&&scene.type==="block"){ updateBlockScene(); }
       else if(!scene){ if(!djumpTutDone&&gaps[0]&&player.onGround&&player.x>gaps[0].x1-150&&player.x<gaps[0].x1+10){ startDjumpScene(); return; }
         else if(!blockTutDone&&player.onGround&&player.x>1880){ startBlockScene(); return; } } }
+    if(level===2&&seg===1&&!scene&&!boarded&&player.x>3340){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
     updatePlayer(); for(const e of enemies)updateEnemy(e);
     if(dred.t>0)dred.t--; if(lady.active){ lady.t++; lady.x+=3.4; if(lady.x-cam.x>VW+140||lady.t>280)lady.active=false; }
     let onShed=false; for(const pf of platforms){ if(pf.shed&&player.onGround&&Math.abs(player.x-pf.x)<pf.w/2&&Math.abs(player.y-pf.top)<10){ onShed=true; dred.x=pf.x; dred.door=pf.x-pf.w*0.09; dred.top=pf.top; dred.w=pf.w; } }
@@ -1037,6 +1056,7 @@ function render(){ ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0); ctx.clearRect(
   drawSearchlights(); drawProjectiles(); drawSlashArcs(); drawParticles(); drawFloaters(); if(level===2)drawRain();
   ctx.restore();
   if(flash>0){ctx.fillStyle="rgba(180,255,210,"+clamp(flash,0,0.5)+")";ctx.fillRect(0,0,VW,VH);}
+  if(state==="shipfade"){const a=fadeT>36?(72-fadeT)/36:fadeT/36; ctx.fillStyle="rgba(0,0,0,"+clamp(a,0,1)+")"; ctx.fillRect(0,0,VW,VH);}
   const vg=ctx.createRadialGradient(VW/2,VH/2,VH*0.3,VW/2,VH/2,VH*0.85);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,0.5)");ctx.fillStyle=vg;ctx.fillRect(0,0,VW,VH);
   drawHUD();
   if(bossTaunt>0){ctx.save();ctx.globalAlpha=clamp(bossTaunt/60,0,1);ctx.textAlign="center";ctx.fillStyle="rgba(0,0,0,0.55)";ctx.fillRect(0,VH/2-54,VW,74);
