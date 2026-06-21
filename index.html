@@ -610,7 +610,8 @@ function updatePlayer(){
   if(player.dead){ player.animT+=16; player.vx*=0.8; player.x+=player.vx;
     if(player.y<GROUND_Y){player.vy+=G;player.y+=player.vy;if(player.y>=GROUND_Y){player.y=GROUND_Y;player.vy=0;}} return; }
   if(player.cine){ player.vx*=0.7; player.x+=player.vx; if(!player.onGround){player.vy+=G;player.y+=player.vy; if(player.y>=GROUND_Y){player.y=GROUND_Y;player.vy=0;player.onGround=true;}} player.animT+=16; return; }
-  if(pressed.has("smoke")&&smokeCharges>0&&(player.smokeT|0)<=0){ smokeCharges--; player.smokeT=300; player.smokePoseT=34; sfx("sfx_power_up"); for(let k=0;k<40;k++)particles.push({x:player.x+rnd(-40,40),y:player.y-rnd(0,HERO_H+10),vx:rnd(-2.6,2.6),vy:rnd(-2,1),g:-0.006,life:rnd(70,140),c:"#b8bec6",r:rnd(12,26),smoke:1}); floatText(player.x,player.y-HERO_H-8,"SMOKE!","#cfd6dd"); for(const en of enemies){ if(!en.boss&&!en.dead&&Math.abs(en.x-player.x)<560){ en.alerted=false; en.alert=0; if(en.state!=="dead")en.state="idle"; } } }
+  if(pressed.has("smoke")&&smokeCharges>0&&(player.smokeT|0)<=0&&(player.smokePending|0)<=0){ smokeCharges--; player.smokePoseT=42; player.smokePending=18; sfx("sfx_power_up"); }
+  if((player.smokePending|0)>0){ player.smokePending--; if(player.smokePending===0){ player.smokeT=300; for(let k=0;k<44;k++)particles.push({x:player.x+rnd(-44,44),y:player.y-rnd(0,HERO_H+12),vx:rnd(-2.8,2.8),vy:rnd(-2,1),g:-0.006,life:rnd(70,150),c:"#b8bec6",r:rnd(13,28),smoke:1}); floatText(player.x,player.y-HERO_H-8,"SMOKE!","#cfd6dd"); for(const en of enemies){ if(!en.boss&&!en.dead&&Math.abs(en.x-player.x)<560){ en.alerted=false; en.alert=0; if(en.state!=="dead")en.state="idle"; } } } }
   if((player.smokePoseT|0)>0)player.smokePoseT--;
   if((player.smokeT|0)>0){ player.smokeT--; if(player.smokeT%5===0)particles.push({x:player.x+rnd(-28,28),y:player.y-rnd(0,HERO_H),vx:rnd(-1,1),vy:rnd(-1,0.4),g:-0.004,life:rnd(50,90),c:"#b8bec6",r:rnd(10,20),smoke:1}); }
   if(pressed.has("kunai")&&player.hasKunai&&(player.kunaiAmmo|0)>0&&!player.attacking&&player.dashT<=0){ player.kunaiAmmo--; projectiles.push({x:player.x+player.face*22,y:player.y-HERO_H*0.55,vx:player.face*12,vy:0,g:0,life:90,kunai:1,dmg:24}); sfx("sfx_slash"); }
@@ -884,11 +885,11 @@ function buildStreet(){ LEVEL_W=5400; seg=1; boarded=false; fadeT=0;
     {n:"Shadow-step Boots (fast dash)",p:30,once:1,f:function(){player.dashFast=true;}},
   ];
   platforms=[
-    {x:620,w:150,top:GROUND_Y-72,sprite:"prop_car",cover:1},
-    {x:1500,w:90,top:GROUND_Y-64,sprite:"prop_dumpster",cover:1},
-    {x:2450,w:360,top:GROUND_Y-112,sprite:"prop_bus",cover:1},
-    {x:3400,w:150,top:GROUND_Y-72,sprite:"prop_car",cover:1},
-    {x:4300,w:90,top:GROUND_Y-64,sprite:"prop_dumpster",cover:1},
+    {x:660,w:250,top:GROUND_Y-120,sprite:"prop_car",cover:1},
+    {x:1520,w:120,top:GROUND_Y-92,sprite:"prop_dumpster",cover:1},
+    {x:2500,w:560,top:GROUND_Y-168,sprite:"prop_bus",cover:1},
+    {x:3450,w:250,top:GROUND_Y-120,sprite:"prop_car",cover:1},
+    {x:4350,w:120,top:GROUND_Y-92,sprite:"prop_dumpster",cover:1},
   ];
   gaps=[]; shadows=[];
   waves=[
@@ -1119,6 +1120,7 @@ function drawEnemy(e){ const x=e.x-cam.x; if(x<-140||x>VW+140)return; const sk=s
     else { const bw=e.h*((bs&&bs.h)?bs.w/bs.h:0.62);
       if(e.phase===2||e.enrageT>0){ const gc=e.type==="shotta"?"#ff3b2f":"#c07bff"; ctx.save(); ctx.shadowColor=gc; ctx.shadowBlur=16+8*Math.sin(now*0.012); for(let q=0;q<3;q++)drawSpriteWH(sk,x,e.y,bw,e.h,e.face<0,0.85); ctx.restore(); }
       drawSpriteWH(sk,x,e.y,bw,e.h,e.face<0,alpha); } }
+  else if(est==="dead"){ const bs=sprites[sk]; const aspect=(bs&&bs.w)?bs.h/bs.w:0.55; const W=e.h*1.3, H=W*aspect; drawSpriteWH(sk,x,e.y,W,H,e.face<0,alpha); }
   else { const Hh=(est==="walk"||est==="chase"||est==="patrol"||est==="idle"||est==="fly")?e.h:clamp(famH(sk,idleKey,e.h),e.h*0.9,e.h*1.12); drawSprite(sk,x,e.y,Hh,e.face<0,alpha); }
   ctx.globalCompositeOperation="source-over";
   if(!e.dead&&!e.boss&&!e.alerted&&!e.stealth&&(e.alert||0)>4)healthBar(x-20,e.y-e.h-14,40,4,e.alert/100,"#ffae3b");
