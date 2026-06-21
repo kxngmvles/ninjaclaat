@@ -209,6 +209,8 @@ window.AS = {
   "shotta_enrage": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_023702_2e89094a-22a8-4bdd-aae8-c5fddb3ee055.png",
   "ship_deck_bg": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030020_e3d32453-be95-4297-b4e0-4dfd6d4b82f9.png",
   "ship_bow": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030025_c0e1c10f-93a4-44ec-b990-90f4bdd9ca7f.png",
+  "voice_rasta": "./YeahBoy.mp3",
+  "prop_shipfront": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_034811_8c4e3907-7082-433e-b8b0-b664fcc5e4c4.png",
 };
 
 </script>
@@ -420,7 +422,7 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 "dog_idle","dog_walk","dog_walk2","dog_lunge","dog_dead",
 "mosq_fly","mosq_fly2","mosq_swoop","mosq_dead",
 "lt_idle","lt_walk","lt_walk2","lt_attack","lt_attack2","lt_death","lt_cast","lt_enrage","lt_walk1","lt_walk2","lt_walk3","lt_walk4",
-"palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage"];
+"palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage","prop_shipfront"];
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
 ["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow"].forEach(k=>loadImage(k,AS[k]));
 loadSound("music_level1",AS.music_level1,{loop:true,vol:0.42});
@@ -440,6 +442,7 @@ loadSound("voice_bomboclaat",AS.voice_bomboclaat,{vol:0.95,pool:1});
 loadSound("voice_power",AS.voice_power,{vol:0.95,pool:1});
 loadSound("voice_gorgon_laugh",AS.voice_gorgon_laugh,{vol:0.8,pool:1});
 loadSound("voice_heybwoy",AS.voice_heybwoy,{vol:1.0,pool:2});
+loadSound("voice_rasta",AS.voice_rasta,{vol:1.0,pool:1});
 loadSound("voice_razor_enrage",AS.voice_razor_enrage,{vol:1.0,pool:1});
 
 /* ---------- animation frame system ---------- */
@@ -614,7 +617,7 @@ function spriteForEnemy(e){ const m=EFR[e.type]; const st=eState(e); const frame
   const fps=EFPS[st]||7; return frameKey(frames,e.animT,fps,1)||frames[0]; }
 function hitEnemy(e,dmg,dir,atk){ if(e.dead||e.noKill)return; e.hp-=dmg;e.hurtT=12;e.vx=dir*(atk?atk.kb:6);blood(e.x,e.y-e.h*0.5,dir);sfx("sfx_hit");
   floatText(e.x,e.y-e.h-4,Math.round(dmg),player.powerT>0?"#5dffa6":"#ffd86b");
-  if(e.boss&&e.phase===1&&e.hp<=e.maxhp*0.5){e.phase=2;e.speed*=1.35;e.enrageT=72;e.special=30;floatText(e.x,e.y-e.h-20,"RAZOR ENRAGED!","#c07bff");shake=16;flash=Math.max(flash,0.5);sfx("voice_razor_enrage");for(let k=0;k<34;k++)particles.push({x:e.x+rnd(-34,34),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(22,46),c:k%2?"#c07bff":"#7a2bd0",r:rnd(2,4.6),glow:1});}
+  if(e.boss&&e.type==="lt"&&e.phase===1&&e.hp<=e.maxhp*0.5){e.phase=2;e.speed*=1.35;e.enrageT=72;e.special=30;floatText(e.x,e.y-e.h-20,"RAZOR ENRAGED!","#c07bff");shake=16;flash=Math.max(flash,0.5);sfx("voice_razor_enrage");for(let k=0;k<34;k++)particles.push({x:e.x+rnd(-34,34),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(22,46),c:k%2?"#c07bff":"#7a2bd0",r:rnd(2,4.6),glow:1});}
   if(e.hp<=0)killEnemy(e,dir); }
 function killEnemy(e,dir){ e.dead=true;e.deadT=0;e.vx=dir*4;e.vy=-4;blood(e.x,e.y-e.h*0.5,dir);sfx("sfx_death");
   spawnPickup(e.x,e.y-30,"coin",e.boss?40:(e.type==="dog"||e.type==="mosq"?4:7));
@@ -630,7 +633,7 @@ function updateEnemy(e){ e.animT+=16;
   if(e.enrageT>0){ e.enrageT--; e.vx=0; if(e.enrageT%2===0){const ang=rnd(0,6.28),d=e.h*rnd(0.2,0.55);particles.push({x:e.x+Math.cos(ang)*d,y:e.y-e.h*0.5+Math.sin(ang)*d*0.8,vx:Math.cos(ang)*rnd(1,3),vy:Math.sin(ang)*rnd(1,3)-0.5,g:0,life:rnd(8,16),c:"#c07bff",r:rnd(1.5,3.5),glow:1});} if(!e.fly){e.vy+=G;e.y+=e.vy;if(e.y>GROUND_Y){e.y=GROUND_Y;e.vy=0;}} return; }
   if(e.attackCd>0)e.attackCd--;
   if(e.type==="lt"&&e.phase===2&&!e.dead&&Math.random()<0.32)particles.push({x:e.x+rnd(-26,26),y:e.y-rnd(10,e.h),vx:rnd(-.5,.5),vy:rnd(-1,-.2),g:0,life:rnd(14,28),c:"#b06bff",r:rnd(1.5,3),glow:1});
-  const dx=player.x-e.x,adx=Math.abs(dx),dir=Math.sign(dx)||1; e.face=dir;
+  const dx=player.x-e.x,adx=Math.abs(dx),dir=Math.sign(dx)||1; if(e.alerted||e.boss||e.fly||e.state==="chase")e.face=dir;
   if(e.fly){ e.flyA+=0.06;
     if(e.state==="attack"){e.x+=e.diveVX;e.y+=e.diveVY;e.diveVY+=0.4; if(e.y>=GROUND_Y-10||e.t++>40){e.state="fly";e.y=e.baseY;} if(adx<e.range&&Math.abs(player.y-e.y)<70)hitP(e,dir);}
     else{ e.x+=clamp(dx,-e.speed,e.speed); e.y=e.baseY+Math.sin(e.flyA)*26;
@@ -744,6 +747,7 @@ function buildHarbour(){ LEVEL_W=3500; seg=1; boarded=false; fadeT=0;
   platforms=[
     {x:560,w:96,top:GROUND_Y-58,sprite:"prop_oildrum",cover:1},
     {x:1080,w:300,top:GROUND_Y-138,stack:1,rows:1},
+    {x:1000,w:80,top:GROUND_Y-54,sprite:"prop_crate",cover:1},
     {x:1380,w:300,top:GROUND_Y-276,stack:1,rows:2},
     {x:2360,w:96,top:GROUND_Y-60,sprite:"prop_crate",cover:1,floodcover:1},
     {x:2760,w:520,top:GROUND_Y-250,sprite:"prop_warehouse2",roof:1},
@@ -902,14 +906,9 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   if(level!==2){ drawParallax("bg_far",0.2,40,VW*1.2); drawParallax("bg_beach",0.5,0,VW*1.4); }
   else if(seg===2){ drawBgMirror(images.ship_deck_bg?"ship_deck_bg":"bg_harbour",0.5,VW*1.5); }
   else { drawBgMirror("bg_harbour",0.5,VW*1.4); }
-  if(level===2&&seg===2){ const tw=80,sx=-(((cam.x%tw)+tw)%tw);
-    const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH); dg.addColorStop(0,"#3a4651"); dg.addColorStop(1,"#1c242c"); ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);
-    ctx.fillStyle="rgba(12,16,20,0.5)"; for(let x=sx;x<VW+tw;x+=tw)ctx.fillRect(x,GROUND_Y,2,VH-GROUND_Y);
-    ctx.fillStyle="rgba(120,150,170,0.12)"; for(let yy=GROUND_Y+18;yy<VH;yy+=22)ctx.fillRect(0,yy,VW,1);
-    ctx.fillStyle="#566472"; ctx.fillRect(0,GROUND_Y,VW,5);
-    ctx.fillStyle="rgba(150,180,200,0.25)"; for(let x=sx+12;x<VW+tw;x+=tw){ctx.beginPath();ctx.arc(x,GROUND_Y+11,1.6,0,7);ctx.fill();}
+  if(level===2&&seg===2){ /* ship deck shown by the background image — no drawn tile */
   } else { const gim=(level===2&&images.dock_ground)?images.dock_ground:images.ground; if(gim){const tw=160,th=128,sx=-(((cam.x%tw)+tw)%tw);for(let x=sx-tw;x<VW+tw;x+=tw)for(let yy=GROUND_Y;yy<VH+th;yy+=th)ctx.drawImage(gim,x,yy,tw,th);} else {ctx.fillStyle="#16202c";ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);} }
-  if(level===2&&seg===1&&images.ship_bow){ const bw=860,bx=3240-cam.x; if(bx<VW+40&&bx+bw>-40)ctx.drawImage(images.ship_bow,bx,0,bw,GROUND_Y+34); }
+  if(level===2&&seg===1&&sprites.prop_shipfront){ const s=sprites.prop_shipfront,H=GROUND_Y+30,W=s.w*(H/s.h),cx=3560-cam.x; if(cx>-W&&cx<VW+W)drawSpriteWH("prop_shipfront",cx,GROUND_Y+6,W,H,false,1); }
   for(const gp of gaps){ const x1=gp.x1-cam.x,x2=gp.x2-cam.x; if(x2<-30||x1>VW+30)continue; ctx.save();
     const L=Math.max(x1,-20),R=Math.min(x2,VW+20);
     const wg=ctx.createLinearGradient(0,GROUND_Y,0,VH); wg.addColorStop(0,"#0b1c28"); wg.addColorStop(1,"#04101a"); ctx.fillStyle=wg; ctx.fillRect(L,GROUND_Y,R-L,VH-GROUND_Y);
@@ -1020,7 +1019,7 @@ function step(){
     updatePlayer(); for(const e of enemies)updateEnemy(e);
     if(dred.t>0)dred.t--; if(lady.active){ lady.t++; lady.x+=3.4; if(lady.x-cam.x>VW+140||lady.t>280)lady.active=false; }
     let onShed=false; for(const pf of platforms){ if(pf.shed&&player.onGround&&Math.abs(player.x-pf.x)<pf.w/2&&Math.abs(player.y-pf.top)<10){ onShed=true; dred.x=pf.x; dred.door=pf.x-pf.w*0.09; dred.top=pf.top; dred.w=pf.w; } }
-    if(onShed&&!dred.prev){dred.t=240; if(!lady.active){lady.active=true;lady.t=0;lady.x=(dred.door||player.x)+10;}} dred.prev=onShed;
+    if(onShed&&!dred.prev){dred.t=240; sfx("voice_rasta"); if(!lady.active){lady.active=true;lady.t=0;lady.x=(dred.door||player.x)+10;}} dred.prev=onShed;
     enemies=enemies.filter(e=>!(e.dead&&e.deadT>80&&!e.boss)&&!e.gone);
     updatePickups(); updateParticles(); updateProjectiles(); updateSearchlights();
     if(waveIdx<waves.length-1&&(function(){const L=enemies.filter(e=>!e.dead&&!e.gone&&e.type!=="dog");return L.length===0||L.every(e=>e.x<player.x-360);})()){ waveIdx++; spawnWave();
