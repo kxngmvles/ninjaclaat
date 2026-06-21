@@ -209,7 +209,7 @@ window.AS = {
   "shotta_enrage": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_023702_2e89094a-22a8-4bdd-aae8-c5fddb3ee055.png",
   "ship_deck_bg": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030020_e3d32453-be95-4297-b4e0-4dfd6d4b82f9.png",
   "ship_bow": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030025_c0e1c10f-93a4-44ec-b990-90f4bdd9ca7f.png",
-  "voice_rasta": "./YeahBoy.mp3",
+  "voice_rasta": "./YeahBoyLoud.mp3",
   "prop_shipfront": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_034811_8c4e3907-7082-433e-b8b0-b664fcc5e4c4.png",
 };
 
@@ -899,7 +899,7 @@ function wrapText(t,x,y,maxW,lh){const words=t.split(" ");let line="",yy=y;for(c
 /* ---------- render world ---------- */
 function drawParallax(key,factor,gap,w){ const im=images[key]; if(!im)return; const h=w*im.height/im.width, yTop=VH-h-gap; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w; bx<VW+w; bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),yTop); if(level!==2 && (((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,h); ctx.restore(); } }
 function drawParallaxCover(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%w; if(off<0)off+=w; for(let bx=-w; bx<VW+w; bx+=w){ ctx.drawImage(im, Math.round(bx-off), 0, w, VH); } }
-function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w;bx<VW+w;bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),0); if((((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,VH); ctx.restore(); } }
+function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w;bx<VW+2*w;bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),0); if((((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,VH); ctx.restore(); } }
 function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   g.addColorStop(0,"#0a1326");g.addColorStop(0.6,"#0c1a2b");g.addColorStop(1,"#0a141d");
   ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
