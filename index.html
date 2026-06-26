@@ -697,8 +697,8 @@ function updatePlayer(){
   if((player.blindT|0)>0)player.blindT--;
   if((player.smokeT|0)>0){ player.smokeT--; if(player.smokeT%3===0)particles.push({x:player.x+rnd(-46,46),y:player.y-rnd(0,HERO_H+12),vx:rnd(-1.2,1.2),vy:rnd(-1,0.4),g:-0.004,life:rnd(90,150),c:"#b8bec6",r:rnd(20,38),smoke:1}); }
   if(pressed.has("kunai")&&player.hasKunai&&(player.kunaiAmmo|0)>0&&!player.attacking&&player.dashT<=0){ player.kunaiAmmo--; player.kunaiPoseT=16; projectiles.push({x:player.x+player.face*22,y:player.y-HERO_H*0.55,vx:player.face*12,vy:0,g:0,life:90,kunai:1,dmg:24}); sfx("sfx_slash"); }
-  if(pressed.has("kunai")&&player.hasChain&&!player.hasKunai&&(player.grapCd|0)<=0&&!player.attacking){ player.grapCd=38; player.grapT=12; let best=null,bd=1e9; for(const e of enemies){ if(e.dead||e.noKill)continue; const dx=e.x-player.x; if(Math.sign(dx)!==player.face)continue; const ad=Math.abs(dx); if(ad<440&&ad<bd){bd=ad;best=e;} } if(best){ player.grapX=best.x; best.x=player.x+player.face*74; best.vx=0; best.hurtT=Math.max(best.hurtT||0,16); hitEnemy(best,16,player.face,{kb:2}); spark(best.x,best.y-best.h*0.5); floatText(player.x,player.y-HERO_H-8,"GRAPPLE!","#ffd86b"); } else { let gp=null; const ah=player.x+player.face*130; for(const gg of gaps){ if(ah>gg.x1-70&&ah<gg.x2+70)gp=gg; } if(gp){ player.vx=player.face*12.5; player.vy=-6; player.grapX=(player.face>0?gp.x2:gp.x1); floatText(player.x,player.y-HERO_H-8,"SWING!","#ffd86b"); } else { player.grapX=player.x+player.face*210; } } sfx("sfx_dash"); }
-  if((player.grapT|0)>0)player.grapT--; if((player.grapCd|0)>0)player.grapCd--;
+  if(pressed.has("kunai")&&player.hasChain&&!player.hasKunai&&(player.grapCd|0)<=0&&!player.attacking&&(player.grapLaunch|0)<=0){ player.grapCd=34; player.grapT=16; let best=null,bd=1e9; for(const e of enemies){ if(e.dead||e.noKill)continue; const dx=e.x-player.x; if(Math.sign(dx)!==player.face)continue; const ad=Math.abs(dx); if(ad<440&&ad<bd){bd=ad;best=e;} } let gp=null; for(const gg of gaps){ if(player.x>gg.x1-300&&player.x<gg.x2+30)gp=gg; } if(gp&&player.onGround){ const tx=(player.face>0?gp.x2+52:gp.x1-52); player.grapX=tx; for(let q=1;q<=6;q++)addGhost(sprites.nc_chain_idle?"nc_chain_idle":"nc_dash", player.x+(tx-player.x)*q/6, player.y, HERO_H, player.face<0); player.x=clamp(tx,40,LEVEL_W-40); player.y=GROUND_Y; player.vy=0; player.onGround=true; player._safe=player.x; player._safeY=GROUND_Y; player.iframe=Math.max(player.iframe||0,18); player.grapLaunch=10; floatText(player.x,player.y-HERO_H-8,"GRAPPLE SWING!","#ffd86b"); sfx("sfx_dash"); } else if(best){ player.grapX=best.x; best.x=player.x+player.face*74; best.vx=0; best.hurtT=Math.max(best.hurtT||0,16); hitEnemy(best,16,player.face,{kb:2}); spark(best.x,best.y-best.h*0.5); floatText(player.x,player.y-HERO_H-8,"GRAPPLE!","#ffd86b"); sfx("sfx_dash"); } else { player.grapX=player.x+player.face*210; sfx("sfx_slash"); } }
+  if((player.grapT|0)>0)player.grapT--; if((player.grapCd|0)>0)player.grapCd--; if((player.grapLaunch|0)>0)player.grapLaunch--;
   if(player.comboTimer>0){player.comboTimer--; if(player.comboTimer===0)player.atkStage=0;}
   if(player.dashCd>0)player.dashCd--; if(player.iframe>0)player.iframe--; if(player.hurtT>0)player.hurtT--; if(player.landT>0)player.landT--;
   if((player.heavyCd|0)>0)player.heavyCd--;
@@ -932,8 +932,8 @@ function buildCompound(){ LEVEL_W=4200; seg=1; mopedMode=false; l4exit=false; bo
   enemies=[];projectiles=[];pickups=[];particles=[];floaters=[];ghosts=[];slashArcs=[];searchlights=[]; gaps=[]; shadows=[]; scene=null; hobos=[]; vendorX=-99999; cat.active=false;
   player.x=180; player.y=GROUND_Y; player.vx=0; player.vy=0; player.onGround=true; player.face=1;
   platforms=[ {x:1500,w:120,top:GROUND_Y-92,sprite:"prop_dumpster",cover:1}, {x:2600,w:96,top:GROUND_Y-60,sprite:"prop_barrel",cover:1} ];
-  gaps=[{x1:3300,x2:3470}];
-  platforms.push({x:3385,w:60,top:GROUND_Y-250,anchor:1});
+  gaps=[{x1:3300,x2:3452}];
+  platforms.push({x:3376,w:60,top:GROUND_Y-250,anchor:1});
   pickups=[{x:2600,y:GROUND_Y-100,vy:null,kind:"herb",val:1,t:0}];
   waves=[
     [["gunner",900,"aggro"],["goonA",1120,"aggro"]],
@@ -1402,6 +1402,7 @@ function step(){
         else if(!blockTutDone&&player.onGround&&player.x>1880){ startBlockScene(); return; } } }
     if(level===2&&seg===1&&!scene&&!boarded&&player.x>3340){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
     if(level===3&&seg===1&&vendorX>-9999&&Math.abs(player.x-vendorX)<92&&player.onGround&&pressed.has("up")){ shopSel=0; setState("shop"); return; }
+    if(level===4&&seg===1){ for(const gg of gaps){ if(!gg._hint&&player.x>gg.x1-320&&player.x<gg.x1-120){ gg._hint=1; floatText(player.x,player.y-HERO_H-22,"GAP! Press F to grapple across","#ffd86b"); } } }
     if(level===4&&seg===1&&!l4exit&&!scene&&player.onGround&&player.x>LEVEL_W-150){ l4exit=true; player.cine=1; player.vx=0; setState("recall"); runDialogue(STR.l4_mid,()=>{ state="shipfade"; fadeT=72; }); return; }
     updatePlayer(); for(const e of enemies)updateEnemy(e);
     if(level===3){ for(const pf of platforms){ if(pf.sprite==="prop_dumpster"&&!pf._cat&&player.onGround&&Math.abs(player.x-pf.x)<pf.w/2+8&&player.y<=pf.top+8){ pf._cat=1; cat.active=true; cat.t=0; cat.dir=(player.x>=pf.x?-1:1); cat.x=pf.x; } } if(cat.active){ cat.t++; cat.x+=cat.dir*1.7; if(cat.t>380||cat.x<cam.x-140||cat.x>cam.x+VW+140)cat.active=false; } }
