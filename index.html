@@ -293,6 +293,18 @@ window.AS = {
  "prop_log": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260626_020139_4a0a58dc-9e3a-41d5-a58d-6329a37dbc12.png",
  "enemy_biker": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260626_020142_5dabc9f5-2c86-40d2-9b25-22e715aaa435.png",
  "enemy_car": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260626_020143_9803c334-38fb-40d6-84ca-55839d8fad14.png",
+ "nc_crun1": "./nc_crun1.png",
+ "nc_crun2": "./nc_crun2.png",
+ "nc_crun3": "./nc_crun3.png",
+ "nc_crun4": "./nc_crun4.png",
+ "nc_cthrow1": "./nc_cthrow1.png",
+ "nc_cthrow2": "./nc_cthrow2.png",
+ "nc_cswing1": "./nc_cswing1.png",
+ "nc_cswing2": "./nc_cswing2.png",
+ "nc_cswing3": "./nc_cswing3.png",
+ "nc_catk1": "./nc_catk1.png",
+ "nc_catk2": "./nc_catk2.png",
+ "nc_catk3": "./nc_catk3.png",
 };
 
 </script>
@@ -572,6 +584,7 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
 ["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt"].forEach(k=>loadImage(k,AS[k]));
 ["bat","molotov","shield","derrick","knife","fyah"].forEach(t=>{for(let n=1;n<=4;n++){const k=t+"_walk"+n; loadSpriteRaw(k,AS[k]);}});
+["nc_crun1","nc_crun2","nc_crun3","nc_crun4","nc_cthrow1","nc_cthrow2","nc_cswing1","nc_cswing2","nc_cswing3","nc_catk1","nc_catk2","nc_catk3"].forEach(k=>loadSpriteRaw(k,AS[k]));
 loadSound("music_level1",AS.music_level1,{loop:true,vol:0.42});
 loadSound("music_lt",AS.music_lt,{loop:true,vol:0.4});
 loadSound("music_level2",AS.music_level2,{loop:true,vol:0.4});
@@ -1358,7 +1371,7 @@ function drawPlayer(){ const x=player.x-cam.x;
   let key=(player.anim==="walk"||player.anim==="run") ? fr.f[Math.floor(Math.abs(player.x)/15)%fr.f.length] : (frameKey(fr.f,player.animT,fr.fps,fr.loop)||fr.f[0]);
   if((player.smokePoseT|0)>0&&sprites.nc_smoke)key="nc_smoke";
   if((player.kunaiPoseT|0)>0&&sprites.nc_kunai)key="nc_kunai";
-  if(player.hasChain){ if((player.grapLaunch|0)>0&&sprites.nc_chain_swing){ key="nc_chain_swing"; } else if(player.attacking&&curAtk){ var _fc=curAtk.dur-player.atkTimer; key=(_fc<curAtk.dur*0.5)?(sprites.nc_chain_swing?"nc_chain_swing":key):(sprites.nc_chain_whip?"nc_chain_whip":key); } else if(player.anim==="idle"&&sprites.nc_chain_idle){ key="nc_chain_idle"; } }
+  if(player.hasChain){ if((player.grapLaunch|0)>0){ var gmx=player.grapLaunchMax||22; var gk=clamp(1-(player.grapLaunch/gmx),0,1); if(gk<0.32&&sprites.nc_cthrow1){ key=(gk<0.16?"nc_cthrow1":"nc_cthrow2"); } else if(sprites.nc_cswing1){ var sw=["nc_cswing1","nc_cswing2","nc_cswing3"]; key=sw[Math.min(2,Math.floor((gk-0.32)/0.7*3))]||"nc_cswing3"; } } else if(player.attacking&&curAtk&&sprites.nc_catk1){ var _fc=curAtk.dur-player.atkTimer; var ak=["nc_catk1","nc_catk2","nc_catk3"]; key=ak[Math.min(2,Math.max(0,Math.floor(_fc/curAtk.dur*3)))]; } else if((player.anim==="run"||player.anim==="walk")&&sprites.nc_crun1){ var rk=["nc_crun1","nc_crun2","nc_crun3","nc_crun4"]; key=rk[Math.floor(Math.abs(player.x)/14)%4]; } else if(player.anim==="idle"&&sprites.nc_chain_idle){ key="nc_chain_idle"; } }
   let H; if(player.anim==="walk"||player.anim==="run"){H=HERO_H;} else if(player.anim==="jumpland"){H=HERO_H*0.9;} else if(player.crouch){H=Math.min(famH(key,"nc_idle",HERO_H),HERO_H*0.62);} else {H=clamp(famH(key,"nc_idle",HERO_H),HERO_H*0.9,HERO_H*1.04);}
   ctx.save(); let pa=1; if(player.iframe>0&&Math.floor(player.iframe/3)%2===0)pa=0.4; if(level===2){ const sd=shadowDepth(); if(sd>0)pa=Math.min(pa,clamp(1-sd*0.72,0.22,1)); } if((player.smokeT|0)>0)pa=Math.min(pa,0.2); ctx.globalAlpha=pa;
   if(player.powerT>0){ctx.shadowColor=player.irie?"#8dff7a":"#39ff8b";ctx.shadowBlur=20;}
