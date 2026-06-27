@@ -630,8 +630,8 @@ loadSound("voice_razor_enrage",AS.voice_razor_enrage,{vol:1.0,pool:1});
 /* ---------- animation frame system ---------- */
 const FR={
  idle:{f:["nc_idle","nc_idle2"],fps:2.4,loop:1},
- walk:{f:["nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6","nc_nrun7","nc_nrun8"],fps:13,loop:1},
- run:{f:["nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6","nc_nrun7","nc_nrun8"],fps:16,loop:1},
+ walk:{f:["nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6"],fps:12,loop:1},
+ run:{f:["nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6"],fps:14,loop:1},
  slash1:{f:["nc_slashA_wind","nc_attack_a"],fps:16,loop:0},
  slash2:{f:["nc_attack_b"],fps:10,loop:0},
  kick:{f:["nc_kick"],fps:10,loop:0},
@@ -1045,8 +1045,8 @@ function drawMoped(){ var HX=Math.round(VW*0.42); var SLOPE=0.10; var yL=mopRoad
   ctx.strokeStyle="rgba(16,10,5,0.85)"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(0,yL); ctx.lineTo(VW,yR); ctx.stroke();
   // pursuers (always visible behind hero)
   for(var fi=0;fi<mopFoes.length;fi++){ var f=mopFoes[fi]; var sx=clamp(HX-70-mopGap*0.42-f.off+(f.knock>0?-f.knock*1.4:0), 18, HX-44); var by=mopRoadY(sx)+Math.sin((mopDist*0.05)+f.bob)*2; var sc=0.8;
-    if(f.car){ if(sprites.enemy_car)drawSpriteSlope("enemy_car",sx,by+3,80,SLOPE); drawWheel(sx-26,by-9,12,mopWheel*9); drawWheel(sx+26,by-9,12,mopWheel*9); }
-    else { var bk=f.sprite; if(sprites[bk])drawSpriteSlope(bk,sx,by+3,84,SLOPE); else if(sprites.enemy_biker)drawSpriteSlope("enemy_biker",sx,by+3,84,SLOPE); drawWheel(sx-25,by-9,12,mopWheel*9); drawWheel(sx+25,by-9,12,mopWheel*9); }
+    if(f.car){ if(sprites.enemy_car)drawSpriteSlope("enemy_car",sx,by+3,84,SLOPE); drawWheel(sx-26,by-9,12,mopWheel*9); drawWheel(sx+26,by-9,12,mopWheel*9); }
+    else { var bk=f.sprite; if(sprites[bk])drawSpriteSlope(bk,sx,by+3,82,SLOPE); else if(sprites.enemy_biker)drawSpriteSlope("enemy_biker",sx,by+3,82,SLOPE); drawWheel(sx-24,by-9,11,mopWheel*9); drawWheel(sx+24,by-9,11,mopWheel*9); }
     if(mopGap<185&&f.ct>58){ ctx.fillStyle="#fff2a8"; ctx.beginPath(); ctx.arc(sx+30,by-40,4,0,7); ctx.fill(); } }
   ctx.fillStyle="#fff6c8"; for(var bi=0;bi<mopBul.length;bi++){ var b=mopBul[bi]; ctx.fillRect(b.sx-9,b.y-2,16,4); }
   // obstacles
@@ -1057,7 +1057,7 @@ function drawMoped(){ var HX=Math.round(VW*0.42); var SLOPE=0.10; var yL=mopRoad
     else { var key=o.type==="log"?"prop_log":"prop_rock"; if(sprites[key])drawSpriteSlope(key,o.sx,oy+3,o.type==="log"?52:62,SLOPE); else { ctx.fillStyle="#6b6b6b"; ctx.fillRect(o.sx-18,oy-36,36,36);} } }
   // hero on animated bike
   var blink=(player.iframe>0&&Math.floor(player.iframe/3)%2===0);
-  if(!blink){ var bf="nc_bike"+(1+(Math.floor(mopDist/7)%8)); if(sprites[bf]){ drawSpriteSlope(bf,HX,player.y,HERO_H*1.18,SLOPE); } else if(sprites.nc_moped){ drawSpriteSlope("nc_moped",HX,player.y,HERO_H*0.95,SLOPE); var s=sprites.nc_moped,w=s.w*(HERO_H*0.95/s.h); drawWheel(HX-w*0.27,player.y-10,14,-mopWheel*9); drawWheel(HX+w*0.30,player.y-10,14,-mopWheel*9);} 
+  if(!blink){ var bf="nc_bike"+(1+(Math.floor(mopDist/7)%8)); if(sprites[bf]){ drawSpriteSlope(bf,HX,player.y,HERO_H*0.82,SLOPE); } else if(sprites.nc_moped){ drawSpriteSlope("nc_moped",HX,player.y,HERO_H*0.95,SLOPE); var s=sprites.nc_moped,w=s.w*(HERO_H*0.95/s.h); drawWheel(HX-w*0.27,player.y-10,14,-mopWheel*9); drawWheel(HX+w*0.30,player.y-10,14,-mopWheel*9);} 
     if(player.mopBoost>0){ for(var q=0;q<2;q++)particles.push({x:HX-34+rnd(-6,6),y:player.y-18+rnd(-8,8),vx:-rnd(3,7),vy:rnd(-1,1),g:0,life:rnd(8,16),c:q?"#7CFF6B":"#bfffce",r:rnd(2,4),glow:1}); } }
   if((player.chainT|0)>0){ var p=1-(player.chainT/20); var a=-0.5+1.9*p; var reach=120; var hx=HX-6,hy=player.y-52; var ex=hx-Math.cos(a)*reach, ey=hy+Math.sin(a)*reach*0.5; chainLine(hx,hy,ex,ey); ctx.save(); ctx.fillStyle="#8b8f97"; ctx.beginPath(); ctx.arc(ex,ey,5,0,7); ctx.fill(); ctx.restore(); }
   drawParticles();
