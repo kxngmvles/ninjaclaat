@@ -1,6 +1,6 @@
 # NINJACLAAT — Web Game (Claude Code handoff)
 
-Dark, cinematic Jamaican-ninja beat-em-up platformer. **This repo IS the live web game** — a finished, playable 4-level game shipped on GitHub Pages. Continue development here.
+Dark, cinematic Jamaican-ninja beat-em-up platformer. **This repo IS the live web game** — a complete, playable 5-level game (story finished, final boss included) shipped on GitHub Pages. Continue development here.
 
 > A separate **Godot 2D port** exists on the owner's machine (`Desktop/NinjaclaatGodot/`, has its own CLAUDE.md). It is **pinned / not active** and is NOT in this repo. Ignore unless the owner asks to resume it.
 
@@ -24,7 +24,7 @@ Owner: **Kemar** (GitHub **kxngmvles**). Live: https://kxngmvles.github.io/ninja
 - `nc_*.png`, `walk_*.png`, `goon_bike*.png`, etc. — locally-hosted, **pre-keyed transparent** sprite frames.
 
 ### FIRST STEP in a new session
-The maintained editable form is **three separate files** `dist/assets.js`, `dist/strings.js`, `dist/game.js`. They are **not committed** — they only ever lived in scratch. **Recreate them by splitting `index.html`'s three `<script>` blocks into `dist/*.js`**, edit those, then re-inline to rebuild `index.html`. (Then commit `dist/` so it's versioned.)
+The maintained editable form is **three separate files** `dist/assets.js`, `dist/strings.js`, `dist/game.js` — **now committed to the repo** (since 2026-07). Edit those, then re-inline to rebuild `index.html`. If `dist/` ever goes missing, recreate it by splitting `index.html`'s three `<script>` blocks.
 
 ### DEPLOY PIPELINE (with real git — much nicer than before)
 1. Edit `dist/assets.js` / `dist/strings.js` / `dist/game.js`.
@@ -42,14 +42,15 @@ The maintained editable form is **three separate files** `dist/assets.js`, `dist
 - **MIRROR = {knife:1, fyah:1}** — per-enemy facing flag. Native art faces RIGHT; draw flips when facing left; MIRROR types have LEFT-native art. Match a type's existing facing when adding art.
 - **FR{}** player anim tables, **EFR{}** enemy anim tables. Base run/walk use `nc_nrun1..6` (a seamless 6-frame run cut from the owner's video).
 - Player kit: dash, block (spin-blade parry), double-jump (L2), smoke screen (L3 spliff), kunai (F), and L4 **chain weapon** (`hasChain`): chain run `nc_crun*`, chain attack `nc_catk*`, grapple throw→swing `nc_cthrow*`/`nc_cswing*`, chain jump/fall/land `nc_chain_jump/fall/land`.
-- **Levels** (`levelSel` 1–4 on the title menu):
+- **Levels** (`levelSel` 1–5 on the title menu):
   - **L1** Dark Beach — boss **Razor**. (Ground must use `images.ground`, level-gated: a bug once made L1 use the ship dock tile — fixed.)
   - **L2** Smuggler's Harbour — stealth takedowns, searchlights, double-jump + block learn-events, ship-deck seg2, boss **Shotta** (enrage, grenades).
   - **L3** Kingston — street seg1 (vendor shop spends BITS, spliff smoke, sub-boss **Derrick**: kick / phone-flash-blind / sandal) → rooftop seg2 (boss **Fyah**: fireballs, punch/kick, enrage, smoke-teleport). 2 segments via `shipfade`.
   - **L4** Don Gorgon's Compound — opens with an **L3 scripted defeat** (enraged Fyah blinds/finishes you) → **cell cutscene** (`bg_cell`) where **Dupree is revealed to be a hallucination / long dead**. Seg1 = compound exterior (`bg_compound_ext`): chain melee + **grapple (F)** swing over a gap under an overhead gantry; enemies goonA/goonB/gunner/dogs. Seg2 = **moped chase** (hill-climb style): diagonal dirt downhill (`bg_forest_night` + `road_dirt`), hero on animated bike `nc_bike1..8`, **goons on bikes** `goon_bikeA/B` + car `enemy_car` that only close the gap when you hit obstacles, **weed = boost**, **ramps = big air**, spinning wheels, escape meter. `updateMoped`/`drawMoped`.
+  - **L5** Gorgon's Tower (FINALE, added 2026-07) — `startLevel5`/`buildTower` (`bg_throne` terrace bg, gold-trimmed marble floor). Hero gets the full kit back (dash/3-combo/double-jump/block + kunai x5, smoke x2, 130 maxhp; machete, no chain). 4 elite waves → **DON GORGON** (`gorgon` type, 660hp, `updateGorgon`): cane melee/punch, dark orbs (`darkOrb`, triple fan in phase 2), **jumpable ground shockwaves** (`gorgonShock`, `p.shock` projectiles), **summons backup goons** (`gorgonSummon`, capped at 2 alive), enrage at 50% (purple aura, +speed, boss music `music_lt`). Victory → `l5_outro` (memory returns, farewell to Dupree) → "NINJACLAAT — THE END". Gorgon art = 8 magenta-keyed stills (`gorgon_*`) + `bg_throne`, generated on the standard image pipeline.
 
 ### STORY
-Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/Fyah. L4 twist: **Dupree was a hallucination all along** (dead since the night the hero "died"). L4 ends fleeing to regroup with the old crew before **Don Gorgon** — the **final boss is NOT built yet**.
+Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/Fyah. L4 twist: **Dupree was a hallucination all along** (dead since the night the hero "died"). L4 ends fleeing to regroup with the old crew — then **L5: the hero returns with the blade, kills Don Gorgon, his memory comes back, and he says goodbye to Dupree. The story is complete.**
 
 ---
 
@@ -70,9 +71,9 @@ Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/F
 ---
 
 ## PENDING WORK
-- **Build the Don Gorgon final boss / finale** (biggest missing piece).
-- **Dedicated L3 music** (rooftop/Kingston currently reuses other tracks).
-- **Balance pass** — especially moped-chase feel (gap rates, obstacle spacing, boost).
+- **Dedicated L3 music** (rooftop/Kingston reuses other tracks); L5 reuses the `music_lt` boss theme — a dedicated finale track would be nice.
+- **Balance pass** — moped-chase feel (gap rates, obstacle spacing, boost), and the L5 Gorgon fight is HARD (shock + orbs + melee together); tune after real playtests.
+- **Regenerate dead assets**: URLs on `d2ol7oe51mr4n9.cloudfront.net` now return 403 (bg_beach, item_machete, item_orb, prop_hobo) — L1's beach parallax layer is silently missing. Regenerate on the current pipeline and swap URLs in `assets.js`.
 - Optional polish on any animation the owner re-records (drop clips through the video→frames pipeline above).
 
 ## RUN LOCALLY
