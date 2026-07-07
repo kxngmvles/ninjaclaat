@@ -1,6 +1,6 @@
 # NINJACLAAT — Web Game (Claude Code handoff)
 
-Dark, cinematic Jamaican-ninja beat-em-up platformer. **This repo IS the live web game** — a complete, playable 5-level game (story finished, final boss included) shipped on GitHub Pages. Continue development here.
+Dark, cinematic Jamaican-ninja beat-em-up platformer. **This repo IS the live web game** — a playable 5-level game (final boss included) shipped on GitHub Pages. **NOT finished**: Kemar plans more levels between the existing ones, a substantial Level 5 rework, and is exploring a full Godot overhaul (smoother skeletal animation, live backgrounds, deeper fight logic). Continue development here unless he says to work in Godot.
 
 > A separate **Godot 2D port** exists on the owner's machine (`Desktop/NinjaclaatGodot/`, has its own CLAUDE.md). It is **pinned / not active** and is NOT in this repo. Ignore unless the owner asks to resume it.
 
@@ -50,7 +50,7 @@ The maintained editable form is **three separate files** `dist/assets.js`, `dist
   - **L5** Gorgon's Tower (FINALE, added 2026-07) — `startLevel5`/`buildTower` (`bg_throne` terrace bg, gold-trimmed marble floor). Hero gets the full kit back (dash/3-combo/double-jump/block + kunai x5, smoke x2, 130 maxhp; machete, no chain). 4 elite waves → **DON GORGON** (`gorgon` type, 660hp, `updateGorgon`): cane melee/punch, dark orbs (`darkOrb`, triple fan in phase 2), **jumpable ground shockwaves** (`gorgonShock`, `p.shock` projectiles), **summons backup goons** (`gorgonSummon`, capped at 2 alive), enrage at 50% (purple aura, +speed, boss music `music_lt`). Victory → `l5_outro` (memory returns, farewell to Dupree) → "NINJACLAAT — THE END". Gorgon art = 8 magenta-keyed stills (`gorgon_*`) + `bg_throne`, generated on the standard image pipeline.
 
 ### STORY
-Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/Fyah. L4 twist: **Dupree was a hallucination all along** (dead since the night the hero "died"). L4 ends fleeing to regroup with the old crew — then **L5: the hero returns with the blade, kills Don Gorgon, his memory comes back, and he says goodbye to Dupree. The story is complete.**
+Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/Fyah. L4 twist: **Dupree was a hallucination all along** (dead since the night the hero "died"). L4 ends fleeing to regroup with the old crew — then **L5: the hero returns with the blade, kills Don Gorgon, his memory comes back, and he says goodbye to Dupree.** (Current arc lands there, but Kemar plans additional levels between the existing ones and an L5 rework — treat the "THE END" screen as provisional.)
 
 ---
 
@@ -71,9 +71,11 @@ Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/F
 ---
 
 ## PENDING WORK
+- **More levels between the existing ones + Level 5 rework** — Kemar wants the game longer and L5 substantially reworked (details TBD with him).
+- **Godot overhaul track** — `OneDrive/Desktop/NinjaclaatGodot/` has the godot_ai MCP plugin (server on `http://127.0.0.1:8000/mcp`, needs `uv` — installed 2026-07-06) and a full asset backup in `assets/web/` (293 files, all CDN art/audio downloaded). Goal: skeletal cutout animation, live backgrounds, better fight logic; web game stays live meanwhile.
 - **Dedicated L3 music** (rooftop/Kingston reuses other tracks); L5 reuses the `music_lt` boss theme — a dedicated finale track would be nice.
 - **Balance pass** — moped-chase feel (gap rates, obstacle spacing, boost), and the L5 Gorgon fight is HARD (shock + orbs + melee together); tune after real playtests.
-- **Regenerate dead assets**: URLs on `d2ol7oe51mr4n9.cloudfront.net` now return 403 (bg_beach, item_machete, item_orb, prop_hobo) — L1's beach parallax layer is silently missing. Regenerate on the current pipeline and swap URLs in `assets.js`.
+- **Two broken assets**: `bg_beach` 403s (old `d2ol7oe51mr4n9` bucket is dead — L1's beach parallax layer silently missing; regenerate on the current pipeline). `voice_goon3` has a **malformed URL** in `assets.js` (invalid UUID tail — never worked; regenerate or fix URL).
 - Optional polish on any animation the owner re-records (drop clips through the video→frames pipeline above).
 
 ## RUN LOCALLY
