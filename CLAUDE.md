@@ -80,3 +80,72 @@ Amnesiac ninja washes ashore, guided by "Dupree." Razor → Shotta → Derrick/F
 
 ## RUN LOCALLY
 Open `index.html` in a browser, or visit the live URL.
+
+### 2026-07-31 (later) — sizing, dogs, slash FX
+
+**⚠️ NEVER run `git checkout -- .` in this repo.** All work here is uncommitted
+until Kemar pushes; I wiped a whole session with it. Recovery only worked
+because the build was still live in a browser tab (pulled the three inlined
+`<script>` blocks back out via a POST endpoint). Commit early instead.
+
+- **Per-frame render scale** (`ASCALE` table in game.js, generated offline):
+  the game sizes sprites by bbox, but a raised bat/machete inflates the bbox so
+  the BODY renders small. `mult = (idle_body/idle_bbox) * (bbox_f/body_f)`,
+  clamped to [0.72, 1.18] so genuinely crouched poses aren't stretched, plus a
+  width cap so wide falling/lying frames can't balloon. Regenerate the table if
+  frames are re-sliced (script is in the session log; measures `body_height()`
+  from tools/slice_sheet.py).
+- **`body_height()`** added to the slicer: feet → top of the *wide* region, so
+  thin protrusions (bat, machete) don't count. Sets are normalized on this now.
+- **Auto-detecting character scale does NOT work reliably** — tried bbox height,
+  body height and head width; generated art varies in scale and a raised bat
+  sits exactly where the head is. Explicit tables + eyeballing a game-scale
+  contact sheet is the honest approach.
+- **Dogs** hold their stride and never double back on patrol (turning around
+  made them unavoidable); they only close in once `alert>=60`. First L1 dog is
+  fully passive scenery.
+- **chromaKey fix**: `isMag` now requires blue clearly ABOVE green
+  (`(b-g)>26 && (r-g)>42`). The old test (`g < min(r,b)*0.8`) was eating the
+  dog's light-brown fur. Same class of bug as the hero's hands/hair.
+- **Synthesised sword slashes** (`bladeSlash()`): filtered noise whoosh sweeping
+  down in pitch + a metallic ring on heavy/powered swings, via WebAudio.
+  Overrides `sfx_slash`/`sfx_power_slash`, adds `sfx_slash_heavy`. No assets,
+  and each swing varies slightly so it never machine-guns.
+  (Higgsfield CANNOT generate SFX — speech only. Don't try.)
+- **Razor's flying slash** redrawn as a long tapered crescent (112x30) with
+  trailing motion streaks + bright core, instead of the geometric half-circle.
+
+**Slicing figures that overlap** (`component_figures`): seam cells decide which
+blob belongs to which figure (by centroid), but each blob is then taken WHOLE
+and masked. A straight column cut chopped Razor's machete and put the tip in
+the next frame — the lunge sheet was never cut off, my slicing was. Always use
+this for weapon poses.
+
+**Sheets are not always the grid you asked for.** The ground-slam sheet came
+back 3+2, not 2x3 — forcing 3 columns on row 2 invented a "frame" out of the
+impact burst. Check the source rows before setting --cols; slice rows
+separately (`--start`) when the layout is ragged. lt_slam is 5 frames.
+
+**Hero power-up is a 5-frame sequence** (`nc_pwr1..5`, generated nano-banana
+from nc_power_pose): calm -> tensing -> crouched with energy swirls -> eruption
+-> full aura with glowing machete. FR.power plays it once at 7fps; HSCALE
+entries correct for the aura inflating the bbox (HSCALE[key] = body/idle_body).
+
+### 2026-08-01 — video-derived combo + heavy, powerup, sword sfx
+- **`tools/video_to_frames.py`**: extracts smooth frames from Kemar's recorded
+  clips (1440x1440, rose-pink #DF1461 bg, ~73f with idle padding). Keys the
+  rose (`(r>150)&(g<115)&(r-g>78)`, keeps the green energy trail), auto-finds
+  the ACTIVE swing window by frame-to-frame motion (drops dead idle), union-
+  crops, normalizes to a ref BODY height, samples N frames. `pip install
+  imageio imageio-ffmpeg` provides the decoder (no system ffmpeg on this box).
+- **3-hit combo is now video-smooth**: `slash1_1..14`, `slash2_1..14`,
+  `slash3_1..14` (14 frames each). FR.slash1/slash2/slash3 at fps 47/53/42
+  loop:0. ATK.c (finisher) switched from the single `nc_kick` to `slash3`.
+  These already have the green trail BAKED IN — the code `slashArcs` crescent
+  in doMeleeHit still fires on top; if it looks doubled, guard it for these.
+- **Heavy attack**: `heavy1..4` sliced from `Heavy slash.png`, FR.heavy at 8fps.
+- Frames are pre-normalized to idle BODY height, so famH renders them at a
+  consistent body size even though the raised blade/trail inflates the bbox
+  (no HSCALE needed — the bbox/body cancel out, see the note in that session).
+- Power-up = `nc_pwr1..5` (5-frame sequence). Real recorded `sword_slash.mp3`
+  (`sfx_sword`) now backs sfx_slash; bladeSlash() WebAudio layers under heavy.

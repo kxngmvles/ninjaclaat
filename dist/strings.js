@@ -1,4 +1,5 @@
 
+
 /* All player-visible text. Switching language = swapping this file. */
 window.STR = {
   title: "NINJACLAAT",
@@ -8,7 +9,12 @@ window.STR = {
   hud_coins: "BITS",
   hud_combo: "HIT",
   lieutenant_name: "RAZOR — GANG LIEUTENANT",
-  recall_dash: "MUSCLE MEMORY: SHADOW STEP — double-tap a direction or press C to dash",
+  recall_dash: "SHADOW STEP UNLOCKED — press C / SHIFT",
+  learn_dash_post: [
+    {s:"DUPREE", t:"Yuh see dat? Yuh body remember before yuh mind do.", n:""},
+    {s:"DUPREE", t:"Shadow Step. Yuh pass right through dem — dem feel it after.", n:""},
+    {s:"DUPREE", t:"Press C. Cut clean through di whole line.", n:""}
+  ],
   recall_combo: "MUSCLE MEMORY: the blade remembers — keep tapping Z to chain hits",
   level_clear: "LEVEL 1 CLEAR",
   level_clear_sub: "Dupree's voice carries down the shore. Somewhere, Don Gorgon is told the body is gone.",
@@ -178,4 +184,5 @@ window.STR = {
   level5_clear: "NINJACLAAT — THE END",
   level5_clear_sub: "The don of dons is done. Kingston breathes easy. And a ninja with his whole memory walks into the morning light — irie at last."
 };
+
 
