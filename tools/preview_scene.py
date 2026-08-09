@@ -28,7 +28,14 @@ def grab(src, name):
     raise ValueError(f"unbalanced braces in {name}")
 
 def grab_const(src, name):
+    """Pull a top-level `const NAME=...;` out of the engine. Handles both object
+    literals and plain scalar lists (`const A=1, B=2;`) — a scene that referenced
+    a scalar the harness hadn't copied just threw ReferenceError and rendered an
+    empty frame, which looks exactly like broken draw code."""
     m = re.search(rf"^const {name}=\{{.*?\}};", src, re.M | re.S)
+    if m:
+        return m.group(0)
+    m = re.search(rf"^const {name}=[^;\n]*;", src, re.M)
     return m.group(0) if m else ""
 
 def main():
@@ -67,6 +74,7 @@ let now=1400;
 let player={{x:{args.cam}+480,y:GROUND_Y}};
 {grab_const(src, "WH")}
 {grab_const(src, "SH")}
+{grab_const(src, "WH_ROOF")}
 function clamp(v,a,b){{return v<a?a:v>b?b:v;}}
 {bodies}
 // Backdrops are <img>s. Draw only once they have actually decoded, or the scene

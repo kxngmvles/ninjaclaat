@@ -180,6 +180,39 @@ function actx(){ if(!_ac){ try{_ac=new (window.AudioContext||window.webkitAudioC
   return _ac; }
 function noiseBuf(ac,dur){ const n=Math.floor(ac.sampleRate*dur); const b=ac.createBuffer(1,n,ac.sampleRate); const d=b.getChannelData(0);
   for(let i=0;i<n;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/n,1.6); } return b; }
+/* Rising power surge for a boss enrage: a sub-bass sweep climbing under a
+   detuned pair, capped with a noise burst. Synthesised because there is no
+   recorded asset for it and it has to key exactly to the animation length. */
+function powerSurge(dur=1.6){
+  const ac=actx(); if(!ac)return; const t=ac.currentTime;
+  const bus=ac.createGain(); bus.gain.value=0.9; bus.connect(ac.destination);
+  // sub sweep climbing the whole animation
+  const o=ac.createOscillator(), og=ac.createGain();
+  o.type="sawtooth"; o.frequency.setValueAtTime(42,t);
+  o.frequency.exponentialRampToValueAtTime(320,t+dur*0.86);
+  const lp=ac.createBiquadFilter(); lp.type="lowpass";
+  lp.frequency.setValueAtTime(220,t); lp.frequency.exponentialRampToValueAtTime(4200,t+dur*0.86);
+  og.gain.setValueAtTime(0.0001,t);
+  og.gain.exponentialRampToValueAtTime(0.34,t+dur*0.5);
+  og.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(lp).connect(og).connect(bus); o.start(t); o.stop(t+dur+0.05);
+  // detuned partner an octave up for the electric edge
+  const o2=ac.createOscillator(), o2g=ac.createGain();
+  o2.type="square"; o2.frequency.setValueAtTime(84,t);
+  o2.frequency.exponentialRampToValueAtTime(640,t+dur*0.86); o2.detune.value=14;
+  o2g.gain.setValueAtTime(0.0001,t);
+  o2g.gain.exponentialRampToValueAtTime(0.09,t+dur*0.6);
+  o2g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o2.connect(o2g).connect(bus); o2.start(t); o2.stop(t+dur+0.05);
+  // discharge at the top
+  const src=ac.createBufferSource(); src.buffer=noiseBuf(ac,0.5);
+  const hp=ac.createBiquadFilter(); hp.type="highpass"; hp.frequency.value=900;
+  const ng=ac.createGain();
+  ng.gain.setValueAtTime(0.0001,t+dur*0.80);
+  ng.gain.exponentialRampToValueAtTime(0.30,t+dur*0.88);
+  ng.gain.exponentialRampToValueAtTime(0.0001,t+dur+0.35);
+  src.connect(hp).connect(ng).connect(bus); src.start(t+dur*0.80); src.stop(t+dur+0.4);
+}
 function bladeSlash({heavy=false,power=false}={}){
   const ac=actx(); if(!ac)return; const t=ac.currentTime;
   const dur=heavy?0.34:0.22;
@@ -758,7 +791,7 @@ function updateShotta(e){
   const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign(dx)||1;
   e.alerted=1; e.face=dir;
   if(!e._met){ e._met=1; sfx("voice_shotta_meet"); }
-  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=104; e.grenCd=120; floatText(e.x,e.y-e.h-20,"SHOTTA SNAPS!","#ff4d3b"); shake=14; flash=Math.max(flash,0.42); sfx("voice_shotta_enrage"); for(let k=0;k<32;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2.4,2.4),vy:rnd(-3.4,-0.2),g:0.02,life:rnd(20,42),c:k%2?"#ff3b2f":"#161616",r:rnd(2,4.6),glow:1}); }
+  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=104; e.grenCd=120; floatText(e.x,e.y-e.h-20,"SHOTTA SNAPS!","#ff4d3b"); shake=14; flash=Math.max(flash,0.42); sfx("voice_shotta_enrage"); powerSurge(1.7); for(let k=0;k<32;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2.4,2.4),vy:rnd(-3.4,-0.2),g:0.02,life:rnd(20,42),c:k%2?"#ff3b2f":"#161616",r:rnd(2,4.6),glow:1}); }
   const fast=e.phase===2;
   if(e.enrageT>0){ e.enrageT--; e.vx=0; if(e.enrageT%2===0){const a=rnd(0,6.28),d2=e.h*rnd(0.2,0.6);particles.push({x:e.x+Math.cos(a)*d2,y:e.y-e.h*0.5+Math.sin(a)*d2*0.8,vx:Math.cos(a)*rnd(1,3),vy:Math.sin(a)*rnd(1,3)-0.4,g:0,life:rnd(8,16),c:Math.random()<0.5?"#ff3b2f":"#161616",r:rnd(1.5,3.6),glow:1});} return; }
   if(e.state==="shoot"){e.t++; if(e.t===5&&!e._hit){fireBullets(e,dir);e._hit=true;} if(e.t>(fast?10:18))e.state="idle"; return;}
@@ -843,9 +876,10 @@ function updateShield(e){ const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign
 function shieldFire(e,dir){ sfx("sfx_gunshot2"); shake=Math.max(shake,4); const by=e.y-e.h*0.64; projectiles.push({x:e.x+dir*42,y:by,vx:dir*9.4,vy:0,g:0,life:100,bullet:1,dmg:e.dmg}); for(let k=0;k<6;k++)particles.push({x:e.x+dir*46,y:by,vx:dir*rnd(2,5),vy:rnd(-1.4,1.4),g:0,life:rnd(5,10),c:k%2?"#fff2a8":"#ffae3b",r:rnd(1.5,3),glow:1}); }
 function updateDerrick(e){ const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign(dx)||1; e.alerted=1; e.face=dir;
   if(!e._met){ e._met=1; alertShout(e); }
-  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=60; e.speed*=1.18; floatText(e.x,e.y-e.h-20,"DERRICK SNAPS!","#ff5ab0"); sfx("voice_derrick_enrage"); shake=14; flash=Math.max(flash,0.4); for(let k=0;k<28;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(20,40),c:k%2?"#ff5ab0":"#ffd23b",r:rnd(2,4.5),glow:1}); }
+  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=60; e.speed*=1.18; floatText(e.x,e.y-e.h-20,"DERRICK SNAPS!","#ff5ab0"); powerSurge(1.7); shake=14; flash=Math.max(flash,0.4); for(let k=0;k<28;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(20,40),c:k%2?"#ff5ab0":"#ffd23b",r:rnd(2,4.5),glow:1}); }
   if(e.attackCd>0)e.attackCd--; const fast=e.phase===2;
   if(e.state==="phone"){ e.t++; if(e.t%12===0){ e.vx=(Math.random()<0.5?-1:1)*4.5; e.x=clamp(e.x+e.vx,40,LEVEL_W-40); } else e.vx=0;
+    if(e.t===1&&!e._said){ e._said=1; sfx("voice_derrick_enrage"); }
     if(e.t===20&&!e._hit){ flash=Math.max(flash,0.9); shake=Math.max(shake,8); sfx("sfx_camera"); for(let k=0;k<16;k++)particles.push({x:e.x+rnd(-20,20),y:e.y-e.h*0.7,vx:rnd(-3,3),vy:rnd(-3,1),g:0,life:rnd(10,20),c:"#ffffff",r:rnd(2,5),glow:1}); if(adx<500){ player.blindT=100; floatText(player.x,player.y-HERO_H-8,"BLINDED!","#ffffff"); } e._hit=true; }
     if(e.t>54)e.state="idle"; return; }
   if(e.state==="sandal"){ e.t++; e.vx=0; if(e.t===12&&!e._hit){ throwSandal(e,dir); e._hit=true; } if(e.t>30)e.state="idle"; return; }
@@ -1455,64 +1489,68 @@ const WH={x1:3150,x2:5550};
    parallax) and clipped to the WH span so the doorways read as walls and the
    art can't swim against the platforms bolted to it. The plate is trimmed so
    its own floor line is the image bottom, which is why it lands on GROUND_Y. */
-/* The warehouse seen from OUTSIDE, drawn either side of a doorway. Without this
-   the interior plate started at a bare vertical edge and read as a split screen
-   rather than as walking into a building. `dir` is which way the wall runs:
-   -1 = wall extends left of the door, +1 = right. */
-function drawWarehouseFront(doorX,dir){
-  const sx=doorX-cam.x, WALL=520, TOPY=48;
-  if(sx+ (dir<0?-WALL:WALL) < -60 && sx < -60)return;
-  if(sx > VW+60 && sx + (dir<0?-WALL:WALL) > VW+60)return;
+/* The warehouse drawn as a CROSS-SECTION of one building: a single roof running
+   the whole span, an end wall at each end with a doorway cut through it, and the
+   painted interior between them. The previous version drew a separate, SHORTER
+   frontage beside the interior, so the outside of the building didn't reach the
+   same height as the inside and it read as two unrelated pictures. */
+const WH_ROOF=26, WH_EAVE=WH_ROOF+30, WH_WALL=118;   // roof band, eaves line, end-wall thickness
+function drawWarehouseShell(){
+  const L=WH.x1-cam.x, R=WH.x2-cam.x;
+  const oL=L-WH_WALL, oR=R+WH_WALL;
+  if(oR<-40||oL>VW+40)return;
   ctx.save();
-  const x0 = dir<0 ? sx-WALL : sx;
-  // corrugated outer wall, colder and dirtier than the lit interior
-  const wg=ctx.createLinearGradient(0,TOPY,0,GROUND_Y);
-  wg.addColorStop(0,"#1b232b"); wg.addColorStop(1,"#2a3239");
-  ctx.fillStyle=wg; ctx.fillRect(x0,TOPY,WALL,GROUND_Y-TOPY);
-  ctx.fillStyle="rgba(0,0,0,0.22)";
-  for(let bx=0;bx<WALL;bx+=17)ctx.fillRect(x0+bx,TOPY,4,GROUND_Y-TOPY);
-  ctx.fillStyle="rgba(120,90,55,0.16)";                       // rust streaks
-  for(let bx=13;bx<WALL;bx+=61)ctx.fillRect(x0+bx,TOPY+40,7,GROUND_Y-TOPY-40);
-  ctx.fillStyle="#171d23"; ctx.fillRect(x0,TOPY-10,WALL,12);  // roof edge / gutter
-  ctx.fillStyle="#39434c"; ctx.fillRect(x0,TOPY-12,WALL,3);
-  // high strip windows, a couple lit from inside
-  for(let bx=40;bx<WALL-70;bx+=120){
-    ctx.fillStyle="#0d1319"; ctx.fillRect(x0+bx,TOPY+26,74,40);
-    ctx.fillStyle=(Math.floor((doorX+bx)/120)%3===0)?"rgba(255,206,140,0.30)":"rgba(120,150,175,0.10)";
-    ctx.fillRect(x0+bx+3,TOPY+29,68,34);
-    ctx.fillStyle="#0d1319";
-    for(let k=1;k<3;k++)ctx.fillRect(x0+bx+3+k*23,TOPY+29,3,34); }
-  // DOOR: a rolled-up shutter in a steel frame, the way in
-  const dw=104, dx=dir<0? sx-dw : sx;
-  ctx.fillStyle="#0a0e12"; ctx.fillRect(dx,GROUND_Y-190,dw,190);          // opening
-  ctx.fillStyle="#232b33"; ctx.fillRect(dx-8,GROUND_Y-206,dw+16,20);      // shutter box
-  ctx.fillStyle="rgba(255,255,255,0.05)";
-  for(let sy2=GROUND_Y-204;sy2<GROUND_Y-188;sy2+=5)ctx.fillRect(dx-8,sy2,dw+16,2);
-  ctx.fillStyle="#3d4a55"; ctx.fillRect(dx-8,GROUND_Y-190,8,190);         // jambs
-  ctx.fillRect(dx+dw,GROUND_Y-190,8,190);
-  ctx.fillStyle="#55636f"; ctx.fillRect(dx-8,GROUND_Y-192,dw+16,3);
-  // warm light spilling out of the opening onto the ground
-  const sp=ctx.createLinearGradient(0,GROUND_Y-190,0,GROUND_Y+40);
-  sp.addColorStop(0,"rgba(255,196,120,0.16)"); sp.addColorStop(1,"rgba(255,196,120,0)");
-  ctx.fillStyle=sp; ctx.beginPath();
-  ctx.moveTo(dx+4,GROUND_Y-190); ctx.lineTo(dx+dw-4,GROUND_Y-190);
-  ctx.lineTo(dx+dw+34,GROUND_Y+34); ctx.lineTo(dx-34,GROUND_Y+34); ctx.closePath(); ctx.fill();
-  // a caged lamp over the door
-  ctx.fillStyle="#20272e"; ctx.fillRect(dx+dw/2-11,GROUND_Y-232,22,12);
-  ctx.fillStyle="rgba(255,206,140,0.9)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-220,8,4,0,0,7); ctx.fill();
-  ctx.fillStyle="rgba(255,206,140,0.13)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-214,30,16,0,0,7); ctx.fill();
-  // ground apron outside the door
-  ctx.fillStyle="#2b2a26"; ctx.fillRect(x0,GROUND_Y,WALL,VH-GROUND_Y);
-  ctx.fillStyle="rgba(0,0,0,0.30)";
-  for(let bx=0;bx<WALL;bx+=150)ctx.fillRect(x0+bx,GROUND_Y+4,2,VH-GROUND_Y);
+  // ---- ROOF: one slab across the whole building, overhanging both ends ----
+  const rg=ctx.createLinearGradient(0,WH_ROOF,0,WH_EAVE);
+  rg.addColorStop(0,"#0f151b"); rg.addColorStop(1,"#1c242c");
+  ctx.fillStyle=rg; ctx.fillRect(oL-16,WH_ROOF,(oR-oL)+32,WH_EAVE-WH_ROOF);
+  ctx.fillStyle="rgba(0,0,0,0.28)";                              // roof corrugation
+  for(let bx=WH.x1-WH_WALL-16;bx<WH.x2+WH_WALL+16;bx+=19)ctx.fillRect(bx-cam.x,WH_ROOF,5,WH_EAVE-WH_ROOF);
+  ctx.fillStyle="#39434c"; ctx.fillRect(oL-16,WH_ROOF-5,(oR-oL)+32,5);   // ridge cap
+  ctx.fillStyle="#0a0e12"; ctx.fillRect(oL-16,WH_EAVE,(oR-oL)+32,7);     // gutter shadow
+  // ---- END WALLS: full height, same as the interior, with a way through ----
+  for(const [ex,dirn] of [[WH.x1,-1],[WH.x2,1]]){
+    const sx=ex-cam.x, x0=dirn<0?sx-WH_WALL:sx;
+    if(x0>VW+40||x0+WH_WALL<-40)continue;
+    const wg=ctx.createLinearGradient(0,WH_EAVE,0,GROUND_Y);
+    wg.addColorStop(0,"#1a222a"); wg.addColorStop(1,"#28303a");
+    ctx.fillStyle=wg; ctx.fillRect(x0,WH_EAVE,WH_WALL,GROUND_Y-WH_EAVE);
+    ctx.fillStyle="rgba(0,0,0,0.24)";                            // cladding ribs
+    for(let bx=0;bx<WH_WALL;bx+=16)ctx.fillRect(x0+bx,WH_EAVE,4,GROUND_Y-WH_EAVE);
+    ctx.fillStyle="rgba(122,88,52,0.16)";                        // rust runs
+    for(let bx=9;bx<WH_WALL;bx+=47)ctx.fillRect(x0+bx,WH_EAVE+26,6,GROUND_Y-WH_EAVE-26);
+    ctx.fillStyle="#222a32"; ctx.fillRect(x0,GROUND_Y-118,WH_WALL,118);  // block base course
+    ctx.strokeStyle="rgba(0,0,0,0.30)"; ctx.lineWidth=1;
+    for(let by=GROUND_Y-118;by<GROUND_Y;by+=22){ ctx.beginPath(); ctx.moveTo(x0,by); ctx.lineTo(x0+WH_WALL,by); ctx.stroke(); }
+    ctx.fillStyle="#333c46"; ctx.fillRect(x0,GROUND_Y-122,WH_WALL,4);
+    // DOORWAY punched through the end wall, on the interior side
+    const dw=92, dx=dirn<0? sx-dw : sx;
+    ctx.fillStyle="#05080b"; ctx.fillRect(dx,GROUND_Y-196,dw,196);
+    ctx.fillStyle="#2b333c"; ctx.fillRect(dx-9,GROUND_Y-214,dw+18,20);          // shutter housing
+    ctx.fillStyle="rgba(255,255,255,0.05)";
+    for(let sy2=GROUND_Y-212;sy2<GROUND_Y-196;sy2+=5)ctx.fillRect(dx-9,sy2,dw+18,2);
+    ctx.fillStyle="#44515d"; ctx.fillRect(dx-9,GROUND_Y-196,9,196);             // jambs
+    ctx.fillRect(dx+dw,GROUND_Y-196,9,196);
+    ctx.fillStyle="#5c6b78"; ctx.fillRect(dx-9,GROUND_Y-198,dw+18,3);
+    const sp=ctx.createLinearGradient(0,GROUND_Y-196,0,GROUND_Y+38);            // light spill
+    sp.addColorStop(0,"rgba(255,196,120,0.15)"); sp.addColorStop(1,"rgba(255,196,120,0)");
+    ctx.fillStyle=sp; ctx.beginPath();
+    ctx.moveTo(dx+3,GROUND_Y-196); ctx.lineTo(dx+dw-3,GROUND_Y-196);
+    ctx.lineTo(dx+dw+30,GROUND_Y+32); ctx.lineTo(dx-30,GROUND_Y+32); ctx.closePath(); ctx.fill();
+    ctx.fillStyle="#20272e"; ctx.fillRect(dx+dw/2-11,GROUND_Y-238,22,12);       // caged lamp
+    ctx.fillStyle="rgba(255,206,140,0.9)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-226,8,4,0,0,7); ctx.fill();
+    ctx.fillStyle="rgba(255,206,140,0.12)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-220,30,16,0,0,7); ctx.fill();
+    // ground outside the wall
+    ctx.fillStyle="#2b2a26"; ctx.fillRect(dirn<0?x0-260:x0+WH_WALL,GROUND_Y,260,VH-GROUND_Y);
+  }
   ctx.restore(); }
 function drawWarehouse(){ if(level!==2||seg!==1)return;
   const im=images.bg_warehouse; if(!im)return;
   const L=WH.x1-cam.x, R=WH.x2-cam.x; if(R<-40||L>VW+40)return;
-  // OUTSIDE the doors: the building's own frontage, so the interior doesn't just
-  // begin at a hard vertical cut in mid-air.
-  drawWarehouseFront(WH.x1,-1); drawWarehouseFront(WH.x2,1);
-  ctx.save(); ctx.beginPath(); ctx.rect(L,0,R-L,VH); ctx.clip();
+  // the building's own shell — roof over everything, an end wall each side —
+  // so this reads as a cross-section rather than as a picture stuck beside a wall
+  drawWarehouseShell();
+  ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
   // world-locked and mirrored, anchored to WH.x1 so the plate never swims
   // against the platforms bolted to it and the repeats have no visible seam
   const w=Math.round(VH*(im.width/im.height)*0.86);
@@ -1521,7 +1559,7 @@ function drawWarehouse(){ if(level!==2||seg!==1)return;
     if(sx>VW+w||sx<-w)continue;
     ctx.save(); ctx.translate(sx,0);
     if(i%2===1){ ctx.translate(w,0); ctx.scale(-1,1); }
-    ctx.drawImage(im,0,0,w,GROUND_Y+2); ctx.restore(); }
+    ctx.drawImage(im,0,WH_EAVE,w,GROUND_Y-WH_EAVE+2); ctx.restore(); }
   // concrete underfoot, tied to the plate's palette
   const fg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
   fg.addColorStop(0,"#39352f"); fg.addColorStop(1,"#15130f");
