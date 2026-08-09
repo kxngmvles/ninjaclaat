@@ -548,6 +548,39 @@ window.AS = {
   "shotta_wk6": "./shotta_wk6.png",
   "shotta_wk7": "./shotta_wk7.png",
   "shotta_wk8": "./shotta_wk8.png",
+  "bg_warehouse": "./bg_warehouse.png",
+  "bg_deck": "./bg_deck.png",
+  "prop_container_ai": "./prop_container_ai.png",
+  "prop_crates_ai": "./prop_crates_ai.png",
+  "prop_winch_ai": "./prop_winch_ai.png",
+  "prop_drums_ai": "./prop_drums_ai.png",
+  "prop_bollard_ai": "./prop_bollard_ai.png",
+  "shotta_hot1": "./shotta_hot1.png",
+  "shotta_hot2": "./shotta_hot2.png",
+  "shotta_hot3": "./shotta_hot3.png",
+  "shotta_hot4": "./shotta_hot4.png",
+  "shotta_hot5": "./shotta_hot5.png",
+  "shotta_thr1": "./shotta_thr1.png",
+  "shotta_thr2": "./shotta_thr2.png",
+  "shotta_thr3": "./shotta_thr3.png",
+  "shotta_thr4": "./shotta_thr4.png",
+  "shotta_thr5": "./shotta_thr5.png",
+  "shotta_thr6": "./shotta_thr6.png",
+  "shotta_butt1": "./shotta_butt1.png",
+  "shotta_butt2": "./shotta_butt2.png",
+  "shotta_butt3": "./shotta_butt3.png",
+  "shotta_butt4": "./shotta_butt4.png",
+  "shotta_butt5": "./shotta_butt5.png",
+  "water1": "./water1.png",
+  "water2": "./water2.png",
+  "water3": "./water3.png",
+  "water4": "./water4.png",
+  "water5": "./water5.png",
+  "water6": "./water6.png",
+  "water7": "./water7.png",
+  "water8": "./water8.png",
+  "water9": "./water9.png",
+  "water10": "./water10.png",
 };
 
 </script>
@@ -868,7 +901,7 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 "lt_idle","lt_walk","lt_walk2","lt_attack","lt_attack2","lt_death","lt_cast","lt_enrage","lt_walk1","lt_walk2","lt_walk3","lt_walk4",
 "palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage","prop_shipfront","derrick_idle","fyah_idle","molotov_idle","shield_idle","knife_idle","bat_idle","vendor","hobo_sleep","vendor2","nc_smoke","prop_car","prop_bus","prop_dumpster","prop_stall","derrick_slap","derrick_charge","derrick_dead","fyah_kick","fyah_cast","fyah_dead","molotov_dead","shield_attack","shield_dead","knife_attack","knife_dead","bat_attack","bat_dead","bat_swing","fyah_punch","fyah_enrage","fyah_smoke","derrick_kick","derrick_phone","derrick_sandal","shield_gun","shield_baton","shield_down","nc_kunai","derrick_power","nc_chain_idle","nc_chain_swing","nc_chain_whip","nc_moped","prop_gantry","prop_rock","prop_log","enemy_biker","enemy_car","nc_chain_jump","nc_chain_fall","nc_chain_land","goon_bikeA","goon_bikeB","gorgon_idle","gorgon_walk1","gorgon_walk2","gorgon_attack","gorgon_attack2","gorgon_cast","gorgon_enrage","gorgon_dead"];
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
-["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne"].forEach(k=>loadImage(k,AS[k]));
+["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne","bg_warehouse","bg_deck","water1","water2","water3","water4","water5","water6","water7","water8","water9","water10"].forEach(k=>loadImage(k,AS[k]));
 ["bat","molotov","shield","derrick","knife","fyah"].forEach(t=>{for(let n=1;n<=4;n++){const k=t+"_walk"+n; loadSpriteRaw(k,AS[k]);}});
 ["nc_crun1","nc_crun2","nc_crun3","nc_crun4","nc_cthrow1","nc_cthrow2","nc_cswing1","nc_cswing2","nc_cswing3","nc_catk1","nc_catk2","nc_catk3"].forEach(k=>loadSpriteRaw(k,AS[k]));
 ["nc_bike1","nc_bike2","nc_bike3","nc_bike4","nc_bike5","nc_bike6","nc_bike7","nc_bike8","nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6","nc_nrun7","nc_nrun8"].forEach(k=>loadSpriteRaw(k,AS[k]));
@@ -893,7 +926,11 @@ const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff
   [1,2,3,4,5,6,7].map(n=>"shotta_reload"+n),
   [1,2,3,4,5,6,7].map(n=>"shotta_mg"+n),            // enraged: minigun
   [1,2,3,4,5,6,7,8].map(n=>"shotta_wk"+n),
-  ["crew_idle"]                                     // famH sizes every enemy against <type>_idle
+  [1,2,3,4,5].map(n=>"shotta_hot"+n),              // overheated, smoking
+  [1,2,3,4,5,6].map(n=>"shotta_thr"+n),            // hurls a drum
+  [1,2,3,4,5].map(n=>"shotta_butt"+n),             // gun-butt at close range
+  ["crew_idle"],                                    // famH sizes every enemy against <type>_idle
+  ["prop_container_ai","prop_crates_ai","prop_winch_ai","prop_drums_ai","prop_bollard_ai"]
 ).forEach(k=>loadSpriteRaw(k,AS[k]));
 loadSound("music_level1",AS.music_level1,{loop:true,vol:0.42});
 loadSound("music_lt",AS.music_lt,{loop:true,vol:0.4});
@@ -1000,7 +1037,7 @@ const EFR={
  lt:{idle:["lt_idle"],walk:["lt_walk1","lt_walk2","lt_walk3","lt_walk4"],attack:["lt_slash1","lt_slash2","lt_slash3"],attack2:["lt_cross1","lt_cross2","lt_cross3","lt_cross4"],lunge:["lt_lunge1","lt_lunge2","lt_lunge3","lt_lunge4"],slam:["lt_slam1","lt_slam2","lt_slam3","lt_slam4","lt_slam5"],cast:["lt_slash1","lt_slash2","lt_slash3"],enrage:["lt_enr1","lt_enr2","lt_enr3","lt_enr3","lt_enr3","lt_enr3","lt_enr4"],hurt:["lt_idle"],dead:["lt_death"]},
  // walk/run/reload are video-derived; the reload clip actually DROPS the
  // magazine, which the old two-frame version left hanging in mid-air
- shotta:{idle:["shotta_idle"],walk:["shotta_wk1","shotta_wk2","shotta_wk3","shotta_wk4","shotta_wk5","shotta_wk6","shotta_wk7","shotta_wk8"],run:["shotta_run1","shotta_run2","shotta_run3","shotta_run4","shotta_run5","shotta_run6","shotta_run7","shotta_run8"],aim:["shotta_shoot"],shoot:["shotta_shoot"],reload:["shotta_reload1","shotta_reload2","shotta_reload3","shotta_reload4","shotta_reload5","shotta_reload6","shotta_reload7"],hurt:["shotta_hurt"],dead:["shotta_death"],enrage:["shotta_enrage"],mgun:["shotta_mg1","shotta_mg2","shotta_mg3","shotta_mg4","shotta_mg5","shotta_mg6","shotta_mg7"],spinup:["shotta_mg1","shotta_mg2"]},
+ shotta:{idle:["shotta_idle"],walk:["shotta_wk1","shotta_wk2","shotta_wk3","shotta_wk4","shotta_wk5","shotta_wk6","shotta_wk7","shotta_wk8"],run:["shotta_run1","shotta_run2","shotta_run3","shotta_run4","shotta_run5","shotta_run6","shotta_run7","shotta_run8"],aim:["shotta_shoot"],shoot:["shotta_shoot"],reload:["shotta_reload1","shotta_reload2","shotta_reload3","shotta_reload4","shotta_reload5","shotta_reload6","shotta_reload7"],hurt:["shotta_hurt"],dead:["shotta_death"],enrage:["shotta_enrage"],mgun:["shotta_mg1","shotta_mg2","shotta_mg3","shotta_mg4","shotta_mg5","shotta_mg6","shotta_mg7"],spinup:["shotta_mg1","shotta_mg2"],overheat:["shotta_hot1","shotta_hot2","shotta_hot3","shotta_hot4","shotta_hot5"],throw:["shotta_thr1","shotta_thr2","shotta_thr3","shotta_thr4","shotta_thr5","shotta_thr6"],butt:["shotta_butt1","shotta_butt2","shotta_butt3","shotta_butt4","shotta_butt5"]},
  // atk1..5 / die1..5 sheets. die1 is the standing stagger, so it doubles as the
  // hurt pose — a recoil is just the first beat of a death, and reusing it saved
  // generating three more frames.
@@ -1022,7 +1059,7 @@ const EFR={
 // over 70. At the old attack:5.5 even goonA's 5-frame swing only reached frame 2.
 // reload:5 spreads the 7-frame clip across the 85-frame reload window, so the
 // magazine drop actually plays out instead of finishing in the first third
-const EFPS={walk:7,chase:9,patrol:6,fly:6,idle:2.2,attack:11,attack2:11,shoot:24,lunge:6,slam:6,enrage:2.2,cast:6,dead:5.5,hurt:7,reload:5};
+const EFPS={walk:7,chase:9,patrol:6,fly:6,idle:2.2,attack:11,attack2:11,shoot:24,lunge:6,slam:6,enrage:2.2,cast:6,dead:5.5,hurt:7,reload:5,overheat:4,throw:12,butt:14};
 function frameKey(frames,clockMs,fps,loop){ if(!frames||!frames.length)return null;
   let i=Math.floor(clockMs/1000*fps); i=loop?(i%frames.length):Math.min(i,frames.length-1); return frames[i]; }
 
@@ -1243,6 +1280,9 @@ function makeEnemy(type,x){ const b={type,x,y:GROUND_Y,vx:0,vy:0,face:-1,state:"
 function eState(e){ if(e.dead)return "dead"; if(e.enrageT>0)return "enrage"; if(e.hurtT>0)return "hurt";
   // Enraged Shotta is holding a MINIGUN. Every armed pose has to come from
   // that set or the weapon pops in and out of his hands between frames.
+  if(e.state==="overheat")return "overheat";
+  if(e.state==="throw")return "throw";
+  if(e.state==="butt")return "butt";
   if(e.shooter&&e.phase===2&&!e.dead){ if(e.state==="reload")return "spinup"; return "mgun"; } if(e.state==="attack"&&e.atkMove==="lunge")return "lunge"; if(e.state==="cast")return "cast"; if(e.state==="shoot")return "shoot"; if(e.state==="reload")return "reload"; if(e.state==="down")return "down"; if(e.state==="phone")return "phone"; if(e.state==="sandal")return "sandal"; if(e.state==="smoke")return "smoke"; if(e.state==="slam")return "slam"; if(e.state==="summon")return "summon"; if(e.state==="attack")return e.atkMove||"attack";
   if(e.fly)return e.state==="attack"?"attack":"fly";
   if(Math.abs(e.vx)>0.4||e.state==="chase")return e.type==="dog"?"chase":"walk"; return "idle"; }
@@ -1504,6 +1544,21 @@ function updateShotta(e){
   if(e.state==="roll"){e.t++; e.vx=-dir*9.5*(1-e.t/22); e.x=clamp(e.x+e.vx,40,LEVEL_W-40);
     if(e.t%3===0)particles.push({x:e.x,y:e.y-6,vx:dir*rnd(1,3),vy:rnd(-1.6,-0.2),g:0.06,life:rnd(10,18),c:"#6d7a86",r:rnd(1.5,3)});
     if(e.t>22)e.state="idle"; return;}
+  if(e.state==="overheat"){e.t++; e.vx=0;
+    // the barrels are glowing and he can't fire — this is YOUR window
+    if(e.t===1){ floatText(e.x,e.y-e.h-16,"OVERHEATED!","#ff8a3b"); sfx("sfx_reload"); }
+    if(e.t%3===0){ particles.push({x:e.x+dir*rnd(30,80),y:e.y-e.h*rnd(0.5,0.75),vx:dir*rnd(0.2,1.2),vy:rnd(-1.6,-0.4),g:-0.01,life:rnd(26,48),c:e.t%6?"#d8d8d8":"#f0f0f0",r:rnd(3,7)}); }
+    if(e.t%9===0)particles.push({x:e.x+dir*rnd(50,86),y:e.y-e.h*0.62,vx:dir*rnd(0.4,1.4),vy:rnd(-0.8,0.2),g:0,life:rnd(10,20),c:"#ff7a2f",r:rnd(1.5,3),glow:1});
+    if(e.t>e.hotT){ e.state="idle"; e.heat=0; e.attackCd=26; } return;}
+  if(e.state==="throw"){e.t++; e.vx=0;
+    if(e.t===16&&!e._hit){ e._hit=true; sfx("sfx_grunt");
+      projectiles.push({x:e.x+dir*40,y:e.y-e.h*0.75,vx:dir*7.2,vy:-5.4,g:0.34,life:150,drum:1,gy:GROUND_Y,dmg:20});
+      floatText(e.x,e.y-e.h-14,"INCOMING!","#ffae3b"); }
+    if(e.t>34){e.state="idle"; e.attackCd=30;} return;}
+  if(e.state==="butt"){e.t++; e.vx=0;
+    if(e.t>=8&&e.t<=15&&!e._hit){ if(adx<108&&Math.abs(player.y-e.y)<150){ hitP(e,dir); e._hit=true;
+      player.vx=dir*11; player.vy=-5; shake=Math.max(shake,10); } }
+    if(e.t>26){e.state="idle"; e.attackCd=24;} return;}
   if(e.state==="sweep"){e.t++; e.vx=0;
     if(e.t===1){ floatText(e.x,e.y-e.h-16,"SPRAY!","#ffae3b"); sfx("sfx_minigun"); }
     // a raking burst that walks up and down, so standing still is fatal
@@ -1514,19 +1569,28 @@ function updateShotta(e){
     if(e.t%14===0)sfx("sfx_minigun");
     if(e.t>84){e.state="idle"; e.attackCd=34;} return;}
   if((e.grenCd|0)>0)e.grenCd--; if((e.rollCd|0)>0)e.rollCd--; if((e.sweepCd|0)>0)e.sweepCd--;
+  if((e.buttCd|0)>0)e.buttCd--; if((e.throwCd|0)>0)e.throwCd--;
+  // the minigun cooks itself: sustained fire builds heat, and at the top he
+  // has to stop and let it smoke. That pause is the fight's opening.
+  if(fast){ e.heat=Math.max(0,(e.heat||0)-0.25);
+    if((e.heat||0)>=100){ e.state="overheat"; e.t=0; e.hotT=112; return; } }
   const want=300;
   if(adx<want-50){e.vx=-dir*(e.speed*(fast?1.5:1.05));e.x+=e.vx;}
   else if(adx>want+70){e.vx=dir*(e.speed*(fast?1.4:1.0));e.x+=e.vx;}
   else e.vx=0;
   e.x=clamp(e.x,40,LEVEL_W-40);
   if(fast&&(e.grenCd|0)<=0&&e.attackCd<=0&&adx<560&&adx>120){ e.state="grenade"; e.t=0; e._hit=false; e.grenCd=210; e.attackCd=28; return; }
+  // GUN BUTT: get right on top of him and he clubs you with the stock
+  if(adx<108&&(e.buttCd|0)<=0){ e.state="butt"; e.t=0; e._hit=false; e.buttCd=110; return; }
   // ROLL: he refuses to be cornered — close to melee and he breaks away
   if(adx<150&&(e.rollCd|0)<=0){ e.state="roll"; e.t=0; e.rollCd=fast?150:230; e.attackCd=Math.max(e.attackCd,20); return; }
   // SWEEP: phase 2 walks a wall of minigun fire across the deck
-  if(fast&&(e.sweepCd|0)<=0&&e.attackCd<=0&&adx<640){ e.state="sweep"; e.t=0; e._hit=false; e.sweepCd=300; return; }
+  if(fast&&(e.sweepCd|0)<=0&&e.attackCd<=0&&adx<640){ e.state="sweep"; e.t=0; e._hit=false; e.sweepCd=300; e.heat=(e.heat||0)+42; return; }
+  // while the gun is cooling he throws whatever is on the deck at you
+  if((e.heat||0)>55&&(e.throwCd|0)<=0&&adx>150&&adx<600){ e.state="throw"; e.t=0; e._hit=false; e.throwCd=170; return; }
   if(e.attackCd<=0&&adx<580&&Math.abs(player.y-e.y)<170){
     if((e.ammo|0)<=0){e.state="reload";e.t=0;sfx("sfx_reload");}
-    else {e.state="shoot";e.t=0;e._hit=false;e.attackCd=fast?16:40;}
+    else {e.state="shoot";e.t=0;e._hit=false;e.attackCd=fast?16:40; if(fast)e.heat=(e.heat||0)+13;}
   }
 }
 function fireBullets(e,dir){ const fast=e.phase===2;
@@ -1717,8 +1781,6 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     {x:900,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:1180,w:80,top:GROUND_Y-54,sprite:"prop_crate",cover:1},
     {x:1330,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    /* --- over the pit: a crane catwalk you can take instead of the jump --- */
-    {x:1640,w:200,top:GROUND_Y-262,deck:1},
     /* --- BLOCK-LESSON GROUND (1800-2350): deliberately FLAT. Anything you can
        stand on here puts you above the scripted gunner's shots. --- */
     {x:2050,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
@@ -1729,23 +1791,35 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     /* --- WAREHOUSE INTERIOR 3150-5350 (see WH / drawWarehouse). No floor pit:
        the mezzanine is a shortcut and a firing position, not a hazard. --- */
     {x:3320,w:96,top:GROUND_Y-60,sprite:"prop_crate",cover:1},
-    {x:3560,w:58,top:GROUND_Y-38,step:1},          // stair run up to the mezzanine
-    {x:3618,w:58,top:GROUND_Y-76,step:1},
-    {x:3676,w:58,top:GROUND_Y-114,step:1},
-    {x:3734,w:58,top:GROUND_Y-152,step:1},
-    {x:4020,w:520,top:GROUND_Y-152,deck:1},        // mezzanine run
-    {x:4300,w:58,top:GROUND_Y-190,step:1},         // stair run up to the catwalk
-    {x:4358,w:58,top:GROUND_Y-228,step:1},
-    {x:4416,w:58,top:GROUND_Y-266,step:1},
-    {x:4474,w:58,top:GROUND_Y-304,step:1},
-    {x:4770,w:540,top:GROUND_Y-304,deck:1},        // upper catwalk (must bridge both stair runs)
-    {x:5060,w:58,top:GROUND_Y-266,step:1},         // stair run back down to the floor
-    {x:5118,w:58,top:GROUND_Y-228,step:1},
-    {x:5176,w:58,top:GROUND_Y-190,step:1},
-    {x:5234,w:58,top:GROUND_Y-152,step:1},
-    {x:5292,w:58,top:GROUND_Y-114,step:1},
-    {x:5350,w:58,top:GROUND_Y-76,step:1},
-    {x:5408,w:58,top:GROUND_Y-38,step:1},
+    {x:3546,w:30,top:GROUND_Y-38,step:1},          // stair run up to the mezzanine
+    {x:3576,w:30,top:GROUND_Y-57,step:1},
+    {x:3606,w:30,top:GROUND_Y-76,step:1},
+    {x:3636,w:30,top:GROUND_Y-95,step:1},
+    {x:3666,w:30,top:GROUND_Y-114,step:1},
+    {x:3696,w:30,top:GROUND_Y-133,step:1},
+    {x:3726,w:30,top:GROUND_Y-152,step:1},
+    {x:4010,w:539,top:GROUND_Y-152,deck:1},        // mezzanine run
+    {x:4286,w:30,top:GROUND_Y-190,step:1},         // stair run up to the catwalk
+    {x:4316,w:30,top:GROUND_Y-209,step:1},
+    {x:4346,w:30,top:GROUND_Y-228,step:1},
+    {x:4376,w:30,top:GROUND_Y-247,step:1},
+    {x:4406,w:30,top:GROUND_Y-266,step:1},
+    {x:4436,w:30,top:GROUND_Y-285,step:1},
+    {x:4466,w:30,top:GROUND_Y-304,step:1},
+    {x:4760,w:559,top:GROUND_Y-304,deck:1},        // upper catwalk (must bridge both stair runs)
+    {x:5046,w:30,top:GROUND_Y-266,step:1},         // stair run back down to the floor
+    {x:5076,w:30,top:GROUND_Y-247,step:1},
+    {x:5106,w:30,top:GROUND_Y-228,step:1},
+    {x:5136,w:30,top:GROUND_Y-209,step:1},
+    {x:5166,w:30,top:GROUND_Y-190,step:1},
+    {x:5196,w:30,top:GROUND_Y-171,step:1},
+    {x:5226,w:30,top:GROUND_Y-152,step:1},
+    {x:5256,w:30,top:GROUND_Y-133,step:1},
+    {x:5286,w:30,top:GROUND_Y-114,step:1},
+    {x:5316,w:30,top:GROUND_Y-95,step:1},
+    {x:5346,w:30,top:GROUND_Y-76,step:1},
+    {x:5376,w:30,top:GROUND_Y-57,step:1},
+    {x:5406,w:30,top:GROUND_Y-38,step:1},
     /* --- rear yard: containers out the back door, then the quay --- */
     {x:5760,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:6060,w:300,top:GROUND_Y-276,stack:1,rows:2},
@@ -1753,12 +1827,14 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     {x:6900,w:300,top:GROUND_Y-150,deck:1},        // gangway up to the ship
   ];
   // gaps[0] gates the double-jump lesson (drawn from the harbour water)
-  gaps=[{x1:1500,x2:1750},{x1:6300,x2:6460}];   // no pit inside the warehouse
+  // 1500-1668 = 168px. The player runs 3.0px/f and a jump lasts 43.9f, so a
+  // single jump covers 131px and a double covers ~258px AT BEST. The old
+  // 250px gap needed a frame-perfect apex double jump — effectively impassable.
+  gaps=[{x1:1500,x2:1668},{x1:6300,x2:6440}];   // no pit inside the warehouse
   shadows=[];
   waves=[
     [["goonA",780,"dormant"]],
     [["goonB",1180,"patrol"]],
-    [["blade",1860,"aggro"]],
     [["goonA",2300,"patrol"],["blade",2560,"aggro"]],
     [["goonB",2900,"aggro"],["crew",3060,"aggro"]],
     // inside: a gunner posted up on the catwalk shooting down at the floor
@@ -1793,18 +1869,24 @@ function buildShipHold(){ LEVEL_W=5200; seg=2; cam.x=0; mopedMode=false;
     {x:760,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:1180,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
     /* stair run up to the first grating */
-    {x:1529,w:58,top:GROUND_Y-38,step:1},
-    {x:1587,w:58,top:GROUND_Y-76,step:1},
-    {x:1645,w:58,top:GROUND_Y-114,step:1},
-    {x:1703,w:58,top:GROUND_Y-152,step:1},
-    {x:1990,w:520,top:GROUND_Y-152,deck:1},        // grating, meets the top tread
+    {x:1515,w:30,top:GROUND_Y-38,step:1},
+    {x:1545,w:30,top:GROUND_Y-57,step:1},
+    {x:1575,w:30,top:GROUND_Y-76,step:1},
+    {x:1605,w:30,top:GROUND_Y-95,step:1},
+    {x:1635,w:30,top:GROUND_Y-114,step:1},
+    {x:1665,w:30,top:GROUND_Y-133,step:1},
+    {x:1695,w:30,top:GROUND_Y-152,step:1},
+    {x:1980,w:540,top:GROUND_Y-152,deck:1},        // grating, meets the top tread
     {x:2620,w:480,top:GROUND_Y-152,deck:1},        // across a 130px jump
     /* stair run up to the corridor */
-    {x:2889,w:58,top:GROUND_Y-190,step:1},
-    {x:2947,w:58,top:GROUND_Y-228,step:1},
-    {x:3005,w:58,top:GROUND_Y-266,step:1},
-    {x:3063,w:58,top:GROUND_Y-304,step:1},
-    {x:3400,w:640,top:GROUND_Y-304,deck:1},        // upper corridor
+    {x:2875,w:30,top:GROUND_Y-190,step:1},
+    {x:2905,w:30,top:GROUND_Y-209,step:1},
+    {x:2935,w:30,top:GROUND_Y-228,step:1},
+    {x:2965,w:30,top:GROUND_Y-247,step:1},
+    {x:2995,w:30,top:GROUND_Y-266,step:1},
+    {x:3025,w:30,top:GROUND_Y-285,step:1},
+    {x:3055,w:30,top:GROUND_Y-304,step:1},
+    {x:3395,w:650,top:GROUND_Y-304,deck:1},        // upper corridor
     {x:4040,w:660,top:GROUND_Y-304,deck:1},
     {x:4700,w:680,top:GROUND_Y-304,deck:1},        // hatch landing
   ];
@@ -1827,21 +1909,23 @@ function buildShipHold(){ LEVEL_W=5200; seg=2; cam.x=0; mopedMode=false;
            {x:4040,y:GROUND_Y-336,vy:null,kind:"herb",val:1,t:0}];
   waveIdx=0; spawnWave();
 }
-function buildShipDeck(){ LEVEL_W=5200; seg=3; cam.x=0;
+function buildShipDeck(){ LEVEL_W=5600; seg=3; cam.x=0;
   player.x=120; player.y=GROUND_Y; player.vx=0; player.vy=0; player.onGround=true; player._safe=120; player._safeY=GROUND_Y;
   enemies=[]; projectiles=[]; pickups=[]; particles=[]; floaters=[]; ghosts=[]; slashArcs=[]; searchlights=[];
   blockTutDone=true; djumpTutDone=true; scene=null; shipDeck=null;
   platforms=[
-    {x:700,w:96,top:GROUND_Y-58,sprite:"prop_crate",cover:1},
-    {x:1500,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    {x:2200,w:96,top:GROUND_Y-60,sprite:"prop_barrel",cover:1,floodcover:1},
-    {x:3100,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    {x:3900,w:96,top:GROUND_Y-58,sprite:"prop_crate",cover:1},
-    /* SHOTTA'S ARENA (4300+): cover to break his line of fire. The sweeping
-       burst is survivable only if there is something to duck behind. */
-    {x:4380,w:96,top:GROUND_Y-64,sprite:"prop_crate",cover:1},
-    {x:4760,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    {x:5060,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
+    {x:700,w:150,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:1500,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:2200,w:104,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1,floodcover:1},
+    {x:2820,w:60,top:GROUND_Y-50,sprite:"prop_bollard_ai",cover:1},
+    {x:3100,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:3900,w:122,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
+    /* SHOTTA'S ARENA (4300+): painted deck cover to break his line of fire. The
+       sweeping burst and the thrown drums are only survivable behind something. */
+    {x:4340,w:104,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
+    {x:4620,w:150,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:4980,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:5320,w:122,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
   ];
   gaps=[]; shadows=[];
   waves=[
@@ -1988,6 +2072,14 @@ function updateProjectiles(){ for(let i=projectiles.length-1;i>=0;i--){const p=p
     if(p.life%2===0)particles.push({x:p.x+rnd(-8,8),y:GROUND_Y-rnd(0,14),vx:rnd(-1,1),vy:rnd(-2.2,-0.6),g:0.12,life:rnd(8,16),c:Math.random()<0.5?"#c07bff":"#7a4aa0",r:rnd(1.5,3.5),glow:1});
     if(!player.dead&&player.iframe<=0&&Math.abs(p.x-player.x)<32&&(GROUND_Y-player.y)<52){ playerHurt(p.dmg||16,Math.sign(p.vx)||1); projectiles.splice(i,1); continue; }
     if(p.life<=0||p.x<cam.x-200||p.x>cam.x+VW+200||overGap(p.x)){ projectiles.splice(i,1); } continue; }
+  if(p.drum){ p.x+=p.vx; p.y+=p.vy; p.vy+=(p.g||0.34); p.life--;
+    const hitP2 = !player.dead&&player.iframe<=0&&Math.abs(p.x-player.x)<34&&Math.abs(p.y-(player.y-HERO_H*0.5))<52;
+    if(hitP2||p.y>=(p.gy||GROUND_Y)-12){
+      if(hitP2)playerHurt(p.dmg||20,Math.sign(p.vx)||1);
+      shake=Math.max(shake,7); sfx("sfx_hit");
+      for(let k=0;k<14;k++)particles.push({x:p.x,y:Math.min(p.y,(p.gy||GROUND_Y)-8),vx:rnd(-4,4),vy:rnd(-5,-0.5),g:0.3,life:rnd(14,30),c:k%2?"#6b727c":"#3b4048",r:rnd(1.5,4)});
+      projectiles.splice(i,1); continue; }
+    if(p.life<=0||p.x<cam.x-260||p.x>cam.x+VW+260){ projectiles.splice(i,1); } continue; }
   if(p.grenade){ p.x+=p.vx; p.y+=p.vy; p.vy+=(p.g||0.34); p.life--;
     if((p.vy>0&&p.y>=p.gy)||p.life<=0){ sfx("sfx_hit"); shake=Math.max(shake,9); flash=Math.max(flash,0.32);
       for(let k=0;k<24;k++)particles.push({x:p.x,y:p.gy,vx:rnd(-5.5,5.5),vy:rnd(-6,1),g:0.32,life:rnd(16,32),c:k%3===0?"#ffd86b":(k%3===1?"#ff6a3b":"#3a3a3a"),r:rnd(2,5),glow:1});
@@ -2019,7 +2111,7 @@ function updateProjectiles(){ for(let i=projectiles.length-1;i>=0;i--){const p=p
   if(p.y>=GROUND_Y||p.life<=0){ for(let k=0;k<10;k++)particles.push({x:p.x,y:GROUND_Y,vx:rnd(-3,3),vy:rnd(-4,0),g:0.3,life:rnd(14,26),c:p.dark?"#b061ff":"#ffae3b",r:rnd(2,4)});
     if(Math.abs(p.x-player.x)<46&&!player.dead)playerHurt(12,Math.sign(p.x-player.x)||1); projectiles.splice(i,1); continue; }
   if(Math.abs(p.x-player.x)<26&&Math.abs(p.y-(player.y-50))<60&&!player.dead){playerHurt(12,Math.sign(p.vx));projectiles.splice(i,1);} } }
-function drawProjectiles(){for(const p of projectiles){ctx.save();ctx.translate(p.x-cam.x,p.y); if(p.shock){const d=Math.sign(p.vx)||1;ctx.shadowColor="#c07bff";ctx.shadowBlur=16;ctx.strokeStyle="#c07bff";ctx.lineWidth=4;ctx.beginPath();ctx.arc(0,-4,16,Math.PI,0);ctx.stroke();ctx.strokeStyle="#e3c8ff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(-d*6,-2,10,Math.PI,0);ctx.stroke();} else if(p.fireball){ctx.shadowColor="#ff7a2f";ctx.shadowBlur=16;ctx.fillStyle="#ffd23b";ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.fillStyle="#ff5a1f";ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();} else if(p.kunai){const d=Math.sign(p.vx)||1;ctx.shadowColor="#cfd6dd";ctx.shadowBlur=6;ctx.fillStyle="#d7dee5";ctx.fillRect(-8*d,-1.5,16,3);ctx.fillStyle="#aeb9c4";ctx.beginPath();ctx.moveTo(8*d,-3);ctx.lineTo(13*d,0);ctx.lineTo(8*d,3);ctx.closePath();ctx.fill();} else if(p.sandal){ctx.rotate(now*0.025);ctx.fillStyle="#6b4a2f";ctx.fillRect(-10,-4,20,8);ctx.fillStyle="#3a2718";ctx.fillRect(-10,1,20,2);} else if(p.grenade){ctx.shadowColor='#ff3b2f';ctx.shadowBlur=8;ctx.fillStyle='#262626';ctx.beginPath();ctx.arc(0,0,7,0,7);ctx.fill();ctx.fillStyle=(Math.floor(now/110)%2?'#ff3b2f':'#ffae3b');ctx.beginPath();ctx.arc(0,-3,2.6,0,7);ctx.fill();} else if(p.bullet){const d=Math.sign(p.vx)||1;ctx.fillStyle="#fff6c8";ctx.shadowColor="#ffae3b";ctx.shadowBlur=10;ctx.fillRect(-12*d,-2,16,4);ctx.fillStyle="#ffd86b";ctx.fillRect(-4*d,-1.5,6,3);} else if(p.dark){ctx.shadowColor="#b061ff";ctx.shadowBlur=16;ctx.fillStyle="#7b2fd0";ctx.beginPath();ctx.arc(0,0,9,0,7);ctx.fill();ctx.fillStyle="#d9b3ff";ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();} else if(p.slashwave){const d=p.face||Math.sign(p.vx)||1;ctx.scale(d,1);
+function drawProjectiles(){for(const p of projectiles){ctx.save();ctx.translate(p.x-cam.x,p.y); if(p.shock){const d=Math.sign(p.vx)||1;ctx.shadowColor="#c07bff";ctx.shadowBlur=16;ctx.strokeStyle="#c07bff";ctx.lineWidth=4;ctx.beginPath();ctx.arc(0,-4,16,Math.PI,0);ctx.stroke();ctx.strokeStyle="#e3c8ff";ctx.lineWidth=2;ctx.beginPath();ctx.arc(-d*6,-2,10,Math.PI,0);ctx.stroke();} else if(p.fireball){ctx.shadowColor="#ff7a2f";ctx.shadowBlur=16;ctx.fillStyle="#ffd23b";ctx.beginPath();ctx.arc(0,0,8,0,7);ctx.fill();ctx.fillStyle="#ff5a1f";ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();} else if(p.kunai){const d=Math.sign(p.vx)||1;ctx.shadowColor="#cfd6dd";ctx.shadowBlur=6;ctx.fillStyle="#d7dee5";ctx.fillRect(-8*d,-1.5,16,3);ctx.fillStyle="#aeb9c4";ctx.beginPath();ctx.moveTo(8*d,-3);ctx.lineTo(13*d,0);ctx.lineTo(8*d,3);ctx.closePath();ctx.fill();} else if(p.sandal){ctx.rotate(now*0.025);ctx.fillStyle="#6b4a2f";ctx.fillRect(-10,-4,20,8);ctx.fillStyle="#3a2718";ctx.fillRect(-10,1,20,2);} else if(p.drum){ctx.rotate(now*0.012*(Math.sign(p.vx)||1));ctx.fillStyle='#3b4048';ctx.fillRect(-16,-11,32,22);ctx.fillStyle='#4d545e';ctx.fillRect(-16,-11,32,3);ctx.fillRect(-16,-2,32,3);ctx.fillRect(-16,7,32,3);ctx.strokeStyle='#22262c';ctx.lineWidth=1.5;ctx.strokeRect(-16,-11,32,22);} else if(p.grenade){ctx.shadowColor='#ff3b2f';ctx.shadowBlur=8;ctx.fillStyle='#262626';ctx.beginPath();ctx.arc(0,0,7,0,7);ctx.fill();ctx.fillStyle=(Math.floor(now/110)%2?'#ff3b2f':'#ffae3b');ctx.beginPath();ctx.arc(0,-3,2.6,0,7);ctx.fill();} else if(p.bullet){const d=Math.sign(p.vx)||1;ctx.fillStyle="#fff6c8";ctx.shadowColor="#ffae3b";ctx.shadowBlur=10;ctx.fillRect(-12*d,-2,16,4);ctx.fillStyle="#ffd86b";ctx.fillRect(-4*d,-1.5,6,3);} else if(p.dark){ctx.shadowColor="#b061ff";ctx.shadowBlur=16;ctx.fillStyle="#7b2fd0";ctx.beginPath();ctx.arc(0,0,9,0,7);ctx.fill();ctx.fillStyle="#d9b3ff";ctx.beginPath();ctx.arc(0,0,4,0,7);ctx.fill();} else if(p.slashwave){const d=p.face||Math.sign(p.vx)||1;ctx.scale(d,1);
       const L=112,Hh=30;                                     // long + thin = reads as a slash, not a wheel
       const crescent=(sx,alpha,wid,col)=>{ctx.globalAlpha=alpha;ctx.strokeStyle=col;ctx.lineWidth=wid;
         ctx.beginPath();ctx.moveTo(sx-L*0.5,0);
@@ -2130,100 +2222,31 @@ function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let of
    canvas rather than as a backdrop image: everything is world-locked, so it
    doesn't swim against the platforms bolted to it, and it costs no payload. */
 const WH={x1:3150,x2:5550};
+/* L2 warehouse interior. This used to be built out of rectangles in canvas and
+   read as "random shapes" — it's a painted backdrop now. Drawn WORLD-LOCKED (no
+   parallax) and clipped to the WH span so the doorways read as walls and the
+   art can't swim against the platforms bolted to it. The plate is trimmed so
+   its own floor line is the image bottom, which is why it lands on GROUND_Y. */
 function drawWarehouse(){ if(level!==2||seg!==1)return;
+  const im=images.bg_warehouse; if(!im)return;
   const L=WH.x1-cam.x, R=WH.x2-cam.x; if(R<-40||L>VW+40)return;
   ctx.save(); ctx.beginPath(); ctx.rect(L,0,R-L,VH); ctx.clip();
-  const ROOF=40, TRUSS=ROOF+52, WALLTOP=TRUSS+10, DADO=GROUND_Y-150;
-  const wx=(v)=>v-cam.x;                       // world -> screen, no parallax:
-                                               // you are INSIDE this building
-  // ---- shell: painted block dado under corrugated steel ----
-  const air=ctx.createLinearGradient(0,ROOF,0,GROUND_Y);
-  air.addColorStop(0,"#0b0f15"); air.addColorStop(0.45,"#141c25"); air.addColorStop(1,"#1e2731");
-  ctx.fillStyle=air; ctx.fillRect(L,0,R-L,GROUND_Y+2);
-  ctx.fillStyle="#1a222c"; ctx.fillRect(L,DADO,R-L,GROUND_Y-DADO);      // block dado
-  ctx.strokeStyle="rgba(0,0,0,0.30)"; ctx.lineWidth=1;
-  for(let by=DADO;by<GROUND_Y;by+=26){ ctx.beginPath(); ctx.moveTo(L,by); ctx.lineTo(R,by); ctx.stroke(); }
-  for(let bx=WH.x1;bx<WH.x2;bx+=52){ const sx=wx(bx); ctx.beginPath(); ctx.moveTo(sx,DADO); ctx.lineTo(sx,GROUND_Y); ctx.stroke(); }
-  ctx.fillStyle="#2b3743"; ctx.fillRect(L,DADO-5,R-L,5);                 // capping rail
-  ctx.fillStyle="rgba(0,0,0,0.22)";                                       // corrugation above
-  for(let bx=WH.x1;bx<WH.x2;bx+=22)ctx.fillRect(wx(bx),WALLTOP,4,DADO-WALLTOP);
-  ctx.fillStyle="rgba(255,255,255,0.030)";
-  for(let bx=WH.x1+8;bx<WH.x2;bx+=22)ctx.fillRect(wx(bx),WALLTOP,2,DADO-WALLTOP);
-
-  // ---- shelving racks: uprights, beams, and pallets of cargo ----
-  for(let bx=WH.x1+120;bx<WH.x2-260;bx+=430){ const sx=wx(bx);
-    ctx.fillStyle="rgba(9,13,18,0.72)";
-    ctx.fillRect(sx,GROUND_Y-268,13,268); ctx.fillRect(sx+236,GROUND_Y-268,13,268);
-    for(let sy=GROUND_Y-268;sy<GROUND_Y-24;sy+=84){
-      ctx.fillStyle="rgba(9,13,18,0.72)"; ctx.fillRect(sx,sy,249,9);
-      ctx.fillStyle="rgba(52,44,32,0.80)";                                // crates
-      ctx.fillRect(sx+16,sy+9,74,50); ctx.fillRect(sx+104,sy+9,58,50); ctx.fillRect(sx+172,sy+9,64,50);
-      ctx.strokeStyle="rgba(0,0,0,0.5)"; ctx.lineWidth=1;
-      ctx.strokeRect(sx+16.5,sy+9.5,74,50); ctx.strokeRect(sx+104.5,sy+9.5,58,50); ctx.strokeRect(sx+172.5,sy+9.5,64,50);
-      ctx.fillStyle="rgba(120,150,175,0.10)"; ctx.fillRect(sx+16,sy+9,74,3); ctx.fillRect(sx+104,sy+9,58,3); } }
-
-  // ---- roof: purlins and cross-braced trusses ----
-  ctx.fillStyle="#0a0e13"; ctx.fillRect(L,0,R-L,ROOF);
-  ctx.strokeStyle="rgba(130,160,185,0.34)"; ctx.lineWidth=2.4;
-  ctx.beginPath(); ctx.moveTo(L,ROOF); ctx.lineTo(R,ROOF); ctx.moveTo(L,TRUSS); ctx.lineTo(R,TRUSS); ctx.stroke();
-  ctx.strokeStyle="rgba(130,160,185,0.22)"; ctx.lineWidth=1.5; ctx.beginPath();
-  for(let bx=WH.x1;bx<WH.x2;bx+=52){ const sx=wx(bx);
-    ctx.moveTo(sx,ROOF); ctx.lineTo(sx+26,TRUSS); ctx.lineTo(sx+52,ROOF); ctx.moveTo(sx+26,ROOF); ctx.lineTo(sx+26,TRUSS); }
-  ctx.stroke();
-
-  // ---- structural columns with base plates ----
-  for(let bx=WH.x1+190;bx<WH.x2;bx+=420){ const sx=wx(bx);
-    ctx.fillStyle="#26313c"; ctx.fillRect(sx,TRUSS,18,GROUND_Y-TRUSS);
-    ctx.fillStyle="#323f4c"; ctx.fillRect(sx,TRUSS,4,GROUND_Y-TRUSS);          // lit edge
-    ctx.fillStyle="#1a222b"; ctx.fillRect(sx-7,GROUND_Y-14,32,14);             // base plate
-    ctx.fillStyle="rgba(255,210,90,0.13)"; ctx.fillRect(sx-7,GROUND_Y-16,32,3); }
-
-  // ---- pipe run along the upper wall ----
-  ctx.fillStyle="#2c3a34"; ctx.fillRect(L,TRUSS+26,R-L,9);
-  ctx.fillStyle="rgba(255,255,255,0.06)"; ctx.fillRect(L,TRUSS+26,R-L,2);
-  for(let bx=WH.x1+70;bx<WH.x2;bx+=210){ ctx.fillStyle="#3a4a42"; ctx.fillRect(wx(bx),TRUSS+23,10,15); }
-
-  // ---- hanging lamps. Skipped where a catwalk is in the way, tested against
-  //      the real platform list so re-laying the level can't re-break it ----
-  for(let bx=WH.x1+250;bx<WH.x2;bx+=340){
-    if(platforms.some(pf=>pf.deck&&Math.abs(pf.x-bx)<pf.w/2+34))continue;
-    const sx=wx(bx), ly=TRUSS+66;
-    ctx.strokeStyle="rgba(150,170,190,0.45)"; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(sx,TRUSS); ctx.lineTo(sx,ly); ctx.stroke();
-    const cone=ctx.createLinearGradient(0,ly,0,GROUND_Y);
-    cone.addColorStop(0,"rgba(255,212,145,0.26)"); cone.addColorStop(1,"rgba(255,212,145,0)");
-    ctx.fillStyle=cone; ctx.beginPath(); ctx.moveTo(sx-17,ly+9); ctx.lineTo(sx+17,ly+9);
-    ctx.lineTo(sx+132,GROUND_Y); ctx.lineTo(sx-132,GROUND_Y); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="#2c343d"; ctx.beginPath(); ctx.moveTo(sx-18,ly+9); ctx.lineTo(sx+18,ly+9);
-    ctx.lineTo(sx+9,ly-9); ctx.lineTo(sx-9,ly-9); ctx.closePath(); ctx.fill();
-    ctx.fillStyle="rgba(255,228,175,0.95)"; ctx.beginPath(); ctx.ellipse(sx,ly+8,11,4,0,0,7); ctx.fill();
-    ctx.fillStyle="rgba(255,228,175,0.20)"; ctx.beginPath(); ctx.ellipse(sx,ly+8,22,9,0,0,7); ctx.fill(); }
-
-  // ---- floor: concrete slab, bay joints, hazard stripes, oil stains ----
+  // world-locked and mirrored, anchored to WH.x1 so the plate never swims
+  // against the platforms bolted to it and the repeats have no visible seam
+  const w=Math.round(VH*(im.width/im.height)*0.86);
+  const n=Math.ceil((WH.x2-WH.x1)/w)+1;
+  for(let i=0;i<n;i++){ const sx=Math.round(WH.x1-cam.x+i*w);
+    if(sx>VW+w||sx<-w)continue;
+    ctx.save(); ctx.translate(sx,0);
+    if(i%2===1){ ctx.translate(w,0); ctx.scale(-1,1); }
+    ctx.drawImage(im,0,0,w,GROUND_Y+2); ctx.restore(); }
+  // concrete underfoot, tied to the plate's palette
   const fg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
-  fg.addColorStop(0,"#39424b"); fg.addColorStop(1,"#161b21");
+  fg.addColorStop(0,"#39352f"); fg.addColorStop(1,"#15130f");
   ctx.fillStyle=fg; ctx.fillRect(L,GROUND_Y,R-L,VH-GROUND_Y);
-  ctx.fillStyle="#48525c"; ctx.fillRect(L,GROUND_Y,R-L,5);
-  ctx.fillStyle="rgba(0,0,0,0.32)";
-  for(let bx=WH.x1;bx<WH.x2;bx+=170)ctx.fillRect(wx(bx),GROUND_Y+5,2,VH-GROUND_Y);
-  for(let bx=WH.x1+40;bx<WH.x2;bx+=600){ ctx.fillStyle="rgba(0,0,0,0.22)";   // oil stain
-    ctx.beginPath(); ctx.ellipse(wx(bx),GROUND_Y+26,58,11,0,0,7); ctx.fill(); }
-  ctx.save(); ctx.globalAlpha=0.5;                                            // hazard hatching
-  for(let bx=WH.x1+330;bx<WH.x2;bx+=760){ const sx=wx(bx);
-    for(let k=0;k<9;k++){ ctx.fillStyle=k%2?"#1c1c1c":"#c9a12c"; ctx.fillRect(sx+k*17,GROUND_Y+8,17,7); } }
-  ctx.restore();
-
-  // ---- roller-shutter doorways at both ends, night spilling in ----
-  for(const [dx,dir] of [[WH.x1,1],[WH.x2,-1]]){ const sx=wx(dx);
-    const dl=Math.min(sx,sx+dir*104);
-    ctx.fillStyle="#212a34"; ctx.fillRect(dl,DADO-96,104,96);                  // shutter box above
-    ctx.fillStyle="rgba(255,255,255,0.05)";
-    for(let sy=DADO-96;sy<DADO;sy+=9)ctx.fillRect(dl,sy,104,3);
-    const dgr=ctx.createLinearGradient(sx,0,sx+dir*104,0);
-    dgr.addColorStop(0,"rgba(14,30,48,0.88)"); dgr.addColorStop(1,"rgba(14,30,48,0)");
-    ctx.fillStyle=dgr; ctx.fillRect(dl,DADO,104,GROUND_Y-DADO);
-    ctx.fillStyle="#3d4855"; ctx.fillRect(sx-(dir>0?0:14),0,14,GROUND_Y);      // door jamb
-    ctx.fillStyle="#556472"; ctx.fillRect(sx-(dir>0?0:14),0,4,GROUND_Y); }
+  ctx.fillStyle="rgba(196,180,140,0.10)"; ctx.fillRect(L,GROUND_Y,R-L,3);
+  ctx.fillStyle="rgba(0,0,0,0.30)";
+  for(let bx=WH.x1;bx<WH.x2;bx+=170)ctx.fillRect(bx-cam.x,GROUND_Y+4,2,VH-GROUND_Y);
   ctx.restore(); }
 /* Inside the freighter. Same world-locked, canvas-drawn approach as the
    warehouse, but read as a HULL: riveted plate, curved frame ribs closing in
@@ -2314,76 +2337,23 @@ function drawShipHold(){ if(level!==2||seg!==2)return;
    furniture at sane proportions (a container is ~2.4x the hero, a bollard
    reaches his knee). The deck plating is drawn here too — the segment used to
    render no ground band at all. */
+/* L2 seg 3 weather deck — painted backdrop. The plate already carries the sea,
+   the containers, the crane, the rail and a wet deck, so nothing here is drawn
+   by hand except the strip below GROUND_Y the character walks on. */
 function drawShipDeckBg(){ if(level!==2||seg!==3)return;
-  const HZ=GROUND_Y-208;                       // horizon
-  const sky=ctx.createLinearGradient(0,0,0,HZ);
-  sky.addColorStop(0,"#060c17"); sky.addColorStop(1,"#132033");
-  ctx.fillStyle=sky; ctx.fillRect(0,0,VW,HZ);
-  // sea beyond the rail
-  const sea=ctx.createLinearGradient(0,HZ,0,GROUND_Y-92);
-  sea.addColorStop(0,"#0a1b28"); sea.addColorStop(1,"#061119");
-  ctx.fillStyle=sea; ctx.fillRect(0,HZ,VW,GROUND_Y-92-HZ);
-  ctx.strokeStyle="rgba(150,195,220,0.10)"; ctx.lineWidth=1;
-  for(let k=0;k<7;k++){ const y=HZ+6+k*13; ctx.beginPath();
-    for(let x=-10;x<VW+10;x+=9)ctx.lineTo(x,y+Math.sin((x+cam.x*0.25)*0.05+now*0.0012+k)*1.6);
-    ctx.stroke(); }
-  // far superstructure + cranes, slow parallax
-  const px=(v,f)=>v-cam.x*f;
-  ctx.fillStyle="#0d1622";
-  for(let bx=0;bx<LEVEL_W;bx+=1500){ const sx=px(bx,0.35);
-    if(sx>VW+400||sx<-400)continue;
-    ctx.fillRect(sx,GROUND_Y-360,190,268);                       // deckhouse
-    ctx.fillRect(sx+60,GROUND_Y-430,60,70);                      // bridge
-    ctx.fillStyle="rgba(255,220,150,0.30)";
-    for(let r=0;r<4;r++)for(let c=0;c<5;c++)ctx.fillRect(sx+14+c*34,GROUND_Y-344+r*46,16,11);
-    ctx.fillStyle="#0d1622";
-    ctx.fillRect(sx+150,GROUND_Y-520,9,160);                     // mast
-    ctx.fillRect(sx+120,GROUND_Y-520,70,7); }
-  // container stacks mid-distance
-  for(let bx=-200;bx<LEVEL_W;bx+=520){ const sx=px(bx,0.6);
-    if(sx>VW+300||sx<-300)continue;
-    const cols=["#22323a","#332a26","#243040"];
-    for(let r=0;r<2;r++){ ctx.fillStyle=cols[(bx/520+r)%3|0];
-      ctx.fillRect(sx,GROUND_Y-196+r*52,236,50);
-      ctx.fillStyle="rgba(0,0,0,0.30)";
-      for(let g2=0;g2<236;g2+=13)ctx.fillRect(sx+g2,GROUND_Y-196+r*52,3,50);
-      ctx.fillStyle="rgba(180,205,220,0.12)"; ctx.fillRect(sx,GROUND_Y-196+r*52,236,2); } }
-  // guard rail along the deck edge
-  ctx.strokeStyle="rgba(170,195,215,0.55)"; ctx.lineWidth=2.5;
-  for(const ry of [GROUND_Y-92,GROUND_Y-70,GROUND_Y-48]){ ctx.beginPath(); ctx.moveTo(0,ry); ctx.lineTo(VW,ry); ctx.stroke(); }
-  ctx.strokeStyle="rgba(150,175,195,0.6)"; ctx.lineWidth=3;
-  for(let bx=0;bx<LEVEL_W;bx+=104){ const sx=px(bx,1); if(sx<-10||sx>VW+10)continue;
-    ctx.beginPath(); ctx.moveTo(sx,GROUND_Y-96); ctx.lineTo(sx,GROUND_Y-44); ctx.stroke(); }
-  // ---- deck plating (the ground band this segment was missing) ----
+  const im=images.bg_deck; if(!im)return;
+  // MIRRORED tiling: plain repeats left a hard vertical seam every plate width.
+  // Flipping every other copy makes the touching edges identical, so the joins
+  // disappear (same trick the harbour and rooftop backdrops use).
+  drawBgMirror("bg_deck",0.5,Math.round(VH*(im.width/im.height)));
   const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
-  dg.addColorStop(0,"#3a4148"); dg.addColorStop(1,"#151a1f");
+  dg.addColorStop(0,"#2f3742"); dg.addColorStop(1,"#12161c");
   ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);
-  ctx.fillStyle="#4a545d"; ctx.fillRect(0,GROUND_Y,VW,5);
-  ctx.fillStyle="rgba(0,0,0,0.30)";
-  for(let bx=0;bx<LEVEL_W;bx+=132){ const sx=px(bx,1); if(sx<-6||sx>VW+6)continue; ctx.fillRect(sx,GROUND_Y+5,2,VH-GROUND_Y); }
-  ctx.fillStyle="rgba(150,175,190,0.07)";
-  for(let y=GROUND_Y+16;y<VH;y+=16)ctx.fillRect(0,y,VW,1);
-  // ---- deck furniture, scaled off the hero (HERO_H = 120) ----
-  for(let bx=0;bx<LEVEL_W;bx+=430){ const sx=px(bx,1); if(sx<-140||sx>VW+140)continue;
-    const k=(bx/430)|0;
-    if(k%3===0){                                  // mooring bollard, knee high
-      ctx.fillStyle="#2a3138"; ctx.fillRect(sx,GROUND_Y-34,20,34);
-      ctx.fillStyle="#39424a"; ctx.fillRect(sx-5,GROUND_Y-40,30,8);
-      ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.beginPath(); ctx.ellipse(sx+10,GROUND_Y+2,20,5,0,0,7); ctx.fill();
-      ctx.strokeStyle="#4a4034"; ctx.lineWidth=4;   // coiled rope
-      ctx.beginPath(); ctx.ellipse(sx+44,GROUND_Y-6,26,8,0,0,7); ctx.stroke();
-      ctx.beginPath(); ctx.ellipse(sx+44,GROUND_Y-11,19,6,0,0,7); ctx.stroke(); }
-    else if(k%3===1){                             // mushroom vent, chest high
-      ctx.fillStyle="#2f3a42"; ctx.fillRect(sx,GROUND_Y-72,22,72);
-      ctx.fillStyle="#3c4a53"; ctx.beginPath(); ctx.ellipse(sx+11,GROUND_Y-74,26,11,0,Math.PI,0); ctx.fill();
-      ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.beginPath(); ctx.ellipse(sx+11,GROUND_Y+2,24,5,0,0,7); ctx.fill(); }
-    else {                                        // winch drum, waist high
-      ctx.fillStyle="#333c44"; ctx.fillRect(sx,GROUND_Y-46,62,46);
-      ctx.fillStyle="#242c33"; ctx.fillRect(sx+8,GROUND_Y-56,46,12);
-      ctx.strokeStyle="#4d5860"; ctx.lineWidth=2;
-      for(let g2=0;g2<46;g2+=7){ ctx.beginPath(); ctx.moveTo(sx+8+g2,GROUND_Y-56); ctx.lineTo(sx+8+g2,GROUND_Y-44); ctx.stroke(); }
-      ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.beginPath(); ctx.ellipse(sx+31,GROUND_Y+2,38,6,0,0,7); ctx.fill(); } }
-}
+  ctx.fillStyle="rgba(170,195,215,0.10)"; ctx.fillRect(0,GROUND_Y,VW,3);
+  ctx.fillStyle="rgba(0,0,0,0.28)";
+  for(let bx=0;bx<LEVEL_W;bx+=132){ const sx=bx-cam.x; if(sx<-6||sx>VW+6)continue; ctx.fillRect(sx,GROUND_Y+4,2,VH-GROUND_Y); }
+  ctx.fillStyle="rgba(150,175,190,0.05)";
+  for(let y=GROUND_Y+16;y<VH;y+=16)ctx.fillRect(0,y,VW,1); }
 // Lay DIFFERENT plates side by side instead of repeating one. Kingston tiled
 // from a single image looked like the same shopfront every 1400px; the three
 // street plates cycled across the scroll give the street somewhere to go.
@@ -2416,48 +2386,33 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   for(const gp of gaps){ const x1=gp.x1-cam.x,x2=gp.x2-cam.x; if(x2<-30||x1>VW+30)continue; ctx.save();
     // a hole in the warehouse floor drops into the dark, not into the harbour
     if(dryPit(gp.x1+1)){ const Lx=Math.max(x1,-20),Rx=Math.min(x2,VW+20); const vv=ctx.createLinearGradient(0,GROUND_Y,0,VH); vv.addColorStop(0,"#0a0d12"); vv.addColorStop(1,"#050709"); ctx.fillStyle=vv; ctx.fillRect(Lx,GROUND_Y,Rx-Lx,VH-GROUND_Y); ctx.fillStyle="#2a2f36"; if(x1>-20)ctx.fillRect(x1-8,GROUND_Y-6,8,12); if(x2<VW+20)ctx.fillRect(x2,GROUND_Y-6,8,12); ctx.restore(); continue; }
-    // HARBOUR WATER. The old version was a flat gradient with four sine lines
-    // ruled across it, which read as stripes on cardboard. This builds it the
-    // way water actually reads: a dark surface plane in perspective, swell
-    // bands that get shorter and slower with distance, broken specular glints,
-    // reflected light smeared vertically, and foam where it meets the dock.
-    const L=Math.max(x1,-20),R=Math.min(x2,VW+20), W=R-L;
-    const wg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
-    wg.addColorStop(0,"#071722"); wg.addColorStop(0.45,"#0a2130"); wg.addColorStop(1,"#030c14");
-    ctx.fillStyle=wg; ctx.fillRect(L,GROUND_Y,W,VH-GROUND_Y);
-    ctx.save(); ctx.beginPath(); ctx.rect(L,GROUND_Y,W,VH-GROUND_Y); ctx.clip();
-    // swell: bands thin out and slow down toward the horizon at GROUND_Y
-    for(let r=0;r<9;r++){
-      const t=r/8, ry=GROUND_Y+6+Math.pow(t,1.7)*(VH-GROUND_Y), amp=1.0+t*3.4;
-      const ph=now*(0.0009+t*0.0016)+r*1.7;
-      ctx.strokeStyle="rgba(150,200,225,"+(0.05+t*0.13).toFixed(3)+")";
-      ctx.lineWidth=0.8+t*1.6; ctx.beginPath();
-      for(let xx=L-8;xx<=R+8;xx+=7){
-        const yy=ry+Math.sin((xx+cam.x)*0.045+ph)*amp+Math.sin((xx+cam.x)*0.11-ph*1.4)*amp*0.4;
-        if(xx<=L-8)ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy); }
-      ctx.stroke(); }
-    // reflected dock light, smeared down the way a reflection breaks up
-    const gl=ctx.createLinearGradient(0,GROUND_Y,0,VH*0.92);
-    gl.addColorStop(0,"rgba(120,190,220,0.13)"); gl.addColorStop(1,"rgba(120,190,220,0)");
-    ctx.fillStyle=gl;
-    for(let k=0;k<5;k++){ const gx=L+((k*137+((cam.x*0.2)|0)%137)%Math.max(1,W));
-      ctx.fillRect(gx,GROUND_Y,3+((k*7)%5),VH-GROUND_Y); }
-    // specular glints riding the swell
-    for(let k=0;k<26;k++){
-      const seed=k*97.13, gx=L+((seed*17.7)%Math.max(1,W));
-      const t=((seed*0.037)%1), gy=GROUND_Y+8+Math.pow(t,1.7)*(VH-GROUND_Y-10);
-      const tw=0.5+0.5*Math.sin(now*0.004+seed);
-      ctx.fillStyle="rgba(190,230,250,"+(0.05+tw*0.16*(0.3+t)).toFixed(3)+")";
-      ctx.fillRect(gx,gy,3+t*7,1);
-    }
+    // HARBOUR WATER — a filmed plate, not painted swell lines. The clip does not
+    // loop on its own (water is chaotic, best residual was ~19), so the last
+    // quarter of the cycle cross-dissolves back into frame 1. Forward motion is
+    // preserved and there is no visible cut.
+    const L=Math.max(x1,-20),R=Math.min(x2,VW+20), W=R-L, WD=VH-GROUND_Y;
+    const N=10, CY=1500, t=(now%CY)/CY, fi=Math.floor(t*N);
+    const a=images["water"+(fi+1)], b=images["water"+(((fi+1)%N)+1)];
+    ctx.save(); ctx.beginPath(); ctx.rect(L,GROUND_Y,W,WD); ctx.clip();
+    // one tile per ~150px of gap so the surface keeps its grain at any width
+    const TW=Math.max(96,Math.round(WD*1.6));
+    const drawPlate=(im,al)=>{ if(!im)return; ctx.globalAlpha=al;
+      for(let sx=L-((cam.x*0.35)%TW)-TW;sx<R+TW;sx+=TW)ctx.drawImage(im,Math.round(sx),GROUND_Y,TW,WD); };
+    drawPlate(a,1);
+    const blend=(t*N)-fi; if(blend>0.75)drawPlate(b,(blend-0.75)/0.25);
+    ctx.globalAlpha=1;
+    // sink it into the dark and cool it toward the level palette
+    const tint=ctx.createLinearGradient(0,GROUND_Y,0,VH);
+    tint.addColorStop(0,"rgba(6,18,28,0.35)"); tint.addColorStop(1,"rgba(2,8,14,0.80)");
+    ctx.fillStyle=tint; ctx.fillRect(L,GROUND_Y,W,WD);
     ctx.restore();
-    // dock edge: pier lip, foam line, and a piling on each side
-    ctx.fillStyle="rgba(210,240,255,0.16)";
+    // foam where it meets the dock, and a piling on each side
+    ctx.fillStyle="rgba(210,240,255,0.18)";
     for(let xx=L;xx<R;xx+=6)ctx.fillRect(xx,GROUND_Y+1+Math.sin((xx+cam.x)*0.09+now*0.003)*1.6,5,2);
     for(const [ex,inw] of [[x1,-1],[x2,1]]){
       if(ex<-30||ex>VW+30)continue;
       ctx.fillStyle="#1b2733"; ctx.fillRect(ex+(inw<0?-12:0),GROUND_Y-7,12,13);
-      ctx.fillStyle="#0f1720"; ctx.fillRect(ex+(inw<0?-12:0),GROUND_Y+6,12,26);   // piling into the water
+      ctx.fillStyle="#0f1720"; ctx.fillRect(ex+(inw<0?-12:0),GROUND_Y+6,12,26);
       ctx.fillStyle="#33404e"; ctx.fillRect(ex+(inw<0?-12:0),GROUND_Y-7,12,3); }
     ctx.restore(); }
   ctx.fillStyle="rgba(0,0,0,0.25)";ctx.fillRect(0,GROUND_Y,VW,4); }

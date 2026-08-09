@@ -39,11 +39,14 @@ def main():
     ap.add_argument("--level", type=int, default=2)
     ap.add_argument("--gaps", default="", help="x1:x2,x1:x2 to draw as pits")
     ap.add_argument("--platforms", default="", help="x:w:top:kind,... kind=deck|step")
+    ap.add_argument("--images", default="",
+                    help="comma-separated image keys to preload from the repo root")
     ap.add_argument("--out", default="_scene.html")
     args = ap.parse_args()
 
     src = open(os.path.join(REPO, "dist", "game.js"), encoding="utf-8").read()
     calls = "\n".join(f"{f}();" for f in args.fns)
+    imgjs = "[" + ",".join('"%s"' % k for k in args.images.split(",") if k) + "]"
     bodies = "\n".join(grab(src, f) for f in args.fns)
 
     gaps = [g for g in args.gaps.split(",") if g]
@@ -66,6 +69,10 @@ let player={{x:{args.cam}+480,y:GROUND_Y}};
 {grab_const(src, "SH")}
 function clamp(v,a,b){{return v<a?a:v>b?b:v;}}
 {bodies}
+// Backdrops are <img>s. Draw only once they have actually decoded, or the scene
+// comes out empty and it looks like the draw code is broken.
+const NEED={imgjs};
+function draw(){{
 // night sky + a plain ground band, the way drawBackground lays them down first
 let g=ctx.createLinearGradient(0,0,0,VH);
 g.addColorStop(0,'#0a1326');g.addColorStop(0.6,'#0c1a2b');g.addColorStop(1,'#0a141d');
@@ -82,6 +89,11 @@ window.__png=h.toDataURL('image/jpeg',0.82);
 document.body.appendChild(Object.assign(document.createElement('textarea'),
   {{id:'png',value:window.__png,style:'width:99%;height:40px'}}));
 document.title='rendered '+window.__png.length;
+}}
+let left=NEED.length;
+if(!left)draw();
+for(const k of NEED){{ const im=new Image();
+  im.onload=im.onerror=()=>{{ images[k]=im; if(--left===0)draw(); }}; im.src='./'+k+'.png'; }}
 </script></body>"""
     path = os.path.join(REPO, args.out)
     open(path, "w", encoding="utf-8", newline="\n").write(html)

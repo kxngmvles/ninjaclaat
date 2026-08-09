@@ -346,3 +346,47 @@ different plates side by side instead of tiling one shopfront every 1400px.
 only the last, which silently rendered an empty scene). It emits a half-size JPEG
 and posts it to a local sink, because a full-res PNG data URL is too big to read
 back through the tool channel.
+
+### 2026-08-09 (4) — painted backdrops, filmed water, Shotta overheat cycle
+
+**Backdrops are GENERATED ART now, not canvas rectangles.** Kemar: "generate it
+with ai, not code". `bg_warehouse.png` and `bg_deck.png` are nano_banana_pro
+21:9 plates, trimmed so the artwork's own floor line IS the image bottom (the
+warehouse plate came back with 480px of dead black under the floor — crop it or
+the character walks in a black band), downscaled to 1920 wide, drawn MIRRORED
+(`drawBgMirror`) so the repeats have no seam. The warehouse plate is world-locked
+and anchored to `WH.x1`; the deck plate parallaxes at 0.5.
+Prompt shape that worked: "flat side-scroller perspective, no vanishing point",
+"the bottom fifth must be plain empty floor so a character can stand on it",
+"NO characters, NO text".
+
+**Deck props are generated sprites** (`prop_container_ai`, `prop_crates_ai`,
+`prop_winch_ai`, `prop_drums_ai`, `prop_bollard_ai`) sliced from one magenta
+strip and scaled by MULTIPLES OF HERO_H — container 2.25x, crates 1.05x, winch
+0.85x, drums 0.80x, bollard 0.42x. They are `cover:1` platforms, so they double
+as the thing you hide behind during Shotta's sweep.
+
+**THE FIRST JUMP WAS IMPOSSIBLE.** Player runs 3.0px/frame and a jump lasts
+43.9 frames (2*JUMP_V/G), so a single jump covers **131px** and a double covers
+**~258px only if the second is frame-perfect at apex**. The gap was 250px. It is
+168px now. Any new gap: keep it between 140 and 200 if the double jump is
+required, under 120 if it isn't.
+
+**Stairs are 30px tread / 19px rise** (was 58/38, which read as wide floating
+slabs). Rise must stay under STEP_UP=46. Treads must ABUT — `check_level.py`
+verifies that and that both ends of every run meet a walkway.
+
+**Water is a filmed plate** (`water1..10`, from a wan2_7 clip of the still).
+Water does NOT loop — best residual was ~19 vs ~0.5 for a character walk — so
+the draw cross-dissolves the last quarter of the cycle back into frame 1
+instead of hard-cutting. Do not bother hunting for a clean water loop.
+
+**Shotta's overheat cycle** is the fight's rhythm: firing and sweeping add heat,
+at 100 the minigun overheats (`shotta_hot*`, glowing barrels + smoke) and he is
+helpless for ~112 frames — that is the damage window. While hot he HURLS oil
+drums (`shotta_thr*`, a `drum:1` projectile that arcs and explodes on impact or
+contact). Point-blank he gun-butts (`shotta_butt*`) with heavy knockback.
+
+**preview_scene.py** now preloads backdrop images (`--images bg_deck`) and calls
+every listed function in order. Image-based scenes rendered EMPTY before, which
+looked like broken draw code — it was just `images={}`.
