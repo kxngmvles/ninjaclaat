@@ -173,7 +173,7 @@ window.AS = {
   "ship_bow": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030025_c0e1c10f-93a4-44ec-b990-90f4bdd9ca7f.png",
   "voice_rasta": "./YeahBoyLoud.mp3",
   "prop_shipfront": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_034811_8c4e3907-7082-433e-b8b0-b664fcc5e4c4.png",
-  "derrick_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_081746_10b37920-dd0c-440b-a9f0-5ec4d8a27b55.png",
+  "derrick_idle": "./derrick_idle.png",
   "fyah_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044030_df1721ab-225a-4f90-acae-97eaa21bea16.png",
   "molotov_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044033_2a902f8c-64e1-44ff-87dd-6dbb366a46c7.png",
   "shield_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044036_8219447f-6187-486f-b30e-8955eb59662f.png",
@@ -541,4 +541,9 @@ window.AS = {
   "water8": "./water8.png",
   "water9": "./water9.png",
   "water10": "./water10.png",
+  "voice_derrick_intro": "./derrick_intro.mp3",
+  "voice_derrick_enrage": "./derrick_enrage.mp3",
+  "sfx_camera": "./sfx_camera.mp3",
+  "voice_shotta_win": "./shotta_defeat.mp3",
+  "bg_kingston": "./bg_kingston.jpg",
 };

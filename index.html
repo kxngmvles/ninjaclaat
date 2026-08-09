@@ -213,7 +213,7 @@ window.AS = {
   "ship_bow": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_030025_c0e1c10f-93a4-44ec-b990-90f4bdd9ca7f.png",
   "voice_rasta": "./YeahBoyLoud.mp3",
   "prop_shipfront": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_034811_8c4e3907-7082-433e-b8b0-b664fcc5e4c4.png",
-  "derrick_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_081746_10b37920-dd0c-440b-a9f0-5ec4d8a27b55.png",
+  "derrick_idle": "./derrick_idle.png",
   "fyah_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044030_df1721ab-225a-4f90-acae-97eaa21bea16.png",
   "molotov_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044033_2a902f8c-64e1-44ff-87dd-6dbb366a46c7.png",
   "shield_idle": "https://d8j0ntlcm91z4.cloudfront.net/user_36PPQQYeHIYDxRTTFhfEHdNglYp/hf_20260621_044036_8219447f-6187-486f-b30e-8955eb59662f.png",
@@ -581,6 +581,11 @@ window.AS = {
   "water8": "./water8.png",
   "water9": "./water9.png",
   "water10": "./water10.png",
+  "voice_derrick_intro": "./derrick_intro.mp3",
+  "voice_derrick_enrage": "./derrick_enrage.mp3",
+  "sfx_camera": "./sfx_camera.mp3",
+  "voice_shotta_win": "./shotta_defeat.mp3",
+  "bg_kingston": "./bg_kingston.jpg",
 };
 
 </script>
@@ -899,9 +904,9 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 "dog_idle","dog_walk","dog_walk2","dog_lunge","dog_dead",
 "mosq_fly","mosq_fly2","mosq_swoop","mosq_dead",
 "lt_idle","lt_walk","lt_walk2","lt_attack","lt_attack2","lt_death","lt_cast","lt_enrage","lt_walk1","lt_walk2","lt_walk3","lt_walk4",
-"palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage","prop_shipfront","derrick_idle","fyah_idle","molotov_idle","shield_idle","knife_idle","bat_idle","vendor","hobo_sleep","vendor2","nc_smoke","prop_car","prop_bus","prop_dumpster","prop_stall","derrick_slap","derrick_charge","derrick_dead","fyah_kick","fyah_cast","fyah_dead","molotov_dead","shield_attack","shield_dead","knife_attack","knife_dead","bat_attack","bat_dead","bat_swing","fyah_punch","fyah_enrage","fyah_smoke","derrick_kick","derrick_phone","derrick_sandal","shield_gun","shield_baton","shield_down","nc_kunai","derrick_power","nc_chain_idle","nc_chain_swing","nc_chain_whip","nc_moped","prop_gantry","prop_rock","prop_log","enemy_biker","enemy_car","nc_chain_jump","nc_chain_fall","nc_chain_land","goon_bikeA","goon_bikeB","gorgon_idle","gorgon_walk1","gorgon_walk2","gorgon_attack","gorgon_attack2","gorgon_cast","gorgon_enrage","gorgon_dead"];
+"palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage","prop_shipfront","fyah_idle","molotov_idle","shield_idle","knife_idle","bat_idle","vendor","hobo_sleep","vendor2","nc_smoke","prop_car","prop_bus","prop_dumpster","prop_stall","derrick_slap","derrick_charge","derrick_dead","fyah_kick","fyah_cast","fyah_dead","molotov_dead","shield_attack","shield_dead","knife_attack","knife_dead","bat_attack","bat_dead","bat_swing","fyah_punch","fyah_enrage","fyah_smoke","derrick_kick","derrick_phone","derrick_sandal","shield_gun","shield_baton","shield_down","nc_kunai","derrick_power","nc_chain_idle","nc_chain_swing","nc_chain_whip","nc_moped","prop_gantry","prop_rock","prop_log","enemy_biker","enemy_car","nc_chain_jump","nc_chain_fall","nc_chain_land","goon_bikeA","goon_bikeB","gorgon_idle","gorgon_walk1","gorgon_walk2","gorgon_attack","gorgon_attack2","gorgon_cast","gorgon_enrage","gorgon_dead"];
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
-["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne","bg_warehouse","bg_deck","water1","water2","water3","water4","water5","water6","water7","water8","water9","water10"].forEach(k=>loadImage(k,AS[k]));
+["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne","bg_warehouse","bg_deck","bg_kingston","water1","water2","water3","water4","water5","water6","water7","water8","water9","water10"].forEach(k=>loadImage(k,AS[k]));
 ["bat","molotov","shield","derrick","knife","fyah"].forEach(t=>{for(let n=1;n<=4;n++){const k=t+"_walk"+n; loadSpriteRaw(k,AS[k]);}});
 ["nc_crun1","nc_crun2","nc_crun3","nc_crun4","nc_cthrow1","nc_cthrow2","nc_cswing1","nc_cswing2","nc_cswing3","nc_catk1","nc_catk2","nc_catk3"].forEach(k=>loadSpriteRaw(k,AS[k]));
 ["nc_bike1","nc_bike2","nc_bike3","nc_bike4","nc_bike5","nc_bike6","nc_bike7","nc_bike8","nc_nrun1","nc_nrun2","nc_nrun3","nc_nrun4","nc_nrun5","nc_nrun6","nc_nrun7","nc_nrun8"].forEach(k=>loadSpriteRaw(k,AS[k]));
@@ -930,7 +935,7 @@ const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff
   [1,2,3,4,5,6].map(n=>"shotta_thr"+n),            // hurls a drum
   [1,2,3,4,5].map(n=>"shotta_butt"+n),             // gun-butt at close range
   ["crew_idle"],                                    // famH sizes every enemy against <type>_idle
-  ["prop_container_ai","prop_crates_ai","prop_winch_ai","prop_drums_ai","prop_bollard_ai"]
+  ["prop_container_ai","prop_crates_ai","prop_winch_ai","prop_drums_ai","prop_bollard_ai","derrick_idle"]
 ).forEach(k=>loadSpriteRaw(k,AS[k]));
 loadSound("music_level1",AS.music_level1,{loop:true,vol:0.42});
 loadSound("music_lt",AS.music_lt,{loop:true,vol:0.4});
@@ -938,6 +943,10 @@ loadSound("music_level2",AS.music_level2,{loop:true,vol:0.4});
 loadSound("sfx_gunshot",AS.sfx_gunshot,{vol:0.5,pool:6});
 loadSound("sfx_gunshot2",AS.sfx_gunshot2,{vol:0.62,pool:6});   // Kemar's gunner shot
 loadSound("sfx_minigun",AS.sfx_minigun,{vol:0.66,pool:4});     // Shotta phase 2
+loadSound("voice_derrick_intro",AS.voice_derrick_intro,{vol:1.0,pool:1});
+loadSound("voice_derrick_enrage",AS.voice_derrick_enrage,{vol:1.0,pool:1});
+loadSound("sfx_camera",AS.sfx_camera,{vol:0.85,pool:3});
+loadSound("voice_shotta_win",AS.voice_shotta_win,{vol:1.0,pool:1});
 loadSound("sfx_reload",AS.sfx_reload,{vol:0.55,pool:2});
 loadSound("sfx_alarm",AS.sfx_alarm,{vol:0.7,pool:2});
 loadSound("voice_goon2",AS.voice_goon2,{vol:0.9,pool:3});
@@ -1037,7 +1046,7 @@ const EFR={
  lt:{idle:["lt_idle"],walk:["lt_walk1","lt_walk2","lt_walk3","lt_walk4"],attack:["lt_slash1","lt_slash2","lt_slash3"],attack2:["lt_cross1","lt_cross2","lt_cross3","lt_cross4"],lunge:["lt_lunge1","lt_lunge2","lt_lunge3","lt_lunge4"],slam:["lt_slam1","lt_slam2","lt_slam3","lt_slam4","lt_slam5"],cast:["lt_slash1","lt_slash2","lt_slash3"],enrage:["lt_enr1","lt_enr2","lt_enr3","lt_enr3","lt_enr3","lt_enr3","lt_enr4"],hurt:["lt_idle"],dead:["lt_death"]},
  // walk/run/reload are video-derived; the reload clip actually DROPS the
  // magazine, which the old two-frame version left hanging in mid-air
- shotta:{idle:["shotta_idle"],walk:["shotta_wk1","shotta_wk2","shotta_wk3","shotta_wk4","shotta_wk5","shotta_wk6","shotta_wk7","shotta_wk8"],run:["shotta_run1","shotta_run2","shotta_run3","shotta_run4","shotta_run5","shotta_run6","shotta_run7","shotta_run8"],aim:["shotta_shoot"],shoot:["shotta_shoot"],reload:["shotta_reload1","shotta_reload2","shotta_reload3","shotta_reload4","shotta_reload5","shotta_reload6","shotta_reload7"],hurt:["shotta_hurt"],dead:["shotta_death"],enrage:["shotta_enrage"],mgun:["shotta_mg1","shotta_mg2","shotta_mg3","shotta_mg4","shotta_mg5","shotta_mg6","shotta_mg7"],spinup:["shotta_mg1","shotta_mg2"],overheat:["shotta_hot1","shotta_hot2","shotta_hot3","shotta_hot4","shotta_hot5"],throw:["shotta_thr1","shotta_thr2","shotta_thr3","shotta_thr4","shotta_thr5","shotta_thr6"],butt:["shotta_butt1","shotta_butt2","shotta_butt3","shotta_butt4","shotta_butt5"]},
+ shotta:{idle:["shotta_idle"],walk:["shotta_wk1","shotta_wk2","shotta_wk3","shotta_wk4","shotta_wk5","shotta_wk6","shotta_wk7","shotta_wk8"],run:["shotta_run1","shotta_run2","shotta_run3","shotta_run4","shotta_run5","shotta_run6","shotta_run7","shotta_run8"],aim:["shotta_shoot"],shoot:["shotta_shoot"],reload:["shotta_reload1","shotta_reload2","shotta_reload3","shotta_reload4","shotta_reload5","shotta_reload6","shotta_reload7"],hurt:["shotta_hurt"],dead:["shotta_death"],enrage:["shotta_enrage","shotta_enrage","shotta_mg1","shotta_mg1","shotta_mg2","shotta_mg2","shotta_mg2","shotta_mg2"],mgun:["shotta_mg1","shotta_mg2","shotta_mg3","shotta_mg4","shotta_mg5","shotta_mg6","shotta_mg7"],spinup:["shotta_mg1","shotta_mg2"],overheat:["shotta_hot1","shotta_hot2","shotta_hot3","shotta_hot4","shotta_hot5"],throw:["shotta_thr1","shotta_thr2","shotta_thr3","shotta_thr4","shotta_thr5","shotta_thr6"],butt:["shotta_butt1","shotta_butt2","shotta_butt3","shotta_butt4","shotta_butt5"]},
  // atk1..5 / die1..5 sheets. die1 is the standing stagger, so it doubles as the
  // hurt pose — a recoil is just the first beat of a death, and reusing it saved
  // generating three more frames.
@@ -1059,7 +1068,7 @@ const EFR={
 // over 70. At the old attack:5.5 even goonA's 5-frame swing only reached frame 2.
 // reload:5 spreads the 7-frame clip across the 85-frame reload window, so the
 // magazine drop actually plays out instead of finishing in the first third
-const EFPS={walk:7,chase:9,patrol:6,fly:6,idle:2.2,attack:11,attack2:11,shoot:24,lunge:6,slam:6,enrage:2.2,cast:6,dead:5.5,hurt:7,reload:5,overheat:4,throw:12,butt:14};
+const EFPS={walk:7,chase:9,patrol:6,fly:6,idle:2.2,attack:11,attack2:11,shoot:24,lunge:6,slam:6,enrage:4.6,cast:6,dead:5.5,hurt:7,reload:5,overheat:4,throw:12,butt:14};
 function frameKey(frames,clockMs,fps,loop){ if(!frames||!frames.length)return null;
   let i=Math.floor(clockMs/1000*fps); i=loop?(i%frames.length):Math.min(i,frames.length-1); return frames[i]; }
 
@@ -1149,7 +1158,9 @@ function playerHurt(dmg,dir){ if(player.iframe>0||player.dead||player.dashT>0)re
   player.hp-=dmg;player.hurtT=18;player.iframe=42;player.vx=dir*5;player.vy=-3;player.powerT=0;player.irie=false;player.comboCount=0;player.killStreak=0;
   shake=Math.max(shake,8);flash=Math.max(flash,0.4);sfx("sfx_grunt");blood(player.x,player.y-HERO_H*0.5,dir);
   if(player.hp<=0&&player.revive){player.revive=false;player.hp=Math.round(player.maxhp*0.5);player.iframe=110;player.hurtT=0;floatText(player.x,player.y-HERO_H-10,"DUPPY REVIVE!","#7CFF6B");greenBurst(player.x,player.y-HERO_H*0.5,26);return;}
-  if(player.hp<=0){player.hp=0;player.dead=true;player.anim="death";player.animT=0;sfx("voice_bomboclaat");shake=14;
+  if(player.hp<=0){player.hp=0;player.dead=true;player.anim="death";player.animT=0;
+    // Shotta gets the last word if he is the one who put you down
+    sfx(enemies.some(e=>e.type==="shotta"&&!e.dead)?"voice_shotta_win":"voice_bomboclaat");shake=14;
     setTimeout(()=>{if(state==="play")setState("gameover");},1500);} }
 // 100 frames = the 10-entry table at fps 6, which holds BOTH the crouched
 // charge (pwr4) and the full aura (pwr5) for ~0.5s each. iframes cover the
@@ -1535,7 +1546,7 @@ function updateShotta(e){
   const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign(dx)||1;
   e.alerted=1; e.face=dir;
   if(!e._met){ e._met=1; sfx("voice_shotta_meet"); }
-  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=70; e.grenCd=120; floatText(e.x,e.y-e.h-20,"SHOTTA SNAPS!","#ff4d3b"); shake=14; flash=Math.max(flash,0.42); sfx("voice_shotta_enrage"); for(let k=0;k<32;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2.4,2.4),vy:rnd(-3.4,-0.2),g:0.02,life:rnd(20,42),c:k%2?"#ff3b2f":"#161616",r:rnd(2,4.6),glow:1}); }
+  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=104; e.grenCd=120; floatText(e.x,e.y-e.h-20,"SHOTTA SNAPS!","#ff4d3b"); shake=14; flash=Math.max(flash,0.42); sfx("voice_shotta_enrage"); for(let k=0;k<32;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2.4,2.4),vy:rnd(-3.4,-0.2),g:0.02,life:rnd(20,42),c:k%2?"#ff3b2f":"#161616",r:rnd(2,4.6),glow:1}); }
   const fast=e.phase===2;
   if(e.enrageT>0){ e.enrageT--; e.vx=0; if(e.enrageT%2===0){const a=rnd(0,6.28),d2=e.h*rnd(0.2,0.6);particles.push({x:e.x+Math.cos(a)*d2,y:e.y-e.h*0.5+Math.sin(a)*d2*0.8,vx:Math.cos(a)*rnd(1,3),vy:Math.sin(a)*rnd(1,3)-0.4,g:0,life:rnd(8,16),c:Math.random()<0.5?"#ff3b2f":"#161616",r:rnd(1.5,3.6),glow:1});} return; }
   if(e.state==="shoot"){e.t++; if(e.t===5&&!e._hit){fireBullets(e,dir);e._hit=true;} if(e.t>(fast?10:18))e.state="idle"; return;}
@@ -1617,13 +1628,13 @@ function updateShield(e){ const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign
   else { e.vx=dir*e.speed; e.x+=e.vx; }
   e.x=clamp(e.x,30,LEVEL_W-30);
 }
-function shieldFire(e,dir){ sfx("sfx_gunshot"); shake=Math.max(shake,4); const by=e.y-e.h*0.64; projectiles.push({x:e.x+dir*42,y:by,vx:dir*9.4,vy:0,g:0,life:100,bullet:1,dmg:e.dmg}); for(let k=0;k<6;k++)particles.push({x:e.x+dir*46,y:by,vx:dir*rnd(2,5),vy:rnd(-1.4,1.4),g:0,life:rnd(5,10),c:k%2?"#fff2a8":"#ffae3b",r:rnd(1.5,3),glow:1}); }
+function shieldFire(e,dir){ sfx("sfx_gunshot2"); shake=Math.max(shake,4); const by=e.y-e.h*0.64; projectiles.push({x:e.x+dir*42,y:by,vx:dir*9.4,vy:0,g:0,life:100,bullet:1,dmg:e.dmg}); for(let k=0;k<6;k++)particles.push({x:e.x+dir*46,y:by,vx:dir*rnd(2,5),vy:rnd(-1.4,1.4),g:0,life:rnd(5,10),c:k%2?"#fff2a8":"#ffae3b",r:rnd(1.5,3),glow:1}); }
 function updateDerrick(e){ const dx=player.x-e.x, adx=Math.abs(dx), dir=Math.sign(dx)||1; e.alerted=1; e.face=dir;
   if(!e._met){ e._met=1; alertShout(e); }
-  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=60; e.speed*=1.18; floatText(e.x,e.y-e.h-20,"DERRICK SNAPS!","#ff5ab0"); shake=14; flash=Math.max(flash,0.4); for(let k=0;k<28;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(20,40),c:k%2?"#ff5ab0":"#ffd23b",r:rnd(2,4.5),glow:1}); }
+  if(e.hp<=e.maxhp*0.5&&e.phase===1){ e.phase=2; e.enrageT=60; e.speed*=1.18; floatText(e.x,e.y-e.h-20,"DERRICK SNAPS!","#ff5ab0"); sfx("voice_derrick_enrage"); shake=14; flash=Math.max(flash,0.4); for(let k=0;k<28;k++)particles.push({x:e.x+rnd(-30,30),y:e.y-rnd(10,e.h),vx:rnd(-2,2),vy:rnd(-3,-0.3),g:0.02,life:rnd(20,40),c:k%2?"#ff5ab0":"#ffd23b",r:rnd(2,4.5),glow:1}); }
   if(e.attackCd>0)e.attackCd--; const fast=e.phase===2;
   if(e.state==="phone"){ e.t++; if(e.t%12===0){ e.vx=(Math.random()<0.5?-1:1)*4.5; e.x=clamp(e.x+e.vx,40,LEVEL_W-40); } else e.vx=0;
-    if(e.t===20&&!e._hit){ flash=Math.max(flash,0.9); shake=Math.max(shake,8); sfx("sfx_power_up"); for(let k=0;k<16;k++)particles.push({x:e.x+rnd(-20,20),y:e.y-e.h*0.7,vx:rnd(-3,3),vy:rnd(-3,1),g:0,life:rnd(10,20),c:"#ffffff",r:rnd(2,5),glow:1}); if(adx<500){ player.blindT=100; floatText(player.x,player.y-HERO_H-8,"BLINDED!","#ffffff"); } e._hit=true; }
+    if(e.t===20&&!e._hit){ flash=Math.max(flash,0.9); shake=Math.max(shake,8); sfx("sfx_camera"); for(let k=0;k<16;k++)particles.push({x:e.x+rnd(-20,20),y:e.y-e.h*0.7,vx:rnd(-3,3),vy:rnd(-3,1),g:0,life:rnd(10,20),c:"#ffffff",r:rnd(2,5),glow:1}); if(adx<500){ player.blindT=100; floatText(player.x,player.y-HERO_H-8,"BLINDED!","#ffffff"); } e._hit=true; }
     if(e.t>54)e.state="idle"; return; }
   if(e.state==="sandal"){ e.t++; e.vx=0; if(e.t===12&&!e._hit){ throwSandal(e,dir); e._hit=true; } if(e.t>30)e.state="idle"; return; }
   if(e.state==="attack"){ e.t++; const hf=14,ht=26; if(e.t>=hf&&e.t<=ht&&!e._hit){ if(adx<e.range+e.hw&&Math.abs(player.y-e.y)<150){hitP(e,dir);e._hit=true;} } if(e.t>(fast?32:42))e.state="idle"; return; }
@@ -1914,18 +1925,18 @@ function buildShipDeck(){ LEVEL_W=5600; seg=3; cam.x=0;
   enemies=[]; projectiles=[]; pickups=[]; particles=[]; floaters=[]; ghosts=[]; slashArcs=[]; searchlights=[];
   blockTutDone=true; djumpTutDone=true; scene=null; shipDeck=null;
   platforms=[
-    {x:700,w:150,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
-    {x:1500,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
-    {x:2200,w:104,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1,floodcover:1},
-    {x:2820,w:60,top:GROUND_Y-50,sprite:"prop_bollard_ai",cover:1},
-    {x:3100,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
-    {x:3900,w:122,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
+    {x:700,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:1500,w:330,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:2200,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1,floodcover:1},
+    {x:2820,w:62,top:GROUND_Y-50,sprite:"prop_bollard_ai",cover:1},
+    {x:3100,w:330,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:3900,w:128,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
     /* SHOTTA'S ARENA (4300+): painted deck cover to break his line of fire. The
        sweeping burst and the thrown drums are only survivable behind something. */
-    {x:4340,w:104,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
-    {x:4620,w:150,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
-    {x:4980,w:270,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
-    {x:5320,w:122,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
+    {x:4340,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
+    {x:4620,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:4980,w:330,top:GROUND_Y-270,sprite:"prop_container_ai",cover:1},
+    {x:5320,w:128,top:GROUND_Y-102,sprite:"prop_winch_ai",cover:1},
   ];
   gaps=[]; shadows=[];
   waves=[
@@ -2184,8 +2195,13 @@ function spawnWave(){ if(waveIdx>=waves.length)return;
     let sx=w[1];
     if(!w[3]&&!BOSSES[w[0]]&&sx>cam.x-100&&sx<cam.x+VW+100)
       sx=clamp(player.face>=0?cam.x+VW+120:cam.x-120,60,LEVEL_W-60);
+    // ...but never into open water, and never into a corridor where a scripted
+    // lesson is about to run — that is how a goon ended up standing on the
+    // double-jump gap and walking into the block cutscene.
+    for(let g=0;g<14&&overGap(sx);g++)sx=clamp(sx+(player.face>=0?70:-70),60,LEVEL_W-60);
+    if(level===2&&seg===1&&!blockTutDone&&sx>1380&&sx<2120)sx=2120;
     const e=makeEnemy(w[0],sx);  if(w[2]){e.mode=w[2]; if(w[2]==="dormant"){e.state="idle"; if(level===2)e.face=1;} if(w[2]==="patrol"){e.gz=sx;e.patrolDir=-1;e.patrolSpan=440;}} if(w[3]==="roof"||w[3]==="deck"){ for(const pf of platforms){ if(Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; } } e._safeX=w[1]; } enemies.push(e);}
-  const _bt=waves[waveIdx][0][0]; if(_bt==="lt"||_bt==="shotta"||_bt==="derrick"||_bt==="fyah"||_bt==="gorgon"){bossActive=true; if(_bt==="lt")sfx("voice_razor_intro");bossTaunt=(_bt==="derrick"||_bt==="fyah"||_bt==="gorgon")?0:200; if(level===1||level===5){ stopMusic(); sfx("music_lt"); } } }
+  const _bt=waves[waveIdx][0][0]; if(_bt==="lt"||_bt==="shotta"||_bt==="derrick"||_bt==="fyah"||_bt==="gorgon"){bossActive=true; if(_bt==="lt")sfx("voice_razor_intro"); if(_bt==="derrick")sfx("voice_derrick_intro");bossTaunt=(_bt==="derrick"||_bt==="fyah"||_bt==="gorgon")?0:200; if(level===1||level===5){ stopMusic(); sfx("music_lt"); } } }
 function aliveCount(){return enemies.filter(e=>!e.dead && e.type!=="dog").length;}
 
 /* ---------- state ---------- */
@@ -2227,9 +2243,63 @@ const WH={x1:3150,x2:5550};
    parallax) and clipped to the WH span so the doorways read as walls and the
    art can't swim against the platforms bolted to it. The plate is trimmed so
    its own floor line is the image bottom, which is why it lands on GROUND_Y. */
+/* The warehouse seen from OUTSIDE, drawn either side of a doorway. Without this
+   the interior plate started at a bare vertical edge and read as a split screen
+   rather than as walking into a building. `dir` is which way the wall runs:
+   -1 = wall extends left of the door, +1 = right. */
+function drawWarehouseFront(doorX,dir){
+  const sx=doorX-cam.x, WALL=520, TOPY=48;
+  if(sx+ (dir<0?-WALL:WALL) < -60 && sx < -60)return;
+  if(sx > VW+60 && sx + (dir<0?-WALL:WALL) > VW+60)return;
+  ctx.save();
+  const x0 = dir<0 ? sx-WALL : sx;
+  // corrugated outer wall, colder and dirtier than the lit interior
+  const wg=ctx.createLinearGradient(0,TOPY,0,GROUND_Y);
+  wg.addColorStop(0,"#1b232b"); wg.addColorStop(1,"#2a3239");
+  ctx.fillStyle=wg; ctx.fillRect(x0,TOPY,WALL,GROUND_Y-TOPY);
+  ctx.fillStyle="rgba(0,0,0,0.22)";
+  for(let bx=0;bx<WALL;bx+=17)ctx.fillRect(x0+bx,TOPY,4,GROUND_Y-TOPY);
+  ctx.fillStyle="rgba(120,90,55,0.16)";                       // rust streaks
+  for(let bx=13;bx<WALL;bx+=61)ctx.fillRect(x0+bx,TOPY+40,7,GROUND_Y-TOPY-40);
+  ctx.fillStyle="#171d23"; ctx.fillRect(x0,TOPY-10,WALL,12);  // roof edge / gutter
+  ctx.fillStyle="#39434c"; ctx.fillRect(x0,TOPY-12,WALL,3);
+  // high strip windows, a couple lit from inside
+  for(let bx=40;bx<WALL-70;bx+=120){
+    ctx.fillStyle="#0d1319"; ctx.fillRect(x0+bx,TOPY+26,74,40);
+    ctx.fillStyle=(Math.floor((doorX+bx)/120)%3===0)?"rgba(255,206,140,0.30)":"rgba(120,150,175,0.10)";
+    ctx.fillRect(x0+bx+3,TOPY+29,68,34);
+    ctx.fillStyle="#0d1319";
+    for(let k=1;k<3;k++)ctx.fillRect(x0+bx+3+k*23,TOPY+29,3,34); }
+  // DOOR: a rolled-up shutter in a steel frame, the way in
+  const dw=104, dx=dir<0? sx-dw : sx;
+  ctx.fillStyle="#0a0e12"; ctx.fillRect(dx,GROUND_Y-190,dw,190);          // opening
+  ctx.fillStyle="#232b33"; ctx.fillRect(dx-8,GROUND_Y-206,dw+16,20);      // shutter box
+  ctx.fillStyle="rgba(255,255,255,0.05)";
+  for(let sy2=GROUND_Y-204;sy2<GROUND_Y-188;sy2+=5)ctx.fillRect(dx-8,sy2,dw+16,2);
+  ctx.fillStyle="#3d4a55"; ctx.fillRect(dx-8,GROUND_Y-190,8,190);         // jambs
+  ctx.fillRect(dx+dw,GROUND_Y-190,8,190);
+  ctx.fillStyle="#55636f"; ctx.fillRect(dx-8,GROUND_Y-192,dw+16,3);
+  // warm light spilling out of the opening onto the ground
+  const sp=ctx.createLinearGradient(0,GROUND_Y-190,0,GROUND_Y+40);
+  sp.addColorStop(0,"rgba(255,196,120,0.16)"); sp.addColorStop(1,"rgba(255,196,120,0)");
+  ctx.fillStyle=sp; ctx.beginPath();
+  ctx.moveTo(dx+4,GROUND_Y-190); ctx.lineTo(dx+dw-4,GROUND_Y-190);
+  ctx.lineTo(dx+dw+34,GROUND_Y+34); ctx.lineTo(dx-34,GROUND_Y+34); ctx.closePath(); ctx.fill();
+  // a caged lamp over the door
+  ctx.fillStyle="#20272e"; ctx.fillRect(dx+dw/2-11,GROUND_Y-232,22,12);
+  ctx.fillStyle="rgba(255,206,140,0.9)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-220,8,4,0,0,7); ctx.fill();
+  ctx.fillStyle="rgba(255,206,140,0.13)"; ctx.beginPath(); ctx.ellipse(dx+dw/2,GROUND_Y-214,30,16,0,0,7); ctx.fill();
+  // ground apron outside the door
+  ctx.fillStyle="#2b2a26"; ctx.fillRect(x0,GROUND_Y,WALL,VH-GROUND_Y);
+  ctx.fillStyle="rgba(0,0,0,0.30)";
+  for(let bx=0;bx<WALL;bx+=150)ctx.fillRect(x0+bx,GROUND_Y+4,2,VH-GROUND_Y);
+  ctx.restore(); }
 function drawWarehouse(){ if(level!==2||seg!==1)return;
   const im=images.bg_warehouse; if(!im)return;
   const L=WH.x1-cam.x, R=WH.x2-cam.x; if(R<-40||L>VW+40)return;
+  // OUTSIDE the doors: the building's own frontage, so the interior doesn't just
+  // begin at a hard vertical cut in mid-air.
+  drawWarehouseFront(WH.x1,-1); drawWarehouseFront(WH.x2,1);
   ctx.save(); ctx.beginPath(); ctx.rect(L,0,R-L,VH); ctx.clip();
   // world-locked and mirrored, anchored to WH.x1 so the plate never swims
   // against the platforms bolted to it and the repeats have no visible seam
@@ -2247,6 +2317,14 @@ function drawWarehouse(){ if(level!==2||seg!==1)return;
   ctx.fillStyle="rgba(196,180,140,0.10)"; ctx.fillRect(L,GROUND_Y,R-L,3);
   ctx.fillStyle="rgba(0,0,0,0.30)";
   for(let bx=WH.x1;bx<WH.x2;bx+=170)ctx.fillRect(bx-cam.x,GROUND_Y+4,2,VH-GROUND_Y);
+  // THRESHOLD: fade the plate into black at both doorways so the interior
+  // emerges out of the dark instead of starting at a hard vertical cut.
+  const FADE=190;
+  for(const [ex,dirn] of [[L,1],[R,-1]]){
+    const gx=ctx.createLinearGradient(ex,0,ex+dirn*FADE,0);
+    gx.addColorStop(0,"rgba(3,4,6,0.96)"); gx.addColorStop(0.45,"rgba(3,4,6,0.55)");
+    gx.addColorStop(1,"rgba(3,4,6,0)");
+    ctx.fillStyle=gx; ctx.fillRect(Math.min(ex,ex+dirn*FADE),0,FADE,VH); }
   ctx.restore(); }
 /* Inside the freighter. Same world-locked, canvas-drawn approach as the
    warehouse, but read as a HULL: riveted plate, curved frame ribs closing in
@@ -2369,7 +2447,12 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   g.addColorStop(0,"#0a1326");g.addColorStop(0.6,"#0c1a2b");g.addColorStop(1,"#0a141d");
   ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
   if(level===1){ drawParallax("bg_far",0.2,40,VW*1.2); drawParallax("bg_beach",0.5,0,VW*1.4); }
-  else if(level===3){ if(seg===2)drawBgMirror("bg_rooftop",0.5,VW*1.4); else drawBgStrip(["bg_street","bg_street2","bg_street3"],0.5,VW*1.45); }
+  else if(level===3){ if(seg===2)drawBgMirror("bg_rooftop",0.5,VW*1.4);
+    // Kemar's stitched Kingston strip: ONE pass across the whole street at
+    // half parallax, so no plate ever repeats
+    else if(images.bg_kingston){ const im=images.bg_kingston, w=Math.round(VH*(im.width/im.height));
+      ctx.drawImage(im,Math.round(-cam.x*0.5),0,w,VH); }
+    else drawBgStrip(["bg_street","bg_street2","bg_street3"],0.5,VW*1.45); }
   else if(level===4){ if(l4cell&&images.bg_cell){ ctx.drawImage(images.bg_cell,0,0,VW,VH); ctx.fillStyle="rgba(4,5,10,0.22)"; ctx.fillRect(0,0,VW,VH); } else { drawBgTile(images.bg_compound_ext?"bg_compound_ext":(images.bg_compound?"bg_compound":"bg_street"),0.55,VW*1.45); ctx.fillStyle="rgba(6,8,14,0.4)"; ctx.fillRect(0,0,VW,VH); } }
   else if(level===5){ drawBgTile(images.bg_throne?"bg_throne":(images.bg_rooftop?"bg_rooftop":"bg_compound"),0.5,VW*1.45); ctx.fillStyle="rgba(6,7,14,0.3)"; ctx.fillRect(0,0,VW,VH); }
   else if(seg===3){ /* weather deck is drawn by drawShipDeckBg() */ }
@@ -2433,18 +2516,24 @@ function drawShop(){ ctx.fillStyle="rgba(3,6,12,0.85)"; ctx.fillRect(0,0,VW,VH);
 function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-pf.w/2-360||x>VW+pf.w/2+360)continue;
   const baseY=pf.deckprop?DECK_Y:GROUND_Y;
   if(pf.deck){ const left=x-pf.w/2, top=pf.top, slab=34;
-    const dg=ctx.createLinearGradient(0,top,0,top+slab); dg.addColorStop(0,"#43505d"); dg.addColorStop(1,"#28323d"); ctx.fillStyle=dg; ctx.fillRect(left,top,pf.w,slab);
+    const dg=ctx.createLinearGradient(0,top,0,top+slab);
+    dg.addColorStop(0,dark?"#2b343e":"#43505d"); dg.addColorStop(1,dark?"#161c23":"#28323d");
+    ctx.fillStyle=dg; ctx.fillRect(left,top,pf.w,slab);
     ctx.fillStyle="rgba(13,18,24,0.5)"; for(let gx=left;gx<left+pf.w;gx+=60)ctx.fillRect(gx,top,2,slab);
     ctx.fillStyle="#5a6873"; ctx.fillRect(left,top,pf.w,5);
     ctx.strokeStyle="rgba(160,190,210,0.5)"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(Math.max(left,-4),top-24); ctx.lineTo(Math.min(left+pf.w,VW+4),top-24); ctx.stroke();
     for(let gx=left+14;gx<left+pf.w;gx+=90){ if(gx<-10||gx>VW+10)continue; ctx.beginPath(); ctx.moveTo(gx,top); ctx.lineTo(gx,top-24); ctx.stroke(); }
     ctx.fillStyle="#2b343d"; for(let gx=left+50;gx<left+pf.w;gx+=260){ if(gx<-10||gx>VW+10)continue; ctx.fillRect(gx,top-12,10,12); }
     continue; }
+  // Indoors everything sits in the warehouse's own gloom — the steel read far
+  // too bright against the painted plate.
+  const dark=(level===2&&seg===2)||(level===2&&seg===1&&pf.x>WH.x1&&pf.x<WH.x2);
   if(pf.step){ // one tread of a staircase: adjacent steps read as a stair run
     const left=x-pf.w/2, top=pf.top, riser=baseY-top;
-    const sg=ctx.createLinearGradient(0,top,0,baseY); sg.addColorStop(0,"#4a5665"); sg.addColorStop(1,"#232c36");
+    const sg=ctx.createLinearGradient(0,top,0,baseY);
+    sg.addColorStop(0,dark?"#2b323b":"#4a5665"); sg.addColorStop(1,dark?"#141920":"#232c36");
     ctx.fillStyle=sg; ctx.fillRect(left,top,pf.w,riser);
-    ctx.fillStyle="#6a7a8a"; ctx.fillRect(left,top,pf.w,4);                  // tread nosing
+    ctx.fillStyle=dark?"#414c57":"#6a7a8a"; ctx.fillRect(left,top,pf.w,4);   // tread nosing
     ctx.fillStyle="rgba(0,0,0,0.45)"; ctx.fillRect(left,top+4,pf.w,3);       // shadow under it
     ctx.fillStyle="rgba(255,220,120,0.16)";                                   // grip stripe
     for(let gx=left+5;gx<left+pf.w-4;gx+=9)ctx.fillRect(gx,top+1,4,2);
@@ -2454,9 +2543,14 @@ function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-p
     for(let r=0;r<rows;r++)ctx.drawImage(sc.cv, x-pf.w/2, baseY-(r+1)*uh, pf.w, uh);
     ctx.fillStyle="rgba(150,180,200,0.4)";ctx.fillRect(x-pf.w/2,pf.top,pf.w,2); continue; }
   const s=sprites[pf.sprite];
-  if(s){ const h=baseY-pf.top+5; ctx.drawImage(s.cv, x-pf.w/2, pf.top, pf.w, h);
-    if(pf.roof){ ctx.fillStyle="#39444f";ctx.fillRect(x-pf.w/2,pf.top,pf.w,7); ctx.fillStyle="#262d36";for(let gx=x-pf.w/2;gx<x+pf.w/2;gx+=22)ctx.fillRect(gx,pf.top,2,7); ctx.fillStyle="rgba(150,180,200,0.55)";ctx.fillRect(x-pf.w/2,pf.top,pf.w,2); }
-    else { ctx.fillStyle="rgba(130,160,180,0.16)"; ctx.fillRect(x-pf.w/2,pf.top,pf.w,2); } }
+  if(s){ const h=baseY-pf.top+5;
+    // Draw at the artwork's own aspect and sit it ON the ground. Stretching a
+    // prop to fill its collision box is what made the new deck props look
+    // squashed and cut off — the box is for hitting, not for framing.
+    const dw=pf.fit?pf.w:s.w*(h/s.h);
+    ctx.drawImage(s.cv, x-dw/2, pf.top, dw, h);
+    if(pf.roof){ ctx.fillStyle="#39444f";ctx.fillRect(x-dw/2,pf.top,dw,7); ctx.fillStyle="#262d36";for(let gx=x-dw/2;gx<x+dw/2;gx+=22)ctx.fillRect(gx,pf.top,2,7); ctx.fillStyle="rgba(150,180,200,0.55)";ctx.fillRect(x-dw/2,pf.top,dw,2); }
+    else { ctx.fillStyle="rgba(130,160,180,0.16)"; ctx.fillRect(x-dw/2,pf.top,dw,2); } }
   else{ctx.fillStyle="#2a3340";ctx.fillRect(x-pf.w/2,pf.top,pf.w,baseY-pf.top);} } }
 function healthBar(x,y,w,h,frac,col){ctx.fillStyle="rgba(0,0,0,0.6)";ctx.fillRect(x-1,y-1,w+2,h+2);ctx.fillStyle="#20131a";ctx.fillRect(x,y,w,h);ctx.fillStyle=col;ctx.fillRect(x,y,w*clamp(frac,0,1),h);}
 function drawCat(){ if(!cat.active)return; const x=cat.x-cam.x, y=GROUND_Y+16; ctx.save(); ctx.translate(x,y); ctx.scale(cat.dir,1); ctx.fillStyle="#0c0c10";
