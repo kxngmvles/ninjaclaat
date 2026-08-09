@@ -390,3 +390,47 @@ contact). Point-blank he gun-butts (`shotta_butt*`) with heavy knockback.
 **preview_scene.py** now preloads backdrop images (`--images bg_deck`) and calls
 every listed function in order. Image-based scenes rendered EMPTY before, which
 looked like broken draw code — it was just `images={}`.
+
+### 2026-08-09 (5) — L3 goes video, Derrick redesigned, warehouse cross-section
+
+**Every L3 character now moves from sliced video** (Kemar's rule). wan2_7 with
+each character's existing magenta idle as `start_image`:
+Derrick walk/photo/kick/enrage, Fyah walk/punch/cast, and bat, knife, molotov
+and shield each walk + attack. Walks use `--loop`, attacks don't.
+
+**MIRROR types must be generated FACING LEFT.** `MIRROR={knife:1,fyah:1}` means
+their native art faces left and the engine flips for right. Prompt those two
+"facing LEFT" or every frame comes out flipped in game.
+
+**Derrick is redesigned**: hard, humourless, deeply lined, no grin (Kemar: "he
+needs to be serious not smiling, and have more wrinkles"). New `derrick_idle` is
+a local pre-keyed PNG scaled to the OLD idle's body height so nothing else
+shifts. His enrage aura is a full RAINBOW and holds its last two poses;
+`enrageT` 60 -> 112 to cover it.
+
+**Sound routing** (Kemar corrected me): `Camera.mp3` is the shutter on the photo
+flash. `Derrick camera.mp3` is his enrage SHOUT and fires when he starts taking
+pictures, not when he snaps. The enrage animation itself gets `powerSurge()` — a
+synthesised rising sub sweep + detuned square + noise discharge, no asset —
+reused for Shotta. `there-goes-another-victim` plays only when Shotta is the one
+who kills you.
+
+**The warehouse is ONE building in cross-section.** The previous attempt drew a
+separate frontage beside the interior with its own lower roofline, so the outside
+was visibly shorter than the inside. Now: one roof band across the whole span
+overhanging both ends, a full-height end wall at each end with a doorway punched
+through it, and the interior plate clipped BELOW the same eaves line
+(`WH_ROOF`/`WH_EAVE`/`WH_WALL`). Interior also fades to black at both thresholds.
+
+**Deck backdrop is option A** (container canyon under floodlights). Generating
+four and letting Kemar pick beat guessing — he rejected two earlier attempts.
+
+**Sprite props must NOT be stretched to their collision box.** `drawPlatforms`
+was drawing `pf.w x (baseY-pf.top)`, which squashed every generated prop. It
+draws at the ART's aspect now (`s.w*(h/s.h)`), and the boxes were resized to
+match. Pass `fit:1` on a platform to opt back into stretching.
+
+**preview_scene.py copies scalar consts too.** A scene referencing one the
+harness hadn't copied threw ReferenceError and rendered an EMPTY frame, which is
+indistinguishable from broken draw code. Check the console before believing a
+blank preview.
