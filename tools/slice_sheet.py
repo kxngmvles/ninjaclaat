@@ -69,6 +69,16 @@ def key_background(a):
         ch[fringe] = ch[fringe] * 0.35 + lum[fringe] * 0.65
         out[..., c] = np.clip(ch, 0, 255).astype(np.uint8)
     out[..., 3] = np.where(bgmask, 0, 255)
+    # Models like to draw a baseline under the row even when told not to. A thin
+    # dark rule spanning most of the sheet is never character art — a body lying
+    # down covers a fraction of the width — and if left in it welds every figure
+    # into one blob and pads every frame's bbox.
+    keep = ~bgmask
+    lum = (0.30 * r + 0.59 * g + 0.11 * b)
+    wide = (keep.sum(axis=1) > a.shape[1] * 0.72)
+    for y in np.where(wide)[0]:
+        if lum[y][keep[y]].mean() < 70:
+            out[y, :, 3] = 0
     return out
 
 def body_height(a):
@@ -83,6 +93,87 @@ def body_height(a):
     wide = np.where(rows > rows.max() * 0.22)[0]
     top = wide.min() if len(wide) else ys.min()
     return max(1, int(ys.max() - top))
+
+def foot_anchor(seg, mode="foot"):
+    """(x, y) of the frame's ground contact: y = lowest opaque row, x = median
+    column across the bottom few rows. Using only the contact rows means a
+    kicking leg thrown out mid-air doesn't drag the anchor sideways the way a
+    bbox centre or a full centre-of-mass does.
+
+    mode="centre" anchors on the centre of mass instead — for airborne frames
+    (a flip) there is no ground contact, and the game is already moving the
+    sprite with jump physics, so the pose has to spin in place."""
+    al = seg[..., 3] > 24
+    ys, xs = np.where(al)
+    if not len(ys):
+        return seg.shape[1] // 2, seg.shape[0] - 1
+    if mode == "centre":
+        return int(np.median(xs)), int(np.median(ys))
+    ymax = int(ys.max())
+    band = max(1, int(round(seg.shape[0] * 0.06)))
+    sel = ys >= ymax - band
+    return int(np.median(xs[sel])), ymax
+
+def bleed_rgb(a):
+    """Flood transparent pixels with the colour of the nearest opaque one.
+
+    Keying only clears ALPHA — the cleared pixels keep their magenta RGB. Any
+    later resample (every set gets scaled to the reference height) blends those
+    hidden magenta values back in across the silhouette, which is where the
+    purple fringing on the sliced frames was coming from. Nothing here changes
+    a visible pixel; it only fixes what the filter picks up from behind them."""
+    op = a[..., 3] > 0
+    if not op.any() or op.all():
+        return a
+    idx = ndimage.distance_transform_edt(~op, return_distances=False, return_indices=True)
+    out = a.copy()
+    for c in range(3):
+        out[..., c] = a[..., c][tuple(idx)]
+    return out
+
+def body_centre(seg):
+    """Horizontal centre of the TORSO/legs — the widest rows — so an outflung
+    arm, blade or pipe doesn't drag the centre off the character."""
+    al = seg[..., 3] > 24
+    rows = al.sum(axis=1)
+    if not rows.max():
+        return seg.shape[1] / 2
+    wide = np.where(rows > rows.max() * 0.35)[0]
+    cols = np.where(al[wide].any(axis=0))[0]
+    return float(np.median(cols)) if len(cols) else seg.shape[1] / 2
+
+def union_pack(segs, mode="foot"):
+    """Put every frame on ONE canvas, aligned by its foot anchor.
+
+    Per-frame cropping is what makes a sliced set jitter: each frame gets its
+    own bbox, so the figure snaps around as limbs change the box. Aligning on
+    the ground contact instead keeps the feet planted and lets the body move
+    within a fixed frame — same property the video pipeline gets from union
+    cropping, but it survives sheets whose cells aren't evenly spaced."""
+    anchors = [foot_anchor(s, mode) for s in segs]
+    # Frames stay locked to each other by the ground anchor (that's what stops
+    # the jitter), but the SET is then shifted so the average torso lands on the
+    # canvas centre — the engine draws every sprite centred on the entity's x,
+    # and a body sitting 25px to one side of its own hitbox makes the hero look
+    # like he is swinging past enemies he cannot actually reach. Centring each
+    # frame's body individually would bring the jitter straight back.
+    m = float(np.mean([body_centre(s) - ax for s, (ax, _) in zip(segs, anchors)]))
+    need_l = max(ax for ax, _ in anchors)
+    need_r = max(s.shape[1] - ax for s, (ax, _) in zip(segs, anchors))
+    half = int(np.ceil(max(need_l + m, need_r - m)))
+    ap = int(round(half - m))                       # where the anchor sits
+    up = max(ay + 1 for _, ay in anchors)
+    down = max(s.shape[0] - ay - 1 for s, (_, ay) in zip(segs, anchors))
+    if mode == "centre":            # airborne: centre vertically too
+        up = down = max(up, down)
+    W, H = half * 2, up + down      # foot mode keeps the anchor on the baseline
+    out = []
+    for s, (ax, ay) in zip(segs, anchors):
+        canvas = np.zeros((H, W, 4), np.uint8)
+        x0, y0 = ap - ax, up - ay - 1
+        canvas[y0:y0 + s.shape[0], x0:x0 + s.shape[1]] = s
+        out.append(canvas)
+    return out
 
 def _content_range(profile, floor):
     occ = np.where(profile > floor)[0]
@@ -113,22 +204,24 @@ def component_figures(a, expect):
     alpha = a[..., 3] > 24
     if not alpha.any():
         return None
-    colsum = alpha.sum(axis=0)
-    x0, x1 = _content_range(colsum, max(2, int(a.shape[0] * 0.006)))
-    cells = seam_cut(colsum, x0, x1, expect)
     lab, n = ndimage.label(alpha)
-    if n < 1:
+    if n < expect:
         return None
     sizes = ndimage.sum(alpha, lab, range(1, n + 1))
-    groups = [np.zeros_like(alpha) for _ in range(expect)]
+    # The `expect` LARGEST blobs are the bodies. Anchoring on them beats cutting
+    # the row into even cells: models space figures unevenly and crowd them to
+    # one side, and an even cut then hands one figure's dropped weapon (or a
+    # boot) to its neighbour and leaves another cell empty.
+    cores = sorted((int(i) + 1 for i in np.argsort(sizes)[::-1][:expect]),
+                   key=lambda i: ndimage.center_of_mass(lab == i)[1])
+    groups = [lab == i for i in cores]
+    cxs = [ndimage.center_of_mass(g)[1] for g in groups]
     for i in range(1, n + 1):
-        if sizes[i - 1] < alpha.size * 0.0004:      # speck
+        if i in cores or sizes[i - 1] < alpha.size * 0.00002:   # core, or speck
             continue
-        m = lab == i
-        cx = ndimage.center_of_mass(m)[1]
-        k = min(range(expect), key=lambda j: 0 if cells[j][0] <= cx < cells[j][1]
-                else min(abs(cx - cells[j][0]), abs(cx - cells[j][1])))
-        groups[k] |= m
+        m = lab == i                                # dropped weapon / stray limb
+        cx = ndimage.center_of_mass(m)[1]           # -> joins the nearest body
+        groups[min(range(expect), key=lambda j: abs(cx - cxs[j]))] |= m
     figs = []
     for m in groups:
         if not m.any():
@@ -256,17 +349,22 @@ def main():
     tallest = max(heights)
     scale = (ref_h / tallest) if ref_h else 1.0
 
-    for i, (f, h) in enumerate(zip(figs, heights)):
+    segs = []
+    for f in figs:
         seg = cut_seg(f)
         ys, xs = np.where(seg[..., 3] > 24)
-        seg = seg[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
-        im = Image.fromarray(seg)
+        segs.append(seg[ys.min():ys.max() + 1, xs.min():xs.max() + 1])
+    segs = union_pack(segs)
+
+    for i, seg in enumerate(segs):
+        im = Image.fromarray(bleed_rgb(seg))
         if scale != 1.0:
             im = im.resize((max(1, round(im.width * scale)),
                             max(1, round(im.height * scale))), Image.LANCZOS)
         name = f"{args.out_prefix}{args.start + i}.png"
         im.save(os.path.join(args.outdir, name))
-        print(f"  {name}: {im.width}x{im.height}")
+    print(f"  wrote {len(segs)} frames -> {args.out_prefix}{args.start}.."
+          f"{args.start + len(segs) - 1}  ({im.width}x{im.height}, foot-aligned)")
 
 if __name__ == "__main__":
     main()

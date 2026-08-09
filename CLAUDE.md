@@ -149,3 +149,200 @@ entries correct for the aura inflating the bbox (HSCALE[key] = body/idle_body).
   (no HSCALE needed — the bbox/body cancel out, see the note in that session).
 - Power-up = `nc_pwr1..5` (5-frame sequence). Real recorded `sword_slash.mp3`
   (`sfx_sword`) now backs sfx_slash; bladeSlash() WebAudio layers under heavy.
+
+### 2026-08-09 — combo rework, Katana-Zero FX, L2 interior, L2 enemy sheets
+
+**The 3-hit combo looked like one move because it WAS one move.** slash1/2/3 are
+three takes of the same overhead-to-low sweep. No amount of retiming fixes that.
+Combo is now spin cut (`nslash1..17`, from Kemar's external sheet) -> overhead
+sweep (`slash2_*`) -> kick (`kick1..4`, sliced at last from `combo3_sheet.png`,
+which had sat unused while the build used the single-frame `nc_kick` still).
+ATK.d removed — a 4th swing only ever read as the 2nd one again.
+
+**tools/slice_sheet.py — three fixes, all learned the hard way:**
+- **Foot-anchored union packing** (`union_pack`). Per-frame cropping is what made
+  sliced sets jitter; every frame now sits on ONE canvas aligned by its ground
+  contact (median x of the bottom 6% of rows, so a kicking leg doesn't drag the
+  anchor). `mode="centre"` anchors on centre of mass instead — for airborne
+  frames, where the game's own jump physics is already moving the sprite.
+  New sets need no ASCALE entry.
+- **Body-anchored blob grouping.** `component_figures` used to cut the row into
+  even cells; models space figures unevenly and crowd them to one side, so a
+  dropped weapon went to the neighbour and a cell came out empty. Now the
+  `expect` LARGEST blobs are the bodies and every stray blob joins the nearest.
+- **Baseline removal** in `key_background`: a thin dark rule spanning >72% of the
+  sheet is never art. Left in, it welds every figure into one blob.
+
+**Generated sheets weld together.** The first bruiser sheets came back as TWO
+connected components — the figures physically touched, so NO splitter can
+separate them. Check the component count before trusting a slice:
+`ndimage.label(alpha)` should give >= frame count. The fix is regeneration with
+"figures at ~60% height, WIDE EMPTY MAGENTA GAP between each, nothing may touch
+or overlap the neighbour" — not more clever slicing. Blade/gunner were fine
+first time; only wide figures with long weapons collide.
+
+**New L2 enemy movesets**: `{gunner,bruiser,blade}_atk1..5` + `_die1..5`,
+nano_banana_pro at 4k 21:9, each with its existing `*_idle` CDN sprite imported
+via `media_import_url` as the reference (keeps them on-model).
+**`die1` is the standing stagger, so it doubles as the `hurt` pose** — a recoil
+is just the first beat of a death. Saved generating three more frames.
+
+**EFPS was starving every multi-frame enemy anim.** attack was 5.5fps inside a
+~25-frame window, so goonA's 5-frame swing only ever reached frame 2. Now
+attack/attack2 11, shoot 24 (10-frame burst window), dead 5.5 (fades over 70).
+
+**Slash FX**: the geometric half-circle fired on every swing including whiffs and
+fought the green trail baked into the video frames. Replaced by `slashGash()` —
+a tapered cut placed ON the enemy hit, white core over a coloured bloom, ~6
+frames — plus a screen flash on connect. Never drawn on a miss.
+
+**Power-up** holds now: fps 7->5 and `nc_pwr5` repeated x4 (same trick as Razor's
+enrage sitting on lt_enr3), `powerupT` 48->96, iframes for the whole pose, and
+the hurt-blink suppressed so it doesn't strobe through the moment.
+
+**L2 rebuilt vertical.** Steps before the pit are one container row (138px) —
+a single jump clears ~149 (JUMP_V/G) and the double jump is still being taught
+there; past it, two-row stacks and catwalks needing both. `gaps[0]` still gates
+the djump lesson, `x>1880` still gates the block lesson — keep those anchors.
+New **warehouse interior** at x2300-3280 (`WH`/`drawWarehouse`): drawn in canvas,
+WORLD-LOCKED (no parallax) so it can't swim against the platforms bolted to it,
+clipped to its own span so the doorways read as walls. `dryPit(x)` makes pits
+inside it drop into dark instead of harbour water.
+
+**tools/build.py** — node --checks all three dist files then inlines them into
+index.html. Use it instead of hand-editing the three `<script>` blocks.
+**tools/contact_sheet.py** — renders a sliced set at HERO_H on the game bg with
+the ground line drawn through. Frames that look fine at full res still jitter in
+game; this is how you catch it.
+
+**Payload ceiling**: sprite frames are stored at nc_idle's native scale (~1800px)
+because famH() sizes every frame relative to it. The new sets add ~40MB. Fixing
+it means downscaling every set at once plus HSCALE entries — not worth it until
+first-load time actually hurts.
+
+### 2026-08-09 (later) — combat feel, L2 three-segment rebuild, ship interior
+
+**The reach complaint and the "no stagger" complaint were mostly ONE bug.**
+`union_pack` sized each canvas to its content, so the hero's torso sat up to
+**25px to one side of player.x** — he visually swung past enemies his hitbox
+never reached, so nothing connected, so nothing ever flinched. Frames are now
+foot-locked to each other (no jitter) and the SET is shifted so the mean
+`body_centre()` lands on the canvas centre. Every set measures mean 0.0px.
+**Any new frame set must go through union_pack or it will be off-centre.**
+Reach was also nudged (a 70→80, b 66→76, kick 84→90) as insurance.
+
+**Real hitstun**: `hurtT` 12 → 20 (bosses 9, so they can't be stun-locked), plus
+`state="hurt"` and `attackCd>=28` on hit. A 12-frame flinch let goons walk
+straight back into the swing they were already winding up.
+
+**`nc_block1..3` are authored at HALF resolution** (1024px vs nc_idle's 2048),
+so famH sized the block stance at exactly 60px. `HSCALE 0.5` fixes it. Check
+source height before blaming the pose when a sprite renders small.
+
+**The dog walked on water** because the stealth patrol stride `return`s before
+the shared over-gap check further down. Both the patrol and chase strides now
+refuse to step into a gap.
+
+**A `gap` makes GROUND_Y itself non-solid.** Do not use one to mean "hole in an
+upper walkway" — the player falls THROUGH the floor below and takes fall damage.
+Just leave a space between platforms; they land on the ground normally.
+
+**Tutorial triggers now require `player.y>=GROUND_Y-2`.** The block lesson
+spawns a gunner firing along the ground line, so triggering it from a crate put
+the player above every shot. The 1800-2350 stretch is also deliberately FLAT —
+don't put anything standable there.
+
+**L2 is three segments now**: dock (`buildHarbour`, 5600 wide) -> **ship interior**
+(`buildShipHold`, seg 2, 4200 wide) -> weather deck (`buildShipDeck`, now **seg 3**).
+`shipfade` dispatches on the OLD seg value. Anything testing `level===2&&seg===2`
+for "the deck" had to become `seg===3`.
+
+**New `crew` enemy** — boat-hook deckhands, `crew_pose1..5` (idle + 4 walk),
+`crew_atk1..5`, `crew_die1..5`, plus `crew_idle` aliased to pose1 because
+`drawEnemy` sizes every enemy via `famH(key, type+"_idle", h)`. **Add that alias
+for any new enemy type** or it renders unnormalized.
+
+**Generated sheets drift between prompts.** The crew's overalls came back worn
+UP in the walk/death sheets and peeled DOWN in the attack sheet. Fix by
+regenerating the odd one out with a PRIOR JOB ID as the reference image
+(`medias:[{role:"image",value:"<job-id>"}]`) and restating the outfit explicitly.
+
+**Video for enemy animation** (`--bg magenta` on video_to_frames.py): wan2_7 with
+the magenta idle sprite as `start_image` and "LOCKED STATIC CAMERA" in the prompt.
+Motion blur smears the character THROUGH the magenta, leaving contaminated bands
+far wider than the fringe despill — a whole swinging pipe came out purple. The
+surviving smear is DARK magenta (r,b under 65, g near zero), so `key_magenta`
+flattens it to luminance with deliberately low thresholds. **Not safe for a
+character with genuinely red parts** (the knife fighter's bandana).
+
+**EFPS was starving enemy anims** (see prior entry) — attack 11, shoot 24, dead 5.5.
+
+**New tools**: `tools/build.py` (parse-check + inline), `tools/contact_sheet.py`
+(renders a set at HERO_H on the game bg), `tools/preview_scene.py` (pulls a draw
+function OUT of dist/game.js by brace-matching and renders it standalone, so what
+gets eyeballed is what ships).
+
+**`voice_goon3` is dead for real** — 403 with and without the malformed UUID tail,
+the file was never uploaded. Set to `""` so loadSound no-ops instead of firing
+three failed requests per load. `bg_beach` (403, dead bucket) still needs
+regenerating — it's L1's beach parallax layer.
+
+### 2026-08-09 (3) — walkable stairs, ship deck, minigun Shotta, video-first rule
+
+**RULE FROM KEMAR: every MOVEMENT animation now comes from a generated video,
+sliced — not from a still sprite strip.** Stills are only for single poses.
+`video_to_frames.py --bg magenta` + wan2_7 with the character's magenta idle as
+`start_image` and "LOCKED STATIC CAMERA" is the pipeline.
+
+**`--loop` for cycles.** A 4s walk clip holds several strides; sampling evenly
+across all of them gives frames that never repeat and the cycle stutters. `--loop`
+finds the ONE stride that closes on itself (min frame-to-frame difference over
+period 12-45), then samples inside it. Search runs on 1/8-scale frames — at full
+res it takes minutes.
+
+**Transparent pixels keep their magenta RGB.** Keying only clears ALPHA, so every
+later LANCZOS resize pulled hidden background magenta back in along the
+silhouette — that was the purple fringing, NOT a bad chroma threshold.
+`bleed_rgb()` floods transparent pixels with the nearest opaque colour before any
+resize. Wired into BOTH pipelines. Do not remove it.
+
+**Magenta spill over dark cloth goes VIOLET** (blue ends up above red), so
+key_magenta tests "blue AND red both clearly above green" rather than a magenta
+ratio. Navy, teal and blue-grey garments sit at or below green on b-g and survive.
+
+**STAIRS**: `step:1` platforms plus a STEP_UP=46 auto-step in the player physics.
+Walking into a tread lifts you onto it and off the far side. The gate is
+`player.onGround` — LAST frame's value — which is what makes stepping DOWN work,
+since the landing check can't have fired yet. Treads must ABUT in x (58 wide,
+58 apart) and rise <= STEP_UP, or it reads as floating platforms again.
+**`tools/check_level.py` validates this** — every stair run must connect at both
+ends, every "roof" spawn must land on a real platform. Run it after any layout edit.
+
+**Enemies no longer pop in on screen.** `spawnWave` pushes any spawn whose
+authored x is on camera to just past the edge the player is walking toward, so
+they walk in. Skipped for "roof" spawns (they'd miss their walkway) and bosses.
+Patrol anchors use the RELOCATED x, not the authored one.
+
+**L2 seg1 is 7200 wide**, warehouse 3150-5550 with THREE stair runs and no floor
+pit (Kemar: no drop in the warehouse). Ship hold is 5200 with two stair runs.
+
+**Ship deck (seg 3) is drawn, not a backdrop image**: horizon, sea, parallaxing
+deckhouse with lit windows, container stacks, guard rail, deck plating (the
+segment previously rendered NO ground band), and props sized off HERO_H — bollard
+knee-high, vent chest-high, winch waist-high. Searchlight mast is a braced
+lattice tower now, not `fillRect(sx-4,sy,8,h)`.
+
+**SHOTTA**: 380hp, video walk/run/reload (the reload clip actually DROPS the
+magazine — the old 2-frame version left it hanging in mid-air), a backward ROLL
+when you close to melee, and a SWEEP that walks a wall of fire across the deck.
+Phase 2 swaps to a **minigun** (`shotta_mg1..7`) — `eState` forces every armed
+pose to come from that set or the weapon pops in and out of his hands. Crates at
+4380/4760/5060 give you something to break line of fire behind.
+
+**L3 backdrop** uses `drawBgStrip(["bg_street","bg_street2","bg_street3"])` —
+different plates side by side instead of tiling one shopfront every 1400px.
+
+**tools/preview_scene.py** calls EVERY listed function in order (it used to call
+only the last, which silently rendered an empty scene). It emits a half-size JPEG
+and posts it to a local sink, because a full-res PNG data URL is too big to read
+back through the tool channel.

@@ -79,10 +79,15 @@ window.STR = {
   block_learned: "GUARD LEARNED — hold B to spin the blade",
   djump_learned: "DOUBLE JUMP — press jump again in mid-air",
   level2_board: [
-    {s:"", t:"The freighter looms over the pier, its hull lost in the rain far above.", n:""},
-    {s:"DUPREE", t:"That's her. The whole shipment's aboard. Step on deck and the quiet's over — it's all their ground up there.", n:""},
-    {s:"NINJACLAAT", t:"Then I stop being quiet.", n:""},
-    {s:"DUPREE", t:"Shotta runs that deck for Don Gorgon. Go end it.", n:""}
+    {s:"", t:"The freighter looms over the pier, its hull lost in the rain far above. A stern stairway hangs open at the waterline.", n:""},
+    {s:"DUPREE", t:"That's her. The whole shipment's aboard. Don't take the gangway — go in low, through the hold, and come up behind them.", n:""},
+    {s:"NINJACLAAT", t:"Then I go in low.", n:""},
+    {s:"DUPREE", t:"Climb till you see sky. Shotta runs the deck for Don Gorgon.", n:""}
+  ],
+  level2_hatch: [
+    {s:"", t:"The hold falls away below. Rain hammers the hatch overhead, and the deck lights bleed through the seams.", n:""},
+    {s:"DUPREE", t:"That's sky. Push that hatch and the quiet's over — it's all their ground up there.", n:""},
+    {s:"NINJACLAAT", t:"Good. I'm done creeping.", n:""}
   ],
   derrick_name: "DERRICK — STREET TYRANT",
   fyah_name: "FYAH — DON GORGON'S RIGHT HAND",

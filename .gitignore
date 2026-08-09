@@ -1,0 +1,6 @@
+# Raw generation source: recorded clips, 4k model sheets, sliced intermediates.
+# ~200MB and the game never loads any of it — only the keyed frames copied to
+# the repo root ship. Keep it local.
+anim_src/
+tools/__pycache__/
+_scene_*.html
