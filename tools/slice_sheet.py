@@ -131,6 +131,26 @@ def bleed_rgb(a):
         out[..., c] = a[..., c][tuple(idx)]
     return out
 
+def defringe(a, strength=1.0):
+    """Flatten any surviving magenta-family pixel to its own luminance.
+
+    key_background only despills a 2px fringe, which is enough for a character
+    whose silhouette is busy but not for a hard-edged object: the generated
+    props all kept a visible pink outline along ropes, rims and edges. Objects
+    have no genuinely red or pink parts, so anything still reading magenta is
+    contamination. Do NOT use this on a character with red clothing."""
+    r, g, b = [a[..., i].astype(np.int16) for i in range(3)]
+    m = (a[..., 3] > 0) & (b - g > 10) & (r - g > 6)
+    if not m.any():
+        return a
+    lum = (0.30 * r + 0.59 * g + 0.11 * b)
+    out = a.copy()
+    for c in range(3):
+        ch = out[..., c].astype(np.float32)
+        ch[m] = ch[m] * (1 - strength) + lum[m] * strength
+        out[..., c] = np.clip(ch, 0, 255).astype(np.uint8)
+    return out
+
 def body_centre(seg):
     """Horizontal centre of the TORSO/legs — the widest rows — so an outflung
     arm, blade or pipe doesn't drag the centre off the character."""

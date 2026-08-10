@@ -48,12 +48,15 @@ def main():
     ap.add_argument("--platforms", default="", help="x:w:top:kind,... kind=deck|step")
     ap.add_argument("--images", default="",
                     help="comma-separated image keys to preload from the repo root")
+    ap.add_argument("--sprites", default="",
+                    help="comma-separated sprite keys to preload into sprites{} (props)")
     ap.add_argument("--out", default="_scene.html")
     args = ap.parse_args()
 
     src = open(os.path.join(REPO, "dist", "game.js"), encoding="utf-8").read()
     calls = "\n".join(f"{f}();" for f in args.fns)
     imgjs = "[" + ",".join('"%s"' % k for k in args.images.split(",") if k) + "]"
+    sprjs = "[" + ",".join('"%s"' % k for k in args.sprites.split(",") if k) + "]"
     bodies = "\n".join(grab(src, f) for f in args.fns)
 
     gaps = [g for g in args.gaps.split(",") if g]
@@ -80,6 +83,7 @@ function clamp(v,a,b){{return v<a?a:v>b?b:v;}}
 // Backdrops are <img>s. Draw only once they have actually decoded, or the scene
 // comes out empty and it looks like the draw code is broken.
 const NEED={imgjs};
+const NEEDSPR={sprjs};
 function draw(){{
 // night sky + a plain ground band, the way drawBackground lays them down first
 let g=ctx.createLinearGradient(0,0,0,VH);
@@ -98,10 +102,16 @@ document.body.appendChild(Object.assign(document.createElement('textarea'),
   {{id:'png',value:window.__png,style:'width:99%;height:40px'}}));
 document.title='rendered '+window.__png.length;
 }}
-let left=NEED.length;
+let left=NEED.length+NEEDSPR.length;
+const done=()=>{{ if(--left===0)draw(); }};
 if(!left)draw();
 for(const k of NEED){{ const im=new Image();
-  im.onload=im.onerror=()=>{{ images[k]=im; if(--left===0)draw(); }}; im.src='./'+k+'.png'; }}
+  im.onload=im.onerror=()=>{{ images[k]=im; done(); }}; im.src='./'+k+'.png'; }}
+// sprites are canvases in the engine ({{cv,w,h}}), so wrap each one the same way
+for(const k of NEEDSPR){{ const im=new Image();
+  im.onload=()=>{{ const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight;
+    c.getContext('2d').drawImage(im,0,0); sprites[k]={{cv:c,w:c.width,h:c.height}}; done(); }};
+  im.onerror=done; im.src='./'+k+'.png'; }}
 </script></body>"""
     path = os.path.join(REPO, args.out)
     open(path, "w", encoding="utf-8", newline="\n").write(html)

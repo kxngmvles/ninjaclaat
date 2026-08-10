@@ -558,7 +558,12 @@ function spriteForEnemy(e){ const m=EFR[e.type]; const st=eState(e); const frame
   // per-state clock (frames since this state began) — enemies don't advance
   // animT, so multi-frame attacks/deaths need this to play through
   if(e._dst!==st){ e._dst=st; e._dstT=0; } else { e._dstT=(e._dstT||0)+1; }
-  if((st==="walk"||st==="chase"||st==="patrol")&&frames.length>1) return frames[Math.floor(Math.abs(e.x)/24)%frames.length];
+  // Walks advance by DISTANCE so feet match the ground. The divisor used to be
+  // a flat 24px, which was tuned for 2-frame walks — an 8-frame cycle then
+  // needed 192px for one stride and the enemy visibly slid instead of
+  // walking. Keep the STRIDE constant (~76px) whatever the frame count.
+  if((st==="walk"||st==="chase"||st==="patrol")&&frames.length>1)
+    return frames[Math.floor(Math.abs(e.x)/(76/frames.length))%frames.length];
   if(frames.length<=1) return frames[0];
   const fps=EFPS[st]||9;
   if(st==="idle"||st==="fly") return frameKey(frames,now,fps,1)||frames[0];   // cyclic
@@ -1078,8 +1083,8 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     {x:3715,w:30,top:GROUND_Y-133,step:1},
     {x:3745,w:30,top:GROUND_Y-152,step:1},
     {x:4420,w:1360,top:GROUND_Y-152,deck:1,hide:1},  // UPPER FLOOR (drawn by drawWarehouseFloors)
-    {x:3900,w:139,top:GROUND_Y-278,sprite:"prop_crates_ai",cover:1},
-    {x:4180,w:89,top:GROUND_Y-248,sprite:"prop_drums_ai",cover:1},
+    {x:3900,w:139,top:GROUND_Y-278,base:GROUND_Y-152,sprite:"prop_crates_ai",cover:1},
+    {x:4180,w:89,top:GROUND_Y-248,base:GROUND_Y-152,sprite:"prop_drums_ai",cover:1},
     {x:4315,w:30,top:GROUND_Y-171,step:1},
     {x:4345,w:30,top:GROUND_Y-190,step:1},
     {x:4375,w:30,top:GROUND_Y-209,step:1},
@@ -1572,7 +1577,13 @@ function drawWarehouseFloors(){
   for(const f of WH_FLOORS){
     const l=f.x1-cam.x, r=f.x2-cam.x; if(r<-40||l>VW+40)continue;
     const TH=26;                                        // slab thickness
-    ctx.fillStyle="#0c1116"; ctx.fillRect(l,f.y+TH,r-l,10);          // ceiling shadow below
+    // The storey below is a separate ROOM, so it sits in its own shadow. Without
+    // this the same wall texture ran straight through the slab and the floor
+    // read as a bar hanging in open space rather than as a ceiling.
+    const rm=ctx.createLinearGradient(0,f.y+TH,0,f.y+TH+96);
+    rm.addColorStop(0,"rgba(4,6,9,0.80)"); rm.addColorStop(1,"rgba(4,6,9,0)");
+    ctx.fillStyle=rm; ctx.fillRect(l,f.y+TH,r-l,96);
+    ctx.fillStyle="#0c1116"; ctx.fillRect(l,f.y+TH,r-l,10);          // hard ceiling line
     const sg=ctx.createLinearGradient(0,f.y,0,f.y+TH);
     sg.addColorStop(0,"#3a444f"); sg.addColorStop(1,"#1a2129");
     ctx.fillStyle=sg; ctx.fillRect(l,f.y,r-l,TH);                    // the slab
@@ -1856,7 +1867,10 @@ function drawShop(){ ctx.fillStyle="rgba(3,6,12,0.85)"; ctx.fillRect(0,0,VW,VH);
   ctx.textAlign="center"; ctx.fillStyle="rgba(200,230,215,0.7)"; ctx.font="14px Trebuchet MS"; ctx.fillText(STR.shop_hint,VW/2,VH-38); ctx.textAlign="left"; }
 function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-pf.w/2-360||x>VW+pf.w/2+360)continue;
   if(pf.hide)continue;   // drawn as architecture by the level (warehouse floors)
-  const baseY=pf.deckprop?DECK_Y:GROUND_Y;
+  // A prop standing on an upper floor rests on THAT floor. Without this its
+  // art was stretched from its top all the way down to GROUND_Y, so it
+  // punched through the floor slab and read as floating.
+  const baseY=pf.base!=null?pf.base:(pf.deckprop?DECK_Y:GROUND_Y);
   // Declared BEFORE any branch that reads it. It used to sit below the deck
   // branch, so every frame with a catwalk on camera threw a temporal-dead-zone
   // ReferenceError and aborted the whole render after this function — the hero
@@ -2075,7 +2089,9 @@ function render(){ ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0); ctx.clearRect(
   for(const e of enemies)if(e.fly)drawEnemy(e);
   for(const e of enemies)if(!e.fly&&e.type!=="dog"&&e.y<=player.y)drawEnemy(e);
   drawPlayer();
-  if(player.crouch&&!player.dead){ for(const pf of platforms){ if(pf.cover&&Math.abs(player.x-pf.x)<pf.w/2+14){ const s2=sprites[pf.sprite]; if(s2){ctx.drawImage(s2.cv,(pf.x-cam.x)-pf.w/2,pf.top,pf.w,GROUND_Y-pf.top+5);} } } }
+  if(player.crouch&&!player.dead){ for(const pf of platforms){ if(pf.cover&&Math.abs(player.x-pf.x)<pf.w/2+14){ const s2=sprites[pf.sprite]; if(s2){
+    const bY=pf.base!=null?pf.base:GROUND_Y, hh=bY-pf.top+5, ww=pf.fit?pf.w:s2.w*(hh/s2.h);
+    ctx.drawImage(s2.cv,(pf.x-cam.x)-ww/2,pf.top,ww,hh);} } } }
   for(const e of enemies)if(!e.fly&&e.type!=="dog"&&e.y>player.y)drawEnemy(e);
   for(const e of enemies)if(e.type==="dog")drawEnemy(e);
   drawSearchlights(); drawProjectiles(); drawSlashArcs(); drawParticles(); drawFloaters();
