@@ -1913,7 +1913,7 @@ function tryTakedown(){ if(player.attacking||player.dashT>0||!player.onGround)re
   }
   return false;
 }
-function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
+function buildHarbour(){ LEVEL_W=9000; seg=1; boarded=false; fadeT=0;
   player.hasDash=true; player.has3combo=true; player.hasDoubleJump=false; player.hasBlock=false; player.cine=0;
   blockTutDone=false; djumpTutDone=false; scene=null; shipDeck=null;
   // A single jump clears ~149px (JUMP_V/G), so every step BEFORE the pit is one
@@ -1932,49 +1932,60 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     /* --- yard before the warehouse --- */
     {x:2560,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:2900,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
-    /* --- WAREHOUSE INTERIOR 3150-5550: a two-storey cross-section. Ground
-       floor, a full upper floor you fight along, and a catwalk above that.
-       Stairs at both ends and in the middle; cover on every level. --- */
-    {x:3300,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
-    {x:3450,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
-    {x:3535,w:30,top:GROUND_Y-19,step:1},
-    {x:3565,w:30,top:GROUND_Y-38,step:1},
-    {x:3595,w:30,top:GROUND_Y-57,step:1},
-    {x:3625,w:30,top:GROUND_Y-76,step:1},
-    {x:3655,w:30,top:GROUND_Y-95,step:1},
-    {x:3685,w:30,top:GROUND_Y-114,step:1},
-    {x:3715,w:30,top:GROUND_Y-133,step:1},
-    {x:3745,w:30,top:GROUND_Y-152,step:1},
-    {x:4420,w:1360,top:GROUND_Y-152,deck:1,hide:1},  // UPPER FLOOR (drawn by drawWarehouseFloors)
-    {x:3900,w:139,top:GROUND_Y-278,base:GROUND_Y-152,sprite:"prop_crates_ai",cover:1},
-    {x:4180,w:89,top:GROUND_Y-248,base:GROUND_Y-152,sprite:"prop_drums_ai",cover:1},
-    {x:4315,w:30,top:GROUND_Y-171,step:1},
-    {x:4345,w:30,top:GROUND_Y-190,step:1},
-    {x:4375,w:30,top:GROUND_Y-209,step:1},
-    {x:4405,w:30,top:GROUND_Y-228,step:1},
-    {x:4435,w:30,top:GROUND_Y-247,step:1},
-    {x:4465,w:30,top:GROUND_Y-266,step:1},
-    {x:4495,w:30,top:GROUND_Y-285,step:1},
-    {x:4525,w:30,top:GROUND_Y-304,step:1},
-    {x:4790,w:500,top:GROUND_Y-304,deck:1,hide:1},   // CATWALK (drawn by drawWarehouseFloors)
-    {x:5115,w:30,top:GROUND_Y-133,step:1},
-    {x:5145,w:30,top:GROUND_Y-114,step:1},
-    {x:5175,w:30,top:GROUND_Y-95,step:1},
-    {x:5205,w:30,top:GROUND_Y-76,step:1},
-    {x:5235,w:30,top:GROUND_Y-57,step:1},
-    {x:5265,w:30,top:GROUND_Y-38,step:1},
-    {x:5340,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
+    /* --- WAREHOUSE 3150-6750: THREE storeys in cross-section. Each level is
+       its own room with its own back wall (drawWarehouse), capped by a floor
+       slab (drawWarehouseFloors). You climb ground -> first -> second and
+       take the long stair down at the far end to the exit. --- */
+    {x:3260,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:3900,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
+    {x:5700,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:3415,w:30,top:GROUND_Y-19,step:1},   // stairs: ground -> first floor
+    {x:3445,w:30,top:GROUND_Y-38,step:1},
+    {x:3475,w:30,top:GROUND_Y-57,step:1},
+    {x:3505,w:30,top:GROUND_Y-76,step:1},
+    {x:3535,w:30,top:GROUND_Y-95,step:1},
+    {x:3565,w:30,top:GROUND_Y-114,step:1},
+    {x:3595,w:30,top:GROUND_Y-133,step:1},
+    {x:3625,w:30,top:GROUND_Y-152,step:1},
+    {x:4560,w:1880,top:GROUND_Y-152,deck:1,hide:1},   // FIRST FLOOR 3620-5500
+    {x:3820,w:139,top:GROUND_Y-278,base:GROUND_Y-152,sprite:"prop_crates_ai",cover:1},
+    {x:5240,w:89,top:GROUND_Y-248,base:GROUND_Y-152,sprite:"prop_drums_ai",cover:1},
+    {x:4415,w:30,top:GROUND_Y-171,step:1},   // stairs: first -> second floor
+    {x:4445,w:30,top:GROUND_Y-190,step:1},
+    {x:4475,w:30,top:GROUND_Y-209,step:1},
+    {x:4505,w:30,top:GROUND_Y-228,step:1},
+    {x:4535,w:30,top:GROUND_Y-247,step:1},
+    {x:4565,w:30,top:GROUND_Y-266,step:1},
+    {x:4595,w:30,top:GROUND_Y-285,step:1},
+    {x:4625,w:30,top:GROUND_Y-304,step:1},
+    {x:5370,w:1500,top:GROUND_Y-304,deck:1,hide:1},   // SECOND FLOOR 4620-6120
+    {x:5000,w:139,top:GROUND_Y-430,base:GROUND_Y-304,sprite:"prop_crates_ai",cover:1},
+    {x:6115,w:30,top:GROUND_Y-285,step:1},   // the long stair back down to the exit
+    {x:6145,w:30,top:GROUND_Y-266,step:1},
+    {x:6175,w:30,top:GROUND_Y-247,step:1},
+    {x:6205,w:30,top:GROUND_Y-228,step:1},
+    {x:6235,w:30,top:GROUND_Y-209,step:1},
+    {x:6265,w:30,top:GROUND_Y-190,step:1},
+    {x:6295,w:30,top:GROUND_Y-171,step:1},
+    {x:6325,w:30,top:GROUND_Y-152,step:1},
+    {x:6355,w:30,top:GROUND_Y-133,step:1},
+    {x:6385,w:30,top:GROUND_Y-114,step:1},
+    {x:6415,w:30,top:GROUND_Y-95,step:1},
+    {x:6445,w:30,top:GROUND_Y-76,step:1},
+    {x:6475,w:30,top:GROUND_Y-57,step:1},
+    {x:6505,w:30,top:GROUND_Y-38,step:1},
+    {x:6535,w:30,top:GROUND_Y-19,step:1},
     /* --- rear yard: containers out the back door, then the quay --- */
-    {x:5760,w:300,top:GROUND_Y-138,stack:1,rows:1},
-    {x:6060,w:300,top:GROUND_Y-276,stack:1,rows:2},
-    {x:6480,w:96,top:GROUND_Y-58,sprite:"prop_oildrum",cover:1},
-    {x:6900,w:300,top:GROUND_Y-96,stack:1,rows:1},  // solid ramp up to the ship, not a floating slab
+    {x:7000,w:300,top:GROUND_Y-138,stack:1,rows:1},
+    {x:7320,w:300,top:GROUND_Y-276,stack:1,rows:2},
+    {x:7700,w:96,top:GROUND_Y-58,sprite:"prop_oildrum",cover:1},
+    {x:8500,w:300,top:GROUND_Y-96,stack:1,rows:1},  // solid ramp up to the ship, not a floating slab
   ];
   // gaps[0] gates the double-jump lesson (drawn from the harbour water)
   // 1500-1668 = 168px. The player runs 3.0px/f and a jump lasts 43.9f, so a
   // single jump covers 131px and a double covers ~258px AT BEST. The old
   // 250px gap needed a frame-perfect apex double jump — effectively impassable.
-  gaps=[{x1:1500,x2:1668},{x1:6300,x2:6440}];   // no pit inside the warehouse
+  gaps=[{x1:1500,x2:1668},{x1:7900,x2:8060}];   // no pit inside the warehouse
   shadows=[];
   waves=[
     [["goonA",780,"dormant"]],
@@ -1994,7 +2005,7 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
            {x:6060,y:GROUND_Y-308,vy:null,kind:"herb",val:1,t:0},
            {x:2560,y:GROUND_Y-170,vy:null,kind:"herb",val:1,t:0}];
   searchlights=[{x:2180,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0},
-                {x:6180,sy:GROUND_Y-300,gy:GROUND_Y,range:210,half:50,t:0.7,sp:0.011,alarmCd:0}];
+                {x:7600,sy:GROUND_Y-300,gy:GROUND_Y,range:210,half:50,t:0.7,sp:0.011,alarmCd:0}];
   waveIdx=0; spawnWave();
 }
 /* ---- L2 seg 2: INSIDE the ship. You board at the stern stairs and fight your
@@ -2380,7 +2391,7 @@ function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let of
    parallax and clipped to its own span so the doorways read as walls. Built in
    canvas rather than as a backdrop image: everything is world-locked, so it
    doesn't swim against the platforms bolted to it, and it costs no payload. */
-const WH={x1:3150,x2:5550};
+const WH={x1:3150,x2:6750};
 /* L2 warehouse interior. This used to be built out of rectangles in canvas and
    read as "random shapes" — it's a painted backdrop now. Drawn WORLD-LOCKED (no
    parallax) and clipped to the WH span so the doorways read as walls and the
@@ -2394,7 +2405,7 @@ const WH={x1:3150,x2:5550};
    with beams, and a railing. Floors are architecture, not platforms — the
    matching collision boxes carry `hide:1` so drawPlatforms leaves them alone. */
 const WH_ROOF=22, WH_EAVE=WH_ROOF+34, WH_WALL=96;
-const WH_FLOORS=[{y:GROUND_Y-152,x1:3740,x2:5100},{y:GROUND_Y-304,x1:4540,x2:5040}];
+const WH_FLOORS=[{y:GROUND_Y-152,x1:3620,x2:5500},{y:GROUND_Y-304,x1:4620,x2:6120}];
 function drawWarehouseShell(){
   const L=WH.x1-cam.x, R=WH.x2-cam.x, oL=L-WH_WALL, oR=R+WH_WALL;
   if(oR<-40||oL>VW+40)return;
@@ -2467,23 +2478,45 @@ function drawWarehouse(){ if(level!==2||seg!==1)return;
   const im=images.bg_warehouse; if(!im)return;
   const L=WH.x1-cam.x, R=WH.x2-cam.x; if(R<-WH_WALL-40||L>VW+WH_WALL+40)return;
   drawWarehouseShell();
-  // interior plate, clipped between the walls and below the eaves
+  // ---- ROOMS ----------------------------------------------------------
+  // A cross-section is a stack of rooms, not one tall hall with shelves
+  // floating in it. Each storey gets its own back wall drawn INTO its own
+  // band, sampled from a different part of the plate so no two levels repeat,
+  // and darkened with height so the upper floors read as further from the
+  // door. That division is what makes it a building rather than a backdrop
+  // with bars across it.
+  // Back walls span the WHOLE building — a wall doesn't stop where a floor
+  // does. Only the floor slabs are partial, which is what gives a cross-section
+  // its stepped, open-sided look instead of leaving holes above the short floors.
+  const rooms=[{top:GROUND_Y-152,bot:GROUND_Y,     off:0.00, dim:0.00},
+               {top:GROUND_Y-304,bot:GROUND_Y-152, off:0.37, dim:0.14},
+               {top:WH_EAVE,     bot:GROUND_Y-304, off:0.71, dim:0.26}];
+  const pw=Math.round(VH*(im.width/im.height)*0.86);
+  for(const rm of rooms){
+    const rl=WH.x1-cam.x, rr=WH.x2-cam.x;
+    if(rr<-40||rl>VW+40)continue;
+    ctx.save(); ctx.beginPath(); ctx.rect(rl,rm.top,rr-rl,rm.bot-rm.top); ctx.clip();
+    const shift=Math.round(pw*rm.off);
+    const n=Math.ceil((WH.x2-WH.x1)/pw)+2;
+    for(let i=-1;i<n;i++){ const sx=Math.round(WH.x1-cam.x+i*pw-shift);
+      if(sx>VW+pw||sx<-pw)continue;
+      ctx.save(); ctx.translate(sx,0);
+      if(((i%2)+2)%2===1){ ctx.translate(pw,0); ctx.scale(-1,1); }
+      // the plate's own floor sits at its bottom, so anchor each copy to the
+      // bottom of ITS room and let the wall run up out of frame
+      ctx.drawImage(im,0,rm.bot-(GROUND_Y-WH_EAVE),pw,GROUND_Y-WH_EAVE+2);
+      ctx.restore(); }
+    if(rm.dim>0){ ctx.fillStyle="rgba(4,6,10,"+rm.dim.toFixed(2)+")"; ctx.fillRect(rl,rm.top,rr-rl,rm.bot-rm.top); }
+    ctx.restore(); }
+  // ---- ground floor slab -----------------------------------------------
   ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
-  const w=Math.round(VH*(im.width/im.height)*0.86);
-  const n=Math.ceil((WH.x2-WH.x1)/w)+1;
-  for(let i=0;i<n;i++){ const sx=Math.round(WH.x1-cam.x+i*w);
-    if(sx>VW+w||sx<-w)continue;
-    ctx.save(); ctx.translate(sx,0);
-    if(i%2===1){ ctx.translate(w,0); ctx.scale(-1,1); }
-    ctx.drawImage(im,0,WH_EAVE,w,GROUND_Y-WH_EAVE+2); ctx.restore(); }
-  // concrete floor
   const fg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
   fg.addColorStop(0,"#39352f"); fg.addColorStop(1,"#15130f");
   ctx.fillStyle=fg; ctx.fillRect(L,GROUND_Y,R-L,VH-GROUND_Y);
   ctx.fillStyle="rgba(196,180,140,0.10)"; ctx.fillRect(L,GROUND_Y,R-L,3);
   ctx.fillStyle="rgba(0,0,0,0.30)";
   for(let bx=WH.x1;bx<WH.x2;bx+=170)ctx.fillRect(bx-cam.x,GROUND_Y+4,2,VH-GROUND_Y);
-  // fade into the dark at each opening so the interior emerges from shadow
+  // fade into the dark at each opening
   const FADE=150;
   for(const [ex,dirn] of [[L,1],[R,-1]]){
     const gx=ctx.createLinearGradient(ex,0,ex+dirn*FADE,0);
@@ -2496,48 +2529,48 @@ function drawWarehouse(){ if(level!==2||seg!==1)return;
 function drawWarehouseProps(){
   const L=WH.x1-cam.x, R=WH.x2-cam.x;
   ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
-  const F2=GROUND_Y-152;                                  // upper floor line
-  // support posts carrying the upper floor
-  for(let bx=3800;bx<5100;bx+=210){ const sx=bx-cam.x; if(sx<-30||sx>VW+30)continue;
-    ctx.fillStyle="#1d232a"; ctx.fillRect(sx,F2,13,GROUND_Y-F2);
-    ctx.fillStyle="#2b333c"; ctx.fillRect(sx,F2,4,GROUND_Y-F2);
-    ctx.fillStyle="#151a20"; ctx.fillRect(sx-6,GROUND_Y-9,25,9); }
-  // strip lights slung under the upper floor, pooling on the ground below
-  for(let bx=3860;bx<5100;bx+=300){ const sx=bx-cam.x; if(sx<-90||sx>VW+90)continue;
-    ctx.fillStyle="#232a31"; ctx.fillRect(sx-30,F2+30,60,7);
-    ctx.fillStyle="rgba(255,226,170,0.85)"; ctx.fillRect(sx-26,F2+33,52,3);
-    const gl=ctx.createLinearGradient(0,F2+36,0,GROUND_Y);
-    gl.addColorStop(0,"rgba(255,214,150,0.16)"); gl.addColorStop(1,"rgba(255,214,150,0)");
-    ctx.fillStyle=gl; ctx.beginPath(); ctx.moveTo(sx-30,F2+36); ctx.lineTo(sx+30,F2+36);
-    ctx.lineTo(sx+96,GROUND_Y); ctx.lineTo(sx-96,GROUND_Y); ctx.closePath(); ctx.fill(); }
-  // pallet racking standing on the ground floor, behind everything
-  for(let bx=3560;bx<5300;bx+=380){ const sx=bx-cam.x; if(sx<-220||sx>VW+220)continue;
+  // Everything here hangs off the FLOOR TABLE, so it follows the building if
+  // the storeys are ever re-laid rather than being pinned to old coordinates.
+  for(const f of WH_FLOORS){
+    // posts carrying this floor, standing on whatever is under it
+    const under=WH_FLOORS.filter(o=>o.y>f.y).sort((p,q)=>p.y-q.y)[0];
+    const footY=under? under.y : GROUND_Y;
+    for(let bx=f.x1+70;bx<f.x2-40;bx+=230){ const sx=bx-cam.x; if(sx<-30||sx>VW+30)continue;
+      ctx.fillStyle="#1d232a"; ctx.fillRect(sx,f.y+26,13,footY-f.y-26);
+      ctx.fillStyle="#2b333c"; ctx.fillRect(sx,f.y+26,4,footY-f.y-26);
+      ctx.fillStyle="#151a20"; ctx.fillRect(sx-6,footY-9,25,9); }
+    // strip lights slung under it, pooling on the surface below
+    for(let bx=f.x1+150;bx<f.x2-60;bx+=330){ const sx=bx-cam.x; if(sx<-90||sx>VW+90)continue;
+      ctx.fillStyle="#232a31"; ctx.fillRect(sx-30,f.y+40,60,7);
+      ctx.fillStyle="rgba(255,226,170,0.85)"; ctx.fillRect(sx-26,f.y+43,52,3);
+      const gl=ctx.createLinearGradient(0,f.y+46,0,footY);
+      gl.addColorStop(0,"rgba(255,214,150,0.17)"); gl.addColorStop(1,"rgba(255,214,150,0)");
+      ctx.fillStyle=gl; ctx.beginPath(); ctx.moveTo(sx-30,f.y+46); ctx.lineTo(sx+30,f.y+46);
+      ctx.lineTo(sx+92,footY); ctx.lineTo(sx-92,footY); ctx.closePath(); ctx.fill(); } }
+  // pallet racking against the ground-floor wall
+  for(let bx=WH.x1+150;bx<WH.x2-260;bx+=420){ const sx=bx-cam.x; if(sx<-230||sx>VW+230)continue;
     ctx.fillStyle="rgba(10,13,17,0.80)";
-    ctx.fillRect(sx,GROUND_Y-140,11,140); ctx.fillRect(sx+188,GROUND_Y-140,11,140);
-    for(let sy=GROUND_Y-140;sy<GROUND_Y-16;sy+=62){
+    ctx.fillRect(sx,GROUND_Y-136,11,136); ctx.fillRect(sx+188,GROUND_Y-136,11,136);
+    for(let sy=GROUND_Y-136;sy<GROUND_Y-16;sy+=60){
       ctx.fillStyle="rgba(10,13,17,0.80)"; ctx.fillRect(sx,sy,199,8);
-      ctx.fillStyle="rgba(58,48,34,0.85)";                      // pallets of stock
-      ctx.fillRect(sx+14,sy+8,68,40); ctx.fillRect(sx+92,sy+8,54,40);
+      ctx.fillStyle="rgba(58,48,34,0.85)";
+      ctx.fillRect(sx+14,sy+8,68,38); ctx.fillRect(sx+92,sy+8,54,38);
       ctx.fillStyle="rgba(150,175,190,0.07)"; ctx.fillRect(sx+14,sy+8,68,3); } }
   // chains off the roof steel
-  ctx.strokeStyle="rgba(120,140,150,0.32)"; ctx.lineWidth=2.5;
-  for(let bx=3700;bx<5400;bx+=430){ const sx=bx-cam.x; if(sx<-20||sx>VW+20)continue;
-    const len=70+((bx*11)%60); ctx.beginPath();
-    for(let k=0;k<len;k+=9){ ctx.moveTo(sx+(k%18?2:-2),WH_EAVE+14+k); ctx.lineTo(sx+(k%18?-2:2),WH_EAVE+23+k); }
+  ctx.strokeStyle="rgba(120,140,150,0.30)"; ctx.lineWidth=2.5;
+  for(let bx=WH.x1+260;bx<WH.x2;bx+=470){ const sx=bx-cam.x; if(sx<-20||sx>VW+20)continue;
+    const len=64+((bx*11)%54); ctx.beginPath();
+    for(let k=0;k<len;k+=9){ ctx.moveTo(sx+(k%18?2:-2),WH_EAVE+12+k); ctx.lineTo(sx+(k%18?-2:2),WH_EAVE+21+k); }
     ctx.stroke();
-    ctx.fillStyle="rgba(110,130,140,0.36)"; ctx.fillRect(sx-5,WH_EAVE+14+len,10,7); }
-  // floor markings and a spill or two
-  ctx.save(); ctx.globalAlpha=0.45;
-  for(let bx=3620;bx<5400;bx+=640){ const sx=bx-cam.x;
+    ctx.fillStyle="rgba(110,130,140,0.34)"; ctx.fillRect(sx-5,WH_EAVE+12+len,10,7); }
+  // floor markings and oil
+  ctx.save(); ctx.globalAlpha=0.42;
+  for(let bx=WH.x1+320;bx<WH.x2;bx+=700){ const sx=bx-cam.x;
     for(let k=0;k<9;k++){ ctx.fillStyle=k%2?"#16160f":"#b8912a"; ctx.fillRect(sx+k*17,GROUND_Y+7,17,6); } }
   ctx.restore();
-  ctx.fillStyle="rgba(0,0,0,0.24)";
-  for(let bx=3900;bx<5400;bx+=520){ ctx.beginPath(); ctx.ellipse(bx-cam.x,GROUND_Y+24,54,10,0,0,7); ctx.fill(); }
+  ctx.fillStyle="rgba(0,0,0,0.22)";
+  for(let bx=WH.x1+400;bx<WH.x2;bx+=560){ ctx.beginPath(); ctx.ellipse(bx-cam.x,GROUND_Y+24,54,10,0,0,7); ctx.fill(); }
   ctx.restore(); }
-/* Inside the freighter. Same world-locked, canvas-drawn approach as the
-   warehouse, but read as a HULL: riveted plate, curved frame ribs closing in
-   overhead, cable trays and pipe runs, caged bulkhead lamps, and a green-grey
-   marine palette so it never gets confused with the dock warehouse. */
 function drawShipHold(){ if(level!==2||seg!==2)return;
   const wx=(v)=>v-cam.x, TOP=26, DECKHEAD=TOP+30;
   const air=ctx.createLinearGradient(0,0,0,GROUND_Y);
@@ -2680,7 +2713,7 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   else if(level===5){ const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH); dg.addColorStop(0,"#23222c"); dg.addColorStop(1,"#0e0d14"); ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y); ctx.fillStyle="#caa23a"; ctx.fillRect(0,GROUND_Y,VW,3); ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.fillRect(0,GROUND_Y+3,VW,3); const tw=170,sx=-(((cam.x%tw)+tw)%tw); ctx.fillStyle="rgba(202,162,58,0.10)"; for(let x=sx;x<VW+tw;x+=tw)ctx.fillRect(x,GROUND_Y+6,2,VH-GROUND_Y-6); }
   else { const gim=(level===1)?(images.ground||images.dock_ground):((images.dock_ground)?images.dock_ground:images.ground); if(gim){const tw=160,th=128,sx=-(((cam.x%tw)+tw)%tw);for(let x=sx-tw;x<VW+tw;x+=tw)for(let yy=GROUND_Y;yy<VH+th;yy+=th)ctx.drawImage(gim,x,yy,tw,th);} else {ctx.fillStyle="#16202c";ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);} }
   drawWarehouse(); drawShipHold(); drawShipDeckBg();
-  if(level===2&&seg===1&&sprites.prop_shipfront){ const s=sprites.prop_shipfront,H=GROUND_Y+30,W=s.w*(H/s.h),cx=7240-cam.x; if(cx>-W&&cx<VW+W)drawSpriteWH("prop_shipfront",cx,GROUND_Y+6,W,H,false,1); }
+  if(level===2&&seg===1&&sprites.prop_shipfront){ const s=sprites.prop_shipfront,H=GROUND_Y+30,W=s.w*(H/s.h),cx=8960-cam.x; if(cx>-W&&cx<VW+W)drawSpriteWH("prop_shipfront",cx,GROUND_Y+6,W,H,false,1); }
   for(const gp of gaps){ const x1=gp.x1-cam.x,x2=gp.x2-cam.x; if(x2<-30||x1>VW+30)continue; ctx.save();
     // a hole in the warehouse floor drops into the dark, not into the harbour
     if(dryPit(gp.x1+1)){ const Lx=Math.max(x1,-20),Rx=Math.min(x2,VW+20); const vv=ctx.createLinearGradient(0,GROUND_Y,0,VH); vv.addColorStop(0,"#0a0d12"); vv.addColorStop(1,"#050709"); ctx.fillStyle=vv; ctx.fillRect(Lx,GROUND_Y,Rx-Lx,VH-GROUND_Y); ctx.fillStyle="#2a2f36"; if(x1>-20)ctx.fillRect(x1-8,GROUND_Y-6,8,12); if(x2<VW+20)ctx.fillRect(x2,GROUND_Y-6,8,12); ctx.restore(); continue; }
@@ -2911,7 +2944,7 @@ function step(){
       else if(!scene&&player.y>=GROUND_Y-2){
         if(!djumpTutDone&&gaps[0]&&player.onGround&&player.x>gaps[0].x1-150&&player.x<gaps[0].x1+10){ startDjumpScene(); return; }
         else if(!blockTutDone&&player.onGround&&player.x>1880){ startBlockScene(); return; } } }
-    if(level===2&&seg===1&&!scene&&!boarded&&player.x>7000){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
+    if(level===2&&seg===1&&!scene&&!boarded&&player.x>8700){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
     // top of the hold: the hatch out onto the weather deck (must be UP there)
     if(level===2&&seg===2&&!scene&&!boarded&&player.x>4850&&player.y<=GROUND_Y-300){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_hatch,()=>{ state="shipfade"; fadeT=72; }); return; }
     if(level===3&&seg===1&&vendorX>-9999&&Math.abs(player.x-vendorX)<92&&player.onGround&&pressed.has("up")){ shopSel=0; setState("shop"); return; }

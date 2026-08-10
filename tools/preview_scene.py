@@ -28,15 +28,27 @@ def grab(src, name):
     raise ValueError(f"unbalanced braces in {name}")
 
 def grab_const(src, name):
-    """Pull a top-level `const NAME=...;` out of the engine. Handles both object
-    literals and plain scalar lists (`const A=1, B=2;`) — a scene that referenced
-    a scalar the harness hadn't copied just threw ReferenceError and rendered an
-    empty frame, which looks exactly like broken draw code."""
-    m = re.search(rf"^const {name}=\{{.*?\}};", src, re.M | re.S)
-    if m:
-        return m.group(0)
-    m = re.search(rf"^const {name}=[^;\n]*;", src, re.M)
-    return m.group(0) if m else ""
+    """Pull a top-level `const NAME = ...;` out of the engine, whatever shape the
+    value is: object, array, or a plain scalar list.
+
+    Bracket-matched rather than regex-matched. A regex alternation that allowed
+    both `{...}` and `[...]` happily ran from one const to a `];` hundreds of
+    lines later and emitted a truncated page, which shows up as a bare
+    "Unexpected end of input" and an empty render."""
+    m = re.search(rf"^const {name}\s*=", src, re.M)
+    if not m:
+        return ""
+    i = m.end()
+    depth = 0
+    for k in range(i, len(src)):
+        c = src[k]
+        if c in "[{(":
+            depth += 1
+        elif c in "]})":
+            depth -= 1
+        elif c == ";" and depth == 0:
+            return src[m.start():k + 1]
+    return ""
 
 def main():
     ap = argparse.ArgumentParser()
@@ -54,7 +66,10 @@ def main():
     args = ap.parse_args()
 
     src = open(os.path.join(REPO, "dist", "game.js"), encoding="utf-8").read()
-    calls = "\n".join(f"{f}();" for f in args.fns)
+    # Every listed function is DEFINED, but only the last one is CALLED — a
+    # scene function normally calls its own helpers, and invoking them again
+    # separately just double-draws (or throws, if one is missing).
+    calls = f"{args.fns[-1]}();"
     imgjs = "[" + ",".join('"%s"' % k for k in args.images.split(",") if k) + "]"
     sprjs = "[" + ",".join('"%s"' % k for k in args.sprites.split(",") if k) + "]"
     bodies = "\n".join(grab(src, f) for f in args.fns)
@@ -78,6 +93,7 @@ let player={{x:{args.cam}+480,y:GROUND_Y}};
 {grab_const(src, "WH")}
 {grab_const(src, "SH")}
 {grab_const(src, "WH_ROOF")}
+{grab_const(src, "WH_FLOORS")}
 function clamp(v,a,b){{return v<a?a:v>b?b:v;}}
 {bodies}
 // Backdrops are <img>s. Draw only once they have actually decoded, or the scene
