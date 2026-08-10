@@ -67,7 +67,9 @@ def main():
                 edge = end[0] if label == "left" else end[1]
                 nb = [p for p in land if p[3] != "step" and p[0] - 8 <= edge <= p[1] + 8
                       and abs(p[2] - end[2]) <= STEP_UP]
-                if not (nb or abs(end[2] - (GY - 38)) <= 2):
+                # a bottom tread within one step of the ground IS connected
+                on_ground = (GY - end[2]) <= STEP_UP
+                if not (nb or on_ground):
                     problems.append(f"{fn}: stair run {r[0][0]:.0f}-{r[-1][1]:.0f} "
                                     f"{label} end at height {GY-end[2]} connects to nothing")
 

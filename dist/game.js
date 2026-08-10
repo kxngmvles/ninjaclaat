@@ -790,10 +790,17 @@ function updateDashScene(){
   }
 }
 function startDjumpScene(){ scene={type:"djump"}; player.vx=0; player.cine=0; setState("cutscene"); runDialogue(STR.learn_djump,()=>{ player.hasDoubleJump=true; djumpTutDone=true; scene=null; floatText(player.x,player.y-HERO_H-12,STR.djump_learned,"#7CFF6B"); setState("play"); }); }
-function startBlockScene(){ const gx=clamp(player.x+250,80,LEVEL_W-80); const g=makeEnemy("gunner",gx); g.scripted=1; g.frozen=1; g.alerted=1; g.face=-1; g.ammo=99; g.attackCd=999; g.y=GROUND_Y; enemies.push(g); scene={type:"block",phase:"pre",g,t:0}; player.face=1; player.vx=0; setState("cutscene"); runDialogue(STR.learn_block_pre,()=>{ scene.phase="fire"; scene.t=0; player.cine=1; player.iframe=600; setState("play"); }); }
+function startBlockScene(){
+  // Clear the stage first. The lesson only completes when the DEFLECTED bullet
+  // kills the scripted gunner — any other goon still hanging around eats the
+  // shot, the gunner never dies, and the player is left blocking at nothing
+  // with the scene stuck open.
+  for(const e of enemies){ if(!e.dead&&!e.scripted){ e.gone=1; e.dead=true; e.deadT=60; } }
+  enemies=enemies.filter(e=>e.scripted||e.dead);
+  const gx=clamp(player.x+250,80,LEVEL_W-80); const g=makeEnemy("gunner",gx); g.scripted=1; g.frozen=1; g.alerted=1; g.face=-1; g.ammo=99; g.attackCd=999; g.y=GROUND_Y; enemies.push(g); scene={type:"block",phase:"pre",g,t:0}; player.face=1; player.vx=0; setState("cutscene"); runDialogue(STR.learn_block_pre,()=>{ scene.phase="fire"; scene.t=0; player.cine=1; player.iframe=600; setState("play"); }); }
 function updateBlockScene(){ if(!scene||scene.type!=="block")return; const g=scene.g;
   if(scene.phase==="fire"){ scene.t++; player.cine=1; player.face=1; player.anim="block"; player.iframe=Math.max(player.iframe,20);
-    if(scene.t===16){ sfx("sfx_gunshot"); shake=Math.max(shake,5); const by=g.y-g.h*0.6; projectiles.push({x:g.x-46,y:by,vx:-9.0,vy:0,g:0,life:130,bullet:1,dmg:14,scripted:1}); g.state="shoot"; g.t=0; g._hit=true; }
+    if(scene.t===16){ sfx("sfx_gunshot2"); shake=Math.max(shake,5); const by=g.y-g.h*0.6; projectiles.push({x:g.x-46,y:by,vx:-9.0,vy:0,g:0,life:130,bullet:1,dmg:14,scripted:1}); g.state="shoot"; g.t=0; g._hit=true; }
     if(g.dead){ scene.phase="post"; player.cine=0; setState("cutscene"); runDialogue(STR.learn_block_post,()=>{ player.hasBlock=true; blockTutDone=true; scene=null; player.iframe=60; floatText(player.x,player.y-HERO_H-12,STR.block_learned,"#9fd0ff"); setState("play"); }); }
     else if(scene.t>320){ killEnemy(g,-1); } } }
 
@@ -1057,38 +1064,38 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     /* --- yard before the warehouse --- */
     {x:2560,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:2900,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
-    /* --- WAREHOUSE INTERIOR 3150-5350 (see WH / drawWarehouse). No floor pit:
-       the mezzanine is a shortcut and a firing position, not a hazard. --- */
-    {x:3320,w:96,top:GROUND_Y-60,sprite:"prop_crate",cover:1},
-    {x:3546,w:30,top:GROUND_Y-38,step:1},          // stair run up to the mezzanine
-    {x:3576,w:30,top:GROUND_Y-57,step:1},
-    {x:3606,w:30,top:GROUND_Y-76,step:1},
-    {x:3636,w:30,top:GROUND_Y-95,step:1},
-    {x:3666,w:30,top:GROUND_Y-114,step:1},
-    {x:3696,w:30,top:GROUND_Y-133,step:1},
-    {x:3726,w:30,top:GROUND_Y-152,step:1},
-    {x:4010,w:539,top:GROUND_Y-152,deck:1},        // mezzanine run
-    {x:4286,w:30,top:GROUND_Y-190,step:1},         // stair run up to the catwalk
-    {x:4316,w:30,top:GROUND_Y-209,step:1},
-    {x:4346,w:30,top:GROUND_Y-228,step:1},
-    {x:4376,w:30,top:GROUND_Y-247,step:1},
-    {x:4406,w:30,top:GROUND_Y-266,step:1},
-    {x:4436,w:30,top:GROUND_Y-285,step:1},
-    {x:4466,w:30,top:GROUND_Y-304,step:1},
-    {x:4760,w:559,top:GROUND_Y-304,deck:1},        // upper catwalk (must bridge both stair runs)
-    {x:5046,w:30,top:GROUND_Y-266,step:1},         // stair run back down to the floor
-    {x:5076,w:30,top:GROUND_Y-247,step:1},
-    {x:5106,w:30,top:GROUND_Y-228,step:1},
-    {x:5136,w:30,top:GROUND_Y-209,step:1},
-    {x:5166,w:30,top:GROUND_Y-190,step:1},
-    {x:5196,w:30,top:GROUND_Y-171,step:1},
-    {x:5226,w:30,top:GROUND_Y-152,step:1},
-    {x:5256,w:30,top:GROUND_Y-133,step:1},
-    {x:5286,w:30,top:GROUND_Y-114,step:1},
-    {x:5316,w:30,top:GROUND_Y-95,step:1},
-    {x:5346,w:30,top:GROUND_Y-76,step:1},
-    {x:5376,w:30,top:GROUND_Y-57,step:1},
-    {x:5406,w:30,top:GROUND_Y-38,step:1},
+    /* --- WAREHOUSE INTERIOR 3150-5550: a two-storey cross-section. Ground
+       floor, a full upper floor you fight along, and a catwalk above that.
+       Stairs at both ends and in the middle; cover on every level. --- */
+    {x:3300,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
+    {x:3450,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
+    {x:3535,w:30,top:GROUND_Y-19,step:1},
+    {x:3565,w:30,top:GROUND_Y-38,step:1},
+    {x:3595,w:30,top:GROUND_Y-57,step:1},
+    {x:3625,w:30,top:GROUND_Y-76,step:1},
+    {x:3655,w:30,top:GROUND_Y-95,step:1},
+    {x:3685,w:30,top:GROUND_Y-114,step:1},
+    {x:3715,w:30,top:GROUND_Y-133,step:1},
+    {x:3745,w:30,top:GROUND_Y-152,step:1},
+    {x:4420,w:1360,top:GROUND_Y-152,deck:1},        // UPPER FLOOR 3740-5100
+    {x:3900,w:139,top:GROUND_Y-278,sprite:"prop_crates_ai",cover:1},
+    {x:4180,w:89,top:GROUND_Y-248,sprite:"prop_drums_ai",cover:1},
+    {x:4315,w:30,top:GROUND_Y-171,step:1},
+    {x:4345,w:30,top:GROUND_Y-190,step:1},
+    {x:4375,w:30,top:GROUND_Y-209,step:1},
+    {x:4405,w:30,top:GROUND_Y-228,step:1},
+    {x:4435,w:30,top:GROUND_Y-247,step:1},
+    {x:4465,w:30,top:GROUND_Y-266,step:1},
+    {x:4495,w:30,top:GROUND_Y-285,step:1},
+    {x:4525,w:30,top:GROUND_Y-304,step:1},
+    {x:4790,w:500,top:GROUND_Y-304,deck:1},         // CATWALK 4540-5040
+    {x:5115,w:30,top:GROUND_Y-133,step:1},
+    {x:5145,w:30,top:GROUND_Y-114,step:1},
+    {x:5175,w:30,top:GROUND_Y-95,step:1},
+    {x:5205,w:30,top:GROUND_Y-76,step:1},
+    {x:5235,w:30,top:GROUND_Y-57,step:1},
+    {x:5265,w:30,top:GROUND_Y-38,step:1},
+    {x:5340,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
     /* --- rear yard: containers out the back door, then the quay --- */
     {x:5760,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:6060,w:300,top:GROUND_Y-276,stack:1,rows:2},
@@ -1107,14 +1114,15 @@ function buildHarbour(){ LEVEL_W=7200; seg=1; boarded=false; fadeT=0;
     [["goonA",2300,"patrol"],["blade",2560,"aggro"]],
     [["goonB",2900,"aggro"],["crew",3060,"aggro"]],
     // inside: a gunner posted up on the catwalk shooting down at the floor
-    [["dog",3400],["gunner",4760,"aggro","roof"],["crew",3600,"aggro"]],
-    [["bruiser",4100,"aggro","roof"],["blade",4300,"aggro"]],
-    [["gunner",4900,"aggro","roof"],["crew",5000,"aggro"]],
+    [["dog",3400],["crew",3600,"aggro"],["gunner",4790,"aggro","roof"]],
+    [["blade",4000,"aggro","roof"],["crew",4400,"aggro","roof"]],
+    [["bruiser",4300,"aggro"],["gunner",4790,"aggro","roof"]],
+    [["crew",4900,"aggro","roof"],["blade",5000,"aggro"]],
     [["goonB",5700,"patrol"],["blade",5900,"aggro"]],
     [["gunner",6100,"aggro"],["crew",6250,"aggro"]],
     [["bruiser",6700,"aggro"],["goonA",6850,"aggro"]],
   ];
-  pickups=[{x:4760,y:GROUND_Y-336,vy:null,kind:"herb",val:1,t:0},
+  pickups=[{x:4790,y:GROUND_Y-336,vy:null,kind:"herb",val:1,t:0},
            {x:6060,y:GROUND_Y-308,vy:null,kind:"herb",val:1,t:0},
            {x:2560,y:GROUND_Y-170,vy:null,kind:"herb",val:1,t:0}];
   searchlights=[{x:2180,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0},
@@ -1587,6 +1595,51 @@ function drawWarehouse(){ if(level!==2||seg!==1)return;
     gx.addColorStop(0,"rgba(3,4,6,0.96)"); gx.addColorStop(0.45,"rgba(3,4,6,0.55)");
     gx.addColorStop(1,"rgba(3,4,6,0)");
     ctx.fillStyle=gx; ctx.fillRect(Math.min(ex,ex+dirn*FADE),0,FADE,VH); }
+  ctx.restore();
+  drawWarehouseProps(); }
+/* Interior furniture. The painted plate is a WALL — it has no depth in front of
+   it, so without this the building reads as an empty box with catwalks stuck on.
+   Drawn after the plate and before the platforms, all world-locked. */
+function drawWarehouseProps(){
+  const L=WH.x1-cam.x, R=WH.x2-cam.x;
+  ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
+  const F2=GROUND_Y-152;                                  // upper floor line
+  // support posts carrying the upper floor
+  for(let bx=3800;bx<5100;bx+=210){ const sx=bx-cam.x; if(sx<-30||sx>VW+30)continue;
+    ctx.fillStyle="#1d232a"; ctx.fillRect(sx,F2,13,GROUND_Y-F2);
+    ctx.fillStyle="#2b333c"; ctx.fillRect(sx,F2,4,GROUND_Y-F2);
+    ctx.fillStyle="#151a20"; ctx.fillRect(sx-6,GROUND_Y-9,25,9); }
+  // strip lights slung under the upper floor, pooling on the ground below
+  for(let bx=3860;bx<5100;bx+=300){ const sx=bx-cam.x; if(sx<-90||sx>VW+90)continue;
+    ctx.fillStyle="#232a31"; ctx.fillRect(sx-30,F2+30,60,7);
+    ctx.fillStyle="rgba(255,226,170,0.85)"; ctx.fillRect(sx-26,F2+33,52,3);
+    const gl=ctx.createLinearGradient(0,F2+36,0,GROUND_Y);
+    gl.addColorStop(0,"rgba(255,214,150,0.16)"); gl.addColorStop(1,"rgba(255,214,150,0)");
+    ctx.fillStyle=gl; ctx.beginPath(); ctx.moveTo(sx-30,F2+36); ctx.lineTo(sx+30,F2+36);
+    ctx.lineTo(sx+96,GROUND_Y); ctx.lineTo(sx-96,GROUND_Y); ctx.closePath(); ctx.fill(); }
+  // pallet racking standing on the ground floor, behind everything
+  for(let bx=3560;bx<5300;bx+=380){ const sx=bx-cam.x; if(sx<-220||sx>VW+220)continue;
+    ctx.fillStyle="rgba(10,13,17,0.80)";
+    ctx.fillRect(sx,GROUND_Y-140,11,140); ctx.fillRect(sx+188,GROUND_Y-140,11,140);
+    for(let sy=GROUND_Y-140;sy<GROUND_Y-16;sy+=62){
+      ctx.fillStyle="rgba(10,13,17,0.80)"; ctx.fillRect(sx,sy,199,8);
+      ctx.fillStyle="rgba(58,48,34,0.85)";                      // pallets of stock
+      ctx.fillRect(sx+14,sy+8,68,40); ctx.fillRect(sx+92,sy+8,54,40);
+      ctx.fillStyle="rgba(150,175,190,0.07)"; ctx.fillRect(sx+14,sy+8,68,3); } }
+  // chains off the roof steel
+  ctx.strokeStyle="rgba(120,140,150,0.32)"; ctx.lineWidth=2.5;
+  for(let bx=3700;bx<5400;bx+=430){ const sx=bx-cam.x; if(sx<-20||sx>VW+20)continue;
+    const len=70+((bx*11)%60); ctx.beginPath();
+    for(let k=0;k<len;k+=9){ ctx.moveTo(sx+(k%18?2:-2),WH_EAVE+14+k); ctx.lineTo(sx+(k%18?-2:2),WH_EAVE+23+k); }
+    ctx.stroke();
+    ctx.fillStyle="rgba(110,130,140,0.36)"; ctx.fillRect(sx-5,WH_EAVE+14+len,10,7); }
+  // floor markings and a spill or two
+  ctx.save(); ctx.globalAlpha=0.45;
+  for(let bx=3620;bx<5400;bx+=640){ const sx=bx-cam.x;
+    for(let k=0;k<9;k++){ ctx.fillStyle=k%2?"#16160f":"#b8912a"; ctx.fillRect(sx+k*17,GROUND_Y+7,17,6); } }
+  ctx.restore();
+  ctx.fillStyle="rgba(0,0,0,0.24)";
+  for(let bx=3900;bx<5400;bx+=520){ ctx.beginPath(); ctx.ellipse(bx-cam.x,GROUND_Y+24,54,10,0,0,7); ctx.fill(); }
   ctx.restore(); }
 /* Inside the freighter. Same world-locked, canvas-drawn approach as the
    warehouse, but read as a HULL: riveted plate, curved frame ribs closing in
@@ -1777,6 +1830,11 @@ function drawShop(){ ctx.fillStyle="rgba(3,6,12,0.85)"; ctx.fillRect(0,0,VW,VH);
   ctx.textAlign="center"; ctx.fillStyle="rgba(200,230,215,0.7)"; ctx.font="14px Trebuchet MS"; ctx.fillText(STR.shop_hint,VW/2,VH-38); ctx.textAlign="left"; }
 function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-pf.w/2-360||x>VW+pf.w/2+360)continue;
   const baseY=pf.deckprop?DECK_Y:GROUND_Y;
+  // Declared BEFORE any branch that reads it. It used to sit below the deck
+  // branch, so every frame with a catwalk on camera threw a temporal-dead-zone
+  // ReferenceError and aborted the whole render after this function — the hero
+  // and the HUD vanished while the level kept scrolling.
+  const dark=(level===2&&seg===2)||(level===2&&seg===1&&pf.x>WH.x1&&pf.x<WH.x2);
   if(pf.deck){ const left=x-pf.w/2, top=pf.top, slab=34;
     const dg=ctx.createLinearGradient(0,top,0,top+slab);
     dg.addColorStop(0,dark?"#2b343e":"#43505d"); dg.addColorStop(1,dark?"#161c23":"#28323d");
@@ -1787,9 +1845,6 @@ function drawPlatforms(){ for(const pf of platforms){const x=pf.x-cam.x; if(x<-p
     for(let gx=left+14;gx<left+pf.w;gx+=90){ if(gx<-10||gx>VW+10)continue; ctx.beginPath(); ctx.moveTo(gx,top); ctx.lineTo(gx,top-24); ctx.stroke(); }
     ctx.fillStyle="#2b343d"; for(let gx=left+50;gx<left+pf.w;gx+=260){ if(gx<-10||gx>VW+10)continue; ctx.fillRect(gx,top-12,10,12); }
     continue; }
-  // Indoors everything sits in the warehouse's own gloom — the steel read far
-  // too bright against the painted plate.
-  const dark=(level===2&&seg===2)||(level===2&&seg===1&&pf.x>WH.x1&&pf.x<WH.x2);
   if(pf.step){ // one tread of a staircase: adjacent steps read as a stair run
     const left=x-pf.w/2, top=pf.top, riser=baseY-top;
     const sg=ctx.createLinearGradient(0,top,0,baseY);
@@ -1897,6 +1952,16 @@ function drawHUD(){ healthBar(20,18,260,18,player.hp/player.maxhp,"#e23b4e");
 
 /* ---------- screens ---------- */
 function wrapCenter(t,cx,y,maxW,lh){ctx.textAlign="center";const words=t.split(" ");let line="",yy=y;for(const w of words){const test=line+w+" ";if(ctx.measureText(test).width>maxW&&line){ctx.fillText(line,cx,yy);line=w+" ";yy+=lh;}else line=test;}ctx.fillText(line,cx,yy);ctx.textAlign="left";}
+// Dev hook: on localhost only, expose the live state so a scene can be jumped
+// to and inspected without playing the whole level up to it. Never active on
+// the deployed build.
+if(location.hostname==="localhost"||location.hostname==="127.0.0.1"){
+  window.__dbg={ get player(){return player;}, get cam(){return cam;},
+    get platforms(){return platforms;}, get enemies(){return enemies;},
+    get images(){return images;}, get sprites(){return sprites;},
+    get seg(){return seg;}, get level(){return level;},
+    warp(x){ player.x=x; player.y=GROUND_Y; player.vx=0; player.vy=0; cam.x=Math.max(0,x-VW/2); } };
+}
 function drawTitle(){ drawBackground();ctx.fillStyle="rgba(3,6,12,0.55)";ctx.fillRect(0,0,VW,VH);ctx.textAlign="center";
   ctx.save();ctx.shadowColor="#39ff8b";ctx.shadowBlur=24;ctx.fillStyle="#eafff4";ctx.font="bold 72px Trebuchet MS";ctx.fillText(STR.title,VW/2,VH/2-20);ctx.restore();
   ctx.fillStyle="#9fe7c4";ctx.font="600 20px Trebuchet MS";ctx.fillText(levelSel===5?STR.level5_subtitle:levelSel===4?STR.level4_subtitle:levelSel===3?STR.level3_subtitle:levelSel===2?STR.level2_subtitle:STR.subtitle,VW/2,VH/2+24);

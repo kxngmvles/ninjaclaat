@@ -434,3 +434,38 @@ match. Pass `fit:1` on a platform to opt back into stretching.
 harness hadn't copied threw ReferenceError and rendered an EMPTY frame, which is
 indistinguishable from broken draw code. Check the console before believing a
 blank preview.
+
+### 2026-08-09 (6) — the vanishing-hero bug, and a two-storey warehouse
+
+**THE HERO DISAPPEARING WAS A THROWN EXCEPTION, not a draw-order or z-index
+problem.** In `drawPlatforms` I declared `const dark=...` BELOW the `if(pf.deck)`
+branch that reads it. `const` is in the temporal dead zone until its declaration
+runs, so every frame with a catwalk on camera threw
+`ReferenceError: Cannot access 'dark' before initialization`, which aborted the
+rest of the frame — player, enemies, HUD, everything after `drawPlatforms`. The
+level kept scrolling because UPDATE still ran; only DRAW died.
+**Symptom to remember: if the hero and the HUD vanish together while the world
+still moves, it is an exception mid-draw. Check the console first.**
+
+**Debug hook**: `window.__dbg` is exposed on localhost only (`player`, `cam`,
+`platforms`, `enemies`, `images`, `sprites`, `warp(x)`). `__dbg.warp(3900)` drops
+you straight at the warehouse instead of playing the level up to it. It is gated
+on hostname so it never exists on the deployed build.
+
+**The block lesson now clears the stage before it starts.** It only completes
+when the DEFLECTED bullet kills the scripted gunner; any other goon standing
+around eats the shot, the gunner survives, and the player is left blocking
+forever with the scene stuck open. Killing off non-scripted enemies at
+`startBlockScene` fixes it at the root, whatever the wave layout does.
+
+**Warehouse is a two-storey cross-section now** (Kemar's reference: Katana Zero).
+Ground floor -> 8-tread stair -> a 1360px UPPER FLOOR you fight along -> 8-tread
+stair -> catwalk, with a stair back down at the far end. Enemies are placed on
+both levels via "roof" spawns. `drawWarehouseProps()` adds the depth the painted
+plate can't: support posts under the upper floor, strip lights slung beneath it
+pooling light on the ground, pallet racking, hanging chains, hazard markings and
+oil stains. Without it the building read as an empty box with catwalks stuck on.
+
+**A stair run must actually REACH the floor it serves.** 7 treads of 19px only
+climbs to 133, not to the 152 upper floor — `check_level.py` caught it. It now
+also accepts a bottom tread within STEP_UP of the ground as connected.
