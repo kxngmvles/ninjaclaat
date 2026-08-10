@@ -546,6 +546,16 @@ window.AS = {
   "shotta_wk7": "./shotta_wk7.png",
   "shotta_wk8": "./shotta_wk8.png",
   "bg_warehouse": "./bg_warehouse.png",
+  "room_loading": "./room_loading.jpg",
+  "room_storage": "./room_storage.jpg",
+  "room_cold": "./room_cold.jpg",
+  "room_workshop": "./room_workshop.jpg",
+  "room_drums": "./room_drums.jpg",
+  "room_office": "./room_office.jpg",
+  "room_break": "./room_break.jpg",
+  "room_packing": "./room_packing.jpg",
+  "room_count": "./room_count.jpg",
+  "room_despatch": "./room_despatch.jpg",
   "bg_deck": "./bg_deck.png",
   "prop_container_ai": "./prop_container_ai.png",
   "prop_crates_ai": "./prop_crates_ai.png",
@@ -981,7 +991,7 @@ const SPR=["nc_idle","nc_idle2","nc_walk_a","nc_walk_b","nc_walk_c","nc_run_a","
 "lt_idle","lt_walk","lt_walk2","lt_attack","lt_attack2","lt_death","lt_cast","lt_enrage","lt_walk1","lt_walk2","lt_walk3","lt_walk4",
 "palm_trunk","boat","rock","prop_crate","prop_barrel","prop_container","prop_pallets","shed_dred","rastaman","lady_run1","lady_run2","item_machete","item_orb","item_herb","prop_hobo","shotta_idle","shotta_walk1","shotta_walk2","shotta_walk3","shotta_walk4","shotta_shoot","shotta_reload","shotta_hurt","shotta_death","bullet","nc_takedown","prop_crane","prop_warehouse","prop_oildrum","searchlight","gunner_idle","gunner_walk1","gunner_walk2","gunner_shoot","gunner_dead","bruiser_idle","bruiser_walk1","bruiser_walk2","bruiser_attack","bruiser_dead","blade_idle","blade_walk1","blade_walk2","blade_attack","blade_dead","nc_block1","nc_block2","nc_block3","nc_flip","nc_flip2","nc_flip3","bruiser_strike","blade_lunge","prop_crane2","prop_container2","prop_container1","prop_warehouse2","prop_gangway","prop_shiptower","shotta_enrage","prop_shipfront","fyah_idle","molotov_idle","shield_idle","knife_idle","bat_idle","vendor","hobo_sleep","vendor2","nc_smoke","prop_car","prop_bus","prop_dumpster","prop_stall","fyah_kick","fyah_cast","fyah_dead","molotov_dead","shield_attack","shield_dead","knife_attack","knife_dead","bat_attack","bat_dead","bat_swing","fyah_punch","fyah_enrage","fyah_smoke","shield_gun","shield_baton","shield_down","nc_kunai","nc_chain_idle","nc_chain_swing","nc_chain_whip","nc_moped","prop_gantry","prop_rock","prop_log","enemy_biker","enemy_car","nc_chain_jump","nc_chain_fall","nc_chain_land","goon_bikeA","goon_bikeB","gorgon_idle","gorgon_walk1","gorgon_walk2","gorgon_attack","gorgon_attack2","gorgon_cast","gorgon_enrage","gorgon_dead"];
 const TINT={}; SPR.forEach(k=>{ let t="#8a8f99"; if(k.startsWith("nc_"))t="#39ff8b"; if(k.startsWith("lt_"))t="#9a3b32"; if(k.startsWith("dog"))t="#6b5a47"; if(k.startsWith("mosq"))t="#9b8b6a"; if(k.startsWith("item_herb"))t="#39ff8b"; loadSprite(k,AS[k],t); });
-["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne","bg_warehouse","bg_deck","bg_kingston","water1","water2","water3","water4","water5","water6","water7","water8","water9","water10"].forEach(k=>loadImage(k,AS[k]));
+["portrait_nc","portrait_dup","portrait_razor","bg_beach","bg_far","ground","bg_harbour","dock_ground","bg_ship","ship_deck_bg","ship_bow","bg_street","bg_rooftop","bg_street2","bg_street3","bg_compound","bg_downhill","bg_cell","bg_compound_ext","bg_forest_night","road_dirt","bg_throne","bg_warehouse","bg_deck","bg_kingston","room_loading","room_storage","room_cold","room_workshop","room_drums","room_office","room_break","room_packing","room_count","room_despatch","water1","water2","water3","water4","water5","water6","water7","water8","water9","water10"].forEach(k=>loadImage(k,AS[k]));
 // L3 crew: video-derived 8-frame walks and 6-frame attacks, all pre-keyed
 ["bat","molotov","shield","knife","fyah"].forEach(t=>{
   for(let n=1;n<=8;n++)loadSpriteRaw(t+"_walk"+n,AS[t+"_walk"+n]); });
@@ -1932,49 +1942,40 @@ function buildHarbour(){ LEVEL_W=9000; seg=1; boarded=false; fadeT=0;
     /* --- yard before the warehouse --- */
     {x:2560,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:2900,w:64,top:GROUND_Y-58,sprite:"prop_barrel",cover:1},
-    /* --- WAREHOUSE 3150-6750: THREE storeys in cross-section. Each level is
-       its own room with its own back wall (drawWarehouse), capped by a floor
-       slab (drawWarehouseFloors). You climb ground -> first -> second and
-       take the long stair down at the far end to the exit. --- */
-    {x:3260,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
-    {x:3900,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},
-    {x:5700,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},
-    {x:3415,w:30,top:GROUND_Y-19,step:1},   // stairs: ground -> first floor
-    {x:3445,w:30,top:GROUND_Y-38,step:1},
-    {x:3475,w:30,top:GROUND_Y-57,step:1},
-    {x:3505,w:30,top:GROUND_Y-76,step:1},
-    {x:3535,w:30,top:GROUND_Y-95,step:1},
-    {x:3565,w:30,top:GROUND_Y-114,step:1},
-    {x:3595,w:30,top:GROUND_Y-133,step:1},
-    {x:3625,w:30,top:GROUND_Y-152,step:1},
-    {x:4560,w:1880,top:GROUND_Y-152,deck:1,hide:1},   // FIRST FLOOR 3620-5500
-    {x:3820,w:139,top:GROUND_Y-278,base:GROUND_Y-152,sprite:"prop_crates_ai",cover:1},
-    {x:5240,w:89,top:GROUND_Y-248,base:GROUND_Y-152,sprite:"prop_drums_ai",cover:1},
-    {x:4415,w:30,top:GROUND_Y-171,step:1},   // stairs: first -> second floor
-    {x:4445,w:30,top:GROUND_Y-190,step:1},
-    {x:4475,w:30,top:GROUND_Y-209,step:1},
-    {x:4505,w:30,top:GROUND_Y-228,step:1},
-    {x:4535,w:30,top:GROUND_Y-247,step:1},
-    {x:4565,w:30,top:GROUND_Y-266,step:1},
-    {x:4595,w:30,top:GROUND_Y-285,step:1},
-    {x:4625,w:30,top:GROUND_Y-304,step:1},
-    {x:5370,w:1500,top:GROUND_Y-304,deck:1,hide:1},   // SECOND FLOOR 4620-6120
-    {x:5000,w:139,top:GROUND_Y-430,base:GROUND_Y-304,sprite:"prop_crates_ai",cover:1},
-    {x:6115,w:30,top:GROUND_Y-285,step:1},   // the long stair back down to the exit
-    {x:6145,w:30,top:GROUND_Y-266,step:1},
-    {x:6175,w:30,top:GROUND_Y-247,step:1},
-    {x:6205,w:30,top:GROUND_Y-228,step:1},
-    {x:6235,w:30,top:GROUND_Y-209,step:1},
-    {x:6265,w:30,top:GROUND_Y-190,step:1},
-    {x:6295,w:30,top:GROUND_Y-171,step:1},
-    {x:6325,w:30,top:GROUND_Y-152,step:1},
-    {x:6355,w:30,top:GROUND_Y-133,step:1},
-    {x:6385,w:30,top:GROUND_Y-114,step:1},
-    {x:6415,w:30,top:GROUND_Y-95,step:1},
-    {x:6445,w:30,top:GROUND_Y-76,step:1},
-    {x:6475,w:30,top:GROUND_Y-57,step:1},
-    {x:6505,w:30,top:GROUND_Y-38,step:1},
-    {x:6535,w:30,top:GROUND_Y-19,step:1},
+    /* --- WAREHOUSE 3150-6750: TWO storeys in cross-section, each divided into
+       separate rooms (WH_ROOMS). Ground floor is loading bay / bulk storage /
+       cold store / workshop / drum store; upper floor is office / break room /
+       packing / counting room. 209px a storey — three storeys only left 19px of
+       headroom over the hero. Climb at the near end, cross the upper floor,
+       take the stair back down past the counting room to the exit. --- */
+    {x:3260,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},   // loading bay
+    {x:3980,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},      // bulk storage
+    {x:5480,w:139,top:GROUND_Y-126,sprite:"prop_crates_ai",cover:1},   // workshop
+    {x:6180,w:89,top:GROUND_Y-96,sprite:"prop_drums_ai",cover:1},      // drum store
+    {x:3445,w:30,top:GROUND_Y-19,step:1},   // stairs: loading bay -> upper floor
+    {x:3475,w:30,top:GROUND_Y-38,step:1},
+    {x:3505,w:30,top:GROUND_Y-57,step:1},
+    {x:3535,w:30,top:GROUND_Y-76,step:1},
+    {x:3565,w:30,top:GROUND_Y-95,step:1},
+    {x:3595,w:30,top:GROUND_Y-114,step:1},
+    {x:3625,w:30,top:GROUND_Y-133,step:1},
+    {x:3655,w:30,top:GROUND_Y-152,step:1},
+    {x:3685,w:30,top:GROUND_Y-171,step:1},
+    {x:3715,w:30,top:GROUND_Y-190,step:1},
+    {x:3745,w:30,top:GROUND_Y-209,step:1},
+    {x:5000,w:2520,top:GROUND_Y-209,deck:1,hide:1},   // UPPER FLOOR 3740-6260
+    {x:4560,w:139,top:GROUND_Y-335,base:GROUND_Y-209,sprite:"prop_crates_ai",cover:1},
+    {x:5240,w:89,top:GROUND_Y-305,base:GROUND_Y-209,sprite:"prop_drums_ai",cover:1},
+    {x:6275,w:30,top:GROUND_Y-190,step:1},   // stair back down past the counting room
+    {x:6305,w:30,top:GROUND_Y-171,step:1},
+    {x:6335,w:30,top:GROUND_Y-152,step:1},
+    {x:6365,w:30,top:GROUND_Y-133,step:1},
+    {x:6395,w:30,top:GROUND_Y-114,step:1},
+    {x:6425,w:30,top:GROUND_Y-95,step:1},
+    {x:6455,w:30,top:GROUND_Y-76,step:1},
+    {x:6485,w:30,top:GROUND_Y-57,step:1},
+    {x:6515,w:30,top:GROUND_Y-38,step:1},
+    {x:6545,w:30,top:GROUND_Y-19,step:1},
     /* --- rear yard: containers out the back door, then the quay --- */
     {x:7000,w:300,top:GROUND_Y-138,stack:1,rows:1},
     {x:7320,w:300,top:GROUND_Y-276,stack:1,rows:2},
@@ -1992,17 +1993,19 @@ function buildHarbour(){ LEVEL_W=9000; seg=1; boarded=false; fadeT=0;
     [["goonB",1180,"patrol"]],
     [["goonA",2300,"patrol"],["blade",2560,"aggro"]],
     [["goonB",2900,"aggro"],["crew",3060,"aggro"]],
-    // inside: a gunner posted up on the catwalk shooting down at the floor
-    [["dog",3400],["crew",3600,"aggro"],["gunner",4790,"aggro","roof"]],
-    [["blade",4000,"aggro","roof"],["crew",4400,"aggro","roof"]],
-    [["bruiser",4300,"aggro"],["gunner",4790,"aggro","roof"]],
-    [["crew",4900,"aggro","roof"],["blade",5000,"aggro"]],
-    [["goonB",5700,"patrol"],["blade",5900,"aggro"]],
-    [["gunner",6100,"aggro"],["crew",6250,"aggro"]],
+    // inside: a fight per room, and a gunner posted up on the floor above
+    [["dog",3400],["crew",3600,"aggro"],["gunner",4100,"aggro","roof"]],   // loading bay
+    [["blade",4050,"aggro"],["crew",4250,"aggro"]],                        // bulk storage
+    [["bruiser",4800,"aggro"],["gunner",4600,"aggro","roof"]],             // cold store
+    [["blade",5500,"aggro"],["crew",5700,"aggro"]],                        // workshop
+    [["goonB",6200,"patrol"],["blade",6400,"aggro"]],                      // drum store
+    [["crew",4000,"aggro","roof"],["blade",4300,"aggro","roof"]],          // office / break
+    [["gunner",5200,"aggro","roof"],["crew",5450,"aggro","roof"]],         // packing
+    [["bruiser",5900,"aggro","roof"],["goonB",6100,"aggro","roof"]],       // counting room
     [["bruiser",6700,"aggro"],["goonA",6850,"aggro"]],
   ];
-  pickups=[{x:4790,y:GROUND_Y-336,vy:null,kind:"herb",val:1,t:0},
-           {x:6060,y:GROUND_Y-308,vy:null,kind:"herb",val:1,t:0},
+  pickups=[{x:4790,y:GROUND_Y-241,vy:null,kind:"herb",val:1,t:0},
+           {x:6060,y:GROUND_Y-241,vy:null,kind:"herb",val:1,t:0},
            {x:2560,y:GROUND_Y-170,vy:null,kind:"herb",val:1,t:0}];
   searchlights=[{x:2180,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0},
                 {x:7600,sy:GROUND_Y-300,gy:GROUND_Y,range:210,half:50,t:0.7,sp:0.011,alarmCd:0}];
@@ -2405,7 +2408,36 @@ const WH={x1:3150,x2:6750};
    with beams, and a railing. Floors are architecture, not platforms — the
    matching collision boxes carry `hide:1` so drawPlatforms leaves them alone. */
 const WH_ROOF=22, WH_EAVE=WH_ROOF+34, WH_WALL=96;
-const WH_FLOORS=[{y:GROUND_Y-152,x1:3620,x2:5500},{y:GROUND_Y-304,x1:4620,x2:6120}];
+/* TWO storeys, not three. The interior is GROUND_Y-WH_EAVE = 418px tall; split
+   three ways that is a 139px storey, which leaves 19px of headroom over a 120px
+   hero — the rooms came out shorter than the character. Split two ways it is
+   209px, 89px of headroom, which is what a room actually looks like. */
+const WH_STOREY=209;
+const WH_FLOORS=[{y:GROUND_Y-WH_STOREY,x1:3740,x2:6260}];
+/* Each storey is divided into separate ROOMS, each with its own painted plate,
+   its own light and a partition wall between it and the next. The upper floor
+   is the offices and the packing/counting rooms; the ground floor is the
+   working part of the building. Bands are keyed off WH_STOREY so re-laying the
+   storeys moves the rooms with them.
+   Room edges line up with the ends of the upper floor slab, so every upper room
+   sits squarely over a ground room instead of straddling two. The two bays
+   BEYOND the slab (the entrance and the back exit) carry `tall:1` and are drawn
+   full double height — left at one storey they were dead black voids, which is
+   what made the entrance read as a hole rather than a hall. */
+const WH_ROOMS=[
+  // ground floor: two double-height end halls with four rooms under the slab
+  {lo:3150,hi:3740,y:GROUND_Y,           img:"room_loading" ,glow:"#ffb457",gx:0.62,gy:0.52,tall:1},
+  {lo:3740,hi:4370,y:GROUND_Y,           img:"room_storage" ,glow:"#ffd9a0",gx:0.50,gy:0.20},
+  {lo:4370,hi:5000,y:GROUND_Y,           img:"room_cold"    ,glow:"#cfeaff",gx:0.50,gy:0.16},
+  {lo:5000,hi:5630,y:GROUND_Y,           img:"room_workshop",glow:"#ffa64d",gx:0.72,gy:0.26},
+  {lo:5630,hi:6260,y:GROUND_Y,           img:"room_drums"   ,glow:"#7dff9e",gx:0.44,gy:0.30},
+  {lo:6260,hi:6750,y:GROUND_Y,           img:"room_despatch",glow:"#ffa845",gx:0.72,gy:0.42,tall:1},
+  // upper floor 3740-6260, one room directly over each ground room
+  {lo:3740,hi:4370,y:GROUND_Y-WH_STOREY, img:"room_office"  ,glow:"#ffc266",gx:0.44,gy:0.44},
+  {lo:4370,hi:5000,y:GROUND_Y-WH_STOREY, img:"room_break"   ,glow:"#ffcf7a",gx:0.36,gy:0.20},
+  {lo:5000,hi:5630,y:GROUND_Y-WH_STOREY, img:"room_packing" ,glow:"#dff0ff",gx:0.55,gy:0.20},
+  {lo:5630,hi:6260,y:GROUND_Y-WH_STOREY, img:"room_count"   ,glow:"#ffb03a",gx:0.52,gy:0.24},
+];
 function drawWarehouseShell(){
   const L=WH.x1-cam.x, R=WH.x2-cam.x, oL=L-WH_WALL, oR=R+WH_WALL;
   if(oR<-40||oL>VW+40)return;
@@ -2454,9 +2486,11 @@ function drawWarehouseFloors(){
     // The storey below is a separate ROOM, so it sits in its own shadow. Without
     // this the same wall texture ran straight through the slab and the floor
     // read as a bar hanging in open space rather than as a ceiling.
-    const rm=ctx.createLinearGradient(0,f.y+TH,0,f.y+TH+96);
-    rm.addColorStop(0,"rgba(4,6,9,0.80)"); rm.addColorStop(1,"rgba(4,6,9,0)");
-    ctx.fillStyle=rm; ctx.fillRect(l,f.y+TH,r-l,96);
+    // Kept SHALLOW on purpose: at 0.80 over 96px the whole ground floor sat in
+    // the mezzanine's shadow and you couldn't read a fight down there.
+    const rm=ctx.createLinearGradient(0,f.y+TH,0,f.y+TH+64);
+    rm.addColorStop(0,"rgba(4,6,9,0.62)"); rm.addColorStop(1,"rgba(4,6,9,0)");
+    ctx.fillStyle=rm; ctx.fillRect(l,f.y+TH,r-l,64);
     ctx.fillStyle="#0c1116"; ctx.fillRect(l,f.y+TH,r-l,10);          // hard ceiling line
     const sg=ctx.createLinearGradient(0,f.y,0,f.y+TH);
     sg.addColorStop(0,"#3a444f"); sg.addColorStop(1,"#1a2129");
@@ -2475,39 +2509,53 @@ function drawWarehouseFloors(){
    it, so without this the building reads as an empty box with catwalks stuck on.
    Drawn after the plate and before the platforms, all world-locked. */
 function drawWarehouse(){ if(level!==2||seg!==1)return;
-  const im=images.bg_warehouse; if(!im)return;
   const L=WH.x1-cam.x, R=WH.x2-cam.x; if(R<-WH_WALL-40||L>VW+WH_WALL+40)return;
   drawWarehouseShell();
   // ---- ROOMS ----------------------------------------------------------
-  // A cross-section is a stack of rooms, not one tall hall with shelves
-  // floating in it. Each storey gets its own back wall drawn INTO its own
-  // band, sampled from a different part of the plate so no two levels repeat,
-  // and darkened with height so the upper floors read as further from the
-  // door. That division is what makes it a building rather than a backdrop
-  // with bars across it.
-  // Back walls span the WHOLE building — a wall doesn't stop where a floor
-  // does. Only the floor slabs are partial, which is what gives a cross-section
-  // its stepped, open-sided look instead of leaving holes above the short floors.
-  const rooms=[{top:GROUND_Y-152,bot:GROUND_Y,     off:0.00, dim:0.00},
-               {top:GROUND_Y-304,bot:GROUND_Y-152, off:0.37, dim:0.14},
-               {top:WH_EAVE,     bot:GROUND_Y-304, off:0.71, dim:0.26}];
-  const pw=Math.round(VH*(im.width/im.height)*0.86);
-  for(const rm of rooms){
-    const rl=WH.x1-cam.x, rr=WH.x2-cam.x;
+  // A cross-section is a stack of DIFFERENT rooms, not one plate repeated at
+  // different offsets. Each room gets its own painted interior anchored to its
+  // own floor, its own pool of light in its own colour, and a partition wall
+  // dividing it from the next — which is what stops a long building reading as
+  // one corridor with furniture along it.
+  // Where nothing is authored (the double-height ends, around the doors) the
+  // band is just left dark, so the entrance reads as open height.
+  ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
+  const HALLDARK=ctx.createLinearGradient(0,WH_EAVE,0,GROUND_Y);
+  HALLDARK.addColorStop(0,"#05080b"); HALLDARK.addColorStop(1,"#0d1219");
+  ctx.fillStyle=HALLDARK; ctx.fillRect(L,WH_EAVE,R-L,GROUND_Y-WH_EAVE);
+  for(const rm of WH_ROOMS){
+    const rl=rm.lo-cam.x, rr=rm.hi-cam.x;
+    const rh=rm.tall? rm.y-WH_EAVE : WH_STOREY, top=rm.y-rh;
     if(rr<-40||rl>VW+40)continue;
-    ctx.save(); ctx.beginPath(); ctx.rect(rl,rm.top,rr-rl,rm.bot-rm.top); ctx.clip();
-    const shift=Math.round(pw*rm.off);
-    const n=Math.ceil((WH.x2-WH.x1)/pw)+2;
-    for(let i=-1;i<n;i++){ const sx=Math.round(WH.x1-cam.x+i*pw-shift);
-      if(sx>VW+pw||sx<-pw)continue;
-      ctx.save(); ctx.translate(sx,0);
-      if(((i%2)+2)%2===1){ ctx.translate(pw,0); ctx.scale(-1,1); }
-      // the plate's own floor sits at its bottom, so anchor each copy to the
-      // bottom of ITS room and let the wall run up out of frame
-      ctx.drawImage(im,0,rm.bot-(GROUND_Y-WH_EAVE),pw,GROUND_Y-WH_EAVE+2);
-      ctx.restore(); }
-    if(rm.dim>0){ ctx.fillStyle="rgba(4,6,10,"+rm.dim.toFixed(2)+")"; ctx.fillRect(rl,rm.top,rr-rl,rm.bot-rm.top); }
-    ctx.restore(); }
+    const im=images[rm.img];
+    ctx.save(); ctx.beginPath(); ctx.rect(rl,top,rr-rl,rh); ctx.clip();
+    // The plate is trimmed so ITS floor line is its bottom edge, so filling the
+    // room band lands the painted floor exactly on the storey's walking surface.
+    if(im){ if(rm.flip){ ctx.save(); ctx.translate(rr,0); ctx.scale(-1,1);
+                         ctx.drawImage(im,0,top,rr-rl,rh); ctx.restore(); }
+            else ctx.drawImage(im,rl,top,rr-rl,rh); }
+    else { ctx.fillStyle="#131a22"; ctx.fillRect(rl,top,rr-rl,rh); }
+    // this room's own light, in this room's own colour
+    const g=ctx.createRadialGradient(rl+(rr-rl)*rm.gx,top+rh*rm.gy,4,
+                                     rl+(rr-rl)*rm.gx,top+rh*rm.gy,rh*1.2);
+    g.addColorStop(0,rm.glow+"3a"); g.addColorStop(1,rm.glow+"00");
+    ctx.fillStyle=g; ctx.fillRect(rl,top,rr-rl,rh);
+    // corners fall off, so the rooms don't all sit at one flat brightness
+    const v=ctx.createLinearGradient(rl,0,rr,0);
+    v.addColorStop(0,"rgba(3,5,8,0.42)"); v.addColorStop(0.5,"rgba(3,5,8,0)");
+    v.addColorStop(1,"rgba(3,5,8,0.42)");
+    ctx.fillStyle=v; ctx.fillRect(rl,top,rr-rl,rh);
+    ctx.restore();
+    // PARTITION between this room and the next one along the same storey
+    const nxt=WH_ROOMS.find(o=>o.y===rm.y&&o.lo===rm.hi);
+    if(nxt){ const px=rr-7, ph=Math.min(rh,nxt.tall?nxt.y-WH_EAVE:WH_STOREY), pt=rm.y-ph;
+      ctx.fillStyle="#0a0e13"; ctx.fillRect(px,pt,14,ph);
+      ctx.fillStyle="#232c36"; ctx.fillRect(px,pt,4,ph);
+      ctx.fillStyle="#39434e"; ctx.fillRect(px+10,pt,4,ph);
+      // doorway punched through it so the rooms visibly connect
+      ctx.fillStyle="#05080b"; ctx.fillRect(px,rm.y-152,14,152);
+      ctx.fillStyle="#4b5764"; ctx.fillRect(px-3,rm.y-156,20,4); } }
+  ctx.restore();
   // ---- ground floor slab -----------------------------------------------
   ctx.save(); ctx.beginPath(); ctx.rect(L,WH_EAVE,R-L,VH-WH_EAVE); ctx.clip();
   const fg=ctx.createLinearGradient(0,GROUND_Y,0,VH);
@@ -2547,15 +2595,8 @@ function drawWarehouseProps(){
       gl.addColorStop(0,"rgba(255,214,150,0.17)"); gl.addColorStop(1,"rgba(255,214,150,0)");
       ctx.fillStyle=gl; ctx.beginPath(); ctx.moveTo(sx-30,f.y+46); ctx.lineTo(sx+30,f.y+46);
       ctx.lineTo(sx+92,footY); ctx.lineTo(sx-92,footY); ctx.closePath(); ctx.fill(); } }
-  // pallet racking against the ground-floor wall
-  for(let bx=WH.x1+150;bx<WH.x2-260;bx+=420){ const sx=bx-cam.x; if(sx<-230||sx>VW+230)continue;
-    ctx.fillStyle="rgba(10,13,17,0.80)";
-    ctx.fillRect(sx,GROUND_Y-136,11,136); ctx.fillRect(sx+188,GROUND_Y-136,11,136);
-    for(let sy=GROUND_Y-136;sy<GROUND_Y-16;sy+=60){
-      ctx.fillStyle="rgba(10,13,17,0.80)"; ctx.fillRect(sx,sy,199,8);
-      ctx.fillStyle="rgba(58,48,34,0.85)";
-      ctx.fillRect(sx+14,sy+8,68,38); ctx.fillRect(sx+92,sy+8,54,38);
-      ctx.fillStyle="rgba(150,175,190,0.07)"; ctx.fillRect(sx+14,sy+8,68,3); } }
+  // No generic racking here any more — each room's painted plate carries its
+  // own furniture, and drawing shelving over the top of it doubled everything up.
   // chains off the roof steel
   ctx.strokeStyle="rgba(120,140,150,0.30)"; ctx.lineWidth=2.5;
   for(let bx=WH.x1+260;bx<WH.x2;bx+=470){ const sx=bx-cam.x; if(sx<-20||sx>VW+20)continue;
@@ -2897,7 +2938,16 @@ if(location.hostname==="localhost"||location.hostname==="127.0.0.1"){
     get platforms(){return platforms;}, get enemies(){return enemies;},
     get images(){return images;}, get sprites(){return sprites;},
     get seg(){return seg;}, get level(){return level;},
-    warp(x){ player.x=x; player.y=GROUND_Y; player.vx=0; player.vy=0; cam.x=Math.max(0,x-VW/2); } };
+    warp(x){ player.x=x; player.y=GROUND_Y; player.vx=0; player.vy=0; cam.x=Math.max(0,x-VW/2); },
+    // jump straight into a level/segment. Driving the title menu by synthetic
+    // key events is fragile, and every scene check starts with "get me there".
+    goto(lv,sg,x){ levelSel=lv; startGame();
+      if(lv===2&&sg===2)buildShipHold(); else if(lv===2&&sg===3)buildShipDeck();
+      setState("play"); scene=null; dlg=null; player.cine=0;
+      if(x!=null)this.warp(x); return {level,seg,x:player.x}; },
+    // clear the stage: enemy barks open a dialogue box over the bottom of the
+    // screen, which is exactly where the ground floor is
+    quiet(){ enemies.length=0; projectiles.length=0; dlg=null; return "clear"; } };
 }
 function drawTitle(){ drawBackground();ctx.fillStyle="rgba(3,6,12,0.55)";ctx.fillRect(0,0,VW,VH);ctx.textAlign="center";
   ctx.save();ctx.shadowColor="#39ff8b";ctx.shadowBlur=24;ctx.fillStyle="#eafff4";ctx.font="bold 72px Trebuchet MS";ctx.fillText(STR.title,VW/2,VH/2-20);ctx.restore();

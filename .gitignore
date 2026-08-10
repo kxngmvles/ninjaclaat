@@ -4,3 +4,12 @@
 anim_src/
 tools/__pycache__/
 _scene_*.html
+
+# session scratch: preview harness pages and rendered check frames
+_play.html
+_scene.html
+_wh_*.html
+_shot_*.jpg
+_gsheet.png
+_whsheet.png
+_rooms.png

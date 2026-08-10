@@ -93,7 +93,9 @@ let player={{x:{args.cam}+480,y:GROUND_Y}};
 {grab_const(src, "WH")}
 {grab_const(src, "SH")}
 {grab_const(src, "WH_ROOF")}
+{grab_const(src, "WH_STOREY")}
 {grab_const(src, "WH_FLOORS")}
+{grab_const(src, "WH_ROOMS")}
 function clamp(v,a,b){{return v<a?a:v>b?b:v;}}
 {bodies}
 // Backdrops are <img>s. Draw only once they have actually decoded, or the scene
@@ -117,12 +119,22 @@ window.__png=h.toDataURL('image/jpeg',0.82);
 document.body.appendChild(Object.assign(document.createElement('textarea'),
   {{id:'png',value:window.__png,style:'width:99%;height:40px'}}));
 document.title='rendered '+window.__png.length;
+// hand the frame to tools/shot_sink.py — the browser can't write a file and a
+// data URL is too big to read back out through the tool channel
+fetch('http://127.0.0.1:8799/shot?name='+encodeURIComponent(
+  location.pathname.replace(/^.*\\//,'').replace(/\\.html$/,'')),
+  {{method:'POST',body:window.__png}}).catch(()=>{{}});
 }}
 let left=NEED.length+NEEDSPR.length;
 const done=()=>{{ if(--left===0)draw(); }};
 if(!left)draw();
-for(const k of NEED){{ const im=new Image();
-  im.onload=im.onerror=()=>{{ images[k]=im; done(); }}; im.src='./'+k+'.png'; }}
+// not every backdrop is a .png — the room plates are jpegs, and silently
+// failing to load one renders an empty room that looks like broken draw code
+for(const k of NEED){{ const im=new Image(); let tried=false;
+  im.onload=()=>{{ images[k]=im; done(); }};
+  im.onerror=()=>{{ if(!tried){{ tried=true; im.src='./'+k+'.jpg'; }}
+                   else {{ console.error('missing image '+k); done(); }} }};
+  im.src='./'+k+'.png'; }}
 // sprites are canvases in the engine ({{cv,w,h}}), so wrap each one the same way
 for(const k of NEEDSPR){{ const im=new Image();
   im.onload=()=>{{ const c=document.createElement('canvas'); c.width=im.naturalWidth; c.height=im.naturalHeight;
