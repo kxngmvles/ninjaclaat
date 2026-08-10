@@ -128,9 +128,11 @@ def main():
             continue
         x0 = min(x0, xs.min()); x1 = max(x1, xs.max())
         y0 = min(y0, ys.min()); y1 = max(y1, ys.max())
-    pad = 6
+    # clamp the padded box to the frame — numpy truncates an over-wide slice
+    # silently, which leaves the art flush against the crop edge
+    pad, H0, W0 = 6, keyed[0].shape[0], keyed[0].shape[1]
     x0, y0 = max(x0 - pad, 0), max(y0 - pad, 0)
-    x1, y1 = x1 + pad, y1 + pad
+    x1, y1 = min(x1 + pad, W0 - 1), min(y1 + pad, H0 - 1)
 
     # scale to the reference body height
     ra = key_background(np.array(Image.open(os.path.join(REF_DIR, args.ref + ".png")).convert("RGBA")))
@@ -146,16 +148,17 @@ def main():
     # not the character — and the engine draws every sprite centred on the
     # entity's x. Shift the whole set (equally, so the motion is preserved) so
     # the average torso sits on the canvas centre.
-    shift = int(round(np.mean([body_centre(c) for c in crops]) - crops[0].shape[1] / 2))
-    if shift:
-        pad = abs(shift) * 2
-        padded = []
-        for c in crops:
-            canvas = np.zeros((c.shape[0], c.shape[1] + pad, 4), np.uint8)
-            x0p = pad if shift > 0 else 0
-            canvas[:, x0p:x0p + c.shape[1]] = c
-            padded.append(canvas)
-        crops = padded
+    # Centre the SET's torso on the canvas by padding, never by moving content
+    # toward an edge. Solving  L + bc == (L + w + R)/2  with d = bc - w/2 gives
+    # L = max(0,-2d), R = max(0,2d): space is always ADDED on the side the body
+    # leans away from. The previous version had the sign inverted and placed the
+    # content flush against the far edge, which is what clipped every attack
+    # frame that swung a weapon out.
+    w0 = crops[0].shape[1]
+    d = float(np.mean([body_centre(c) for c in crops])) - w0 / 2.0
+    padL, padR = int(round(max(0.0, -2 * d))), int(round(max(0.0, 2 * d)))
+    if padL or padR:
+        crops = [np.pad(c, ((0, 0), (padL, padR), (0, 0))) for c in crops]
     for j, c in enumerate(crops, 1):
         im = Image.fromarray(bleed_rgb(c))
         im = im.resize((max(1, round(im.width * scale)), max(1, round(im.height * scale))), Image.LANCZOS)
