@@ -78,6 +78,12 @@ window.STR = {
   ],
   block_learned: "GUARD LEARNED — hold B to spin the blade",
   djump_learned: "DOUBLE JUMP — press jump again in mid-air",
+  level2_warehouse: [
+    {s:"", t:"A blockhouse squats at the head of the pier — three floors of it, roller doors chained, one shutter jacked half open on a wedge of yellow light.", n:""},
+    {s:"DUPREE", t:"Everything that comes off that boat goes through here first. Weighed, counted, signed for.", n:""},
+    {s:"NINJACLAAT", t:"Then the men who sign are inside.", n:""},
+    {s:"DUPREE", t:"All the way up. Ground's theirs — but they never watch the roof steel.", n:""}
+  ],
   level2_board: [
     {s:"", t:"The freighter looms over the pier, its hull lost in the rain far above. A stern stairway hangs open at the waterline.", n:""},
     {s:"DUPREE", t:"That's her. The whole shipment's aboard. Don't take the gangway — go in low, through the hold, and come up behind them.", n:""},

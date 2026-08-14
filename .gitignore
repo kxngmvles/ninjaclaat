@@ -13,3 +13,9 @@ _shot_*.jpg
 _gsheet.png
 _whsheet.png
 _rooms.png
+
+# local mirror of the CDN art, for the offline test harness only
+_cdn/
+_whopts.png
+_gridA*.png
+_despatch_preview.png
