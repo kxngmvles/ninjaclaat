@@ -1,0 +1,48 @@
+name: Integrate Warehouse V2
+
+on:
+  push:
+    branches:
+      - warehouse-v2-rebuild
+    paths:
+      - 'warehouse_v2/**'
+      - '.github/workflows/integrate-warehouse-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out test branch
+        uses: actions/checkout@v4
+        with:
+          ref: warehouse-v2-rebuild
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Apply and validate Warehouse V2
+        run: python warehouse_v2/apply_warehouse_v2.py
+
+      - name: Commit integrated playable build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- dist/game.js dist/assets.js wh_plate_v2.jpg index.html
+          if git diff --cached --quiet; then
+            echo "No integration changes to commit."
+          else
+            git commit -m "Integrate Warehouse V2 into playable branch build"
+            git push origin HEAD:warehouse-v2-rebuild
+          fi
