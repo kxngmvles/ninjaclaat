@@ -351,13 +351,12 @@ let shipDeck=null;
    One definition, one place to change. */
 const L2_DOCK=1, L2_WARE=2, L2_HOLD=3, L2_DECK=4;
 const onDock =()=>level===2&&seg===L2_DOCK;
-const inWare =()=>level===2&&seg===L2_WARE;
+// Warehouse V3 lives inside the dock map. L2_WARE remains only as a legacy
+// debug id so old bookmarks/dev helpers do not break.
+const inWare =()=>level===2&&seg===L2_DOCK&&inWarehouseX(player.x);
 const inHold =()=>level===2&&seg===L2_HOLD;
 const onDeck =()=>level===2&&seg===L2_DECK;
-/* Which segment follows which, so the fade has one route table instead of a
-   chain of ternaries that has to be re-read every time a segment is added. */
-const L2_NEXT={[L2_DOCK]:()=>buildWarehouse(),[L2_WARE]:()=>buildShipHold(),
-               [L2_HOLD]:()=>buildShipDeck()};
+const L2_NEXT={[L2_DOCK]:()=>buildShipHold(),[L2_HOLD]:()=>buildShipDeck()};
 let seg=1, fadeT=0, boarded=false;
 let hobos=[], vendorX=-99999, smokeCharges=0, shopSel=0, shopItems=[];
 let mopedMode=false,mopDist=0,mopEnd=12500,mopSpeed=7,mopObs=[],mopFoes=[],mopBul=[],mopSpawnT=46,mopGap=320,mopSlow=0,mopWheel=0,l3DefeatDone=false,l4exit=false,l4cell=false;
@@ -373,7 +372,7 @@ let cam={x:0,y:0}, camTop=0, shake=0, hitstop=0, flash=0, now=0;
 let scene=null, blockTutDone=false, djumpTutDone=false;
 function overGap(x){ for(const g of gaps){ if(x>g.x1&&x<g.x2)return true; } return false; }
 // a pit with a floor below instead of harbour water (L3 rooftops, L2 warehouse)
-function dryPit(x){ return level===3||inHold()||inWare(); }
+function dryPit(x){ return level===3||inHold()||inWarehouseX(x); }
 const rnd=(a,b)=>a+Math.random()*(b-a), clamp=(v,a,b)=>v<a?a:v>b?b:v;
 let particles=[],floaters=[],ghosts=[],slashArcs=[],projectiles=[];
 function blood(x,y,d){for(let i=0;i<16;i++)particles.push({x,y,vx:rnd(-2,2)+d*1.5,vy:rnd(-4,1),g:0.3,life:rnd(24,46),c:"#b81d2a",r:rnd(2,4)});}
@@ -1082,7 +1081,7 @@ function tryTakedown(){ if(player.attacking||player.dashT>0||!player.onGround)re
   }
   return false;
 }
-function buildHarbour(){ LEVEL_W=7400; seg=L2_DOCK; boarded=false; fadeT=0;
+function buildHarbour(){ LEVEL_W=WH_EXIT_END; seg=L2_DOCK; boarded=false; fadeT=0;
   player.hasDash=true; player.has3combo=true; player.hasDoubleJump=false; player.hasBlock=false; player.cine=0;
   blockTutDone=false; djumpTutDone=false; scene=null; shipDeck=null;
   camTop=0; cam.y=0;
@@ -1153,6 +1152,7 @@ function buildHarbour(){ LEVEL_W=7400; seg=L2_DOCK; boarded=false; fadeT=0;
   searchlights=[{x:2180,sy:GROUND_Y-200,gy:GROUND_Y,range:200,half:54,t:0,sp:0.013,alarmCd:0},
                 {x:4560,sy:GROUND_Y-300,gy:GROUND_Y,range:210,half:50,t:0.4,sp:0.011,alarmCd:0},
                 {x:6960,sy:GROUND_Y-300,gy:GROUND_Y,range:210,half:50,t:0.7,sp:0.011,alarmCd:0}];
+  appendWarehouseToHarbour();
   waveIdx=0; spawnWave();
 }
 /* ---- L2 seg 2: INSIDE the ship. You board at the stern stairs and fight your
@@ -1541,67 +1541,82 @@ function wrapText(t,x,y,maxW,lh){const words=t.split(" ");let line="",yy=y;for(c
 function drawParallax(key,factor,gap,w){ const im=images[key]; if(!im)return; const h=w*im.height/im.width, yTop=VH-h-gap; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w; bx<VW+w; bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),yTop); if(level!==2 && (((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,h); ctx.restore(); } }
 function drawParallaxCover(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%w; if(off<0)off+=w; for(let bx=-w; bx<VW+w; bx+=w){ ctx.drawImage(im, Math.round(bx-off), 0, w, VH); } }
 function drawBgMirror(key,factor,w){ const im=images[key]; if(!im)return; let off=(cam.x*factor)%(2*w); if(off<0)off+=2*w; for(let bx=-2*w;bx<VW+2*w;bx+=w){ const tile=Math.round(bx/w), sx=bx-off; ctx.save(); ctx.translate(Math.round(sx),0); if((((tile%2)+2)%2)===1){ctx.translate(w,0);ctx.scale(-1,1);} ctx.drawImage(im,0,0,w,VH); ctx.restore(); } }
-/* ============================ L2 seg 2: THE WAREHOUSE V2 ====================
-   One unique, cinematic warehouse plate. The route snakes through the same
-   building instead of repeating architectural bays:
-     ground loading floor -> right stair -> middle mezzanine -> left stair ->
-     upper machinery floor -> freight-shaft drop -> ground exit.
-   Collision is authored to the visible structure and kept hidden so the art,
-   not debug-looking slabs, carries the scene.                                      */
+/* ====================== L2: CONTINUOUS WAREHOUSE V3 =========================
+   The warehouse is part of the harbour world, not a separate segment.
+   Player flow:
+     harbour -> warehouse doorway -> ground loading floor -> right stairs ->
+     middle mezzanine -> left stairs -> upper machinery floor -> freight shaft ->
+     ground exit -> outdoor apron -> freighter.
+   The single painted warehouse plate is world-locked inside the dock map.        */
 const WH={
-  w:2400,h:1028,
-  groundF:0.842, midF:0.572, topF:0.304, roofF:0.050,
-  leftStair:{x1:360,x2:675}, rightStair:{x1:1690,x2:2035},
-  shaft:{x1:1450,x2:1615}, gateX:2105
+  off:7350,w:2400,h:1028,
+  groundF:0.842,midF:0.572,topF:0.304,roofF:0.050,
+  leftStair:{x1:360,x2:675},rightStair:{x1:1690,x2:2035},
+  shaft:{x1:1450,x2:1615},gateX:2105
 };
+const WH_OFF=WH.off, WH_END=WH.off+WH.w, WH_EXIT_END=WH_END+700;
 const WH_Y0=Math.round(GROUND_Y-WH.groundF*WH.h);
 const WH_F1=GROUND_Y;
 const WH_F2=Math.round(WH_Y0+WH.midF*WH.h);
 const WH_F3=Math.round(WH_Y0+WH.topF*WH.h);
 const WH_TOP=Math.round(WH_Y0+WH.roofF*WH.h);
-const WH_X1=92, WH_X2=WH.w-92;
-const whIndoor=(x)=>x>WH_X1&&x<WH_X2;
+const whGX=(x)=>WH_OFF+x;
+function inWarehouseX(x){return level===2&&seg===L2_DOCK&&x>=WH_OFF&&x<=WH_END;}
+function warehouseVisible(){return level===2&&seg===L2_DOCK&&cam.x+VW>WH_OFF-120&&cam.x<WH_END+120;}
 let whRoute={armed:false,done:false,hintCd:0};
 
-function drawWarehouse(){ if(!inWare())return;
-  const im=images.wh_plate;
+function drawWarehouse(){
+  if(!warehouseVisible())return;
+  const im=images.wh_plate, x0=WH_OFF-cam.x;
   ctx.save();
-  ctx.fillStyle="#04070a";
-  ctx.fillRect(0,-camTop-80,VW,VH+camTop+160);
+  ctx.beginPath();
+  ctx.rect(x0,WH_TOP-40,WH.w,GROUND_Y-WH_TOP+150);
+  ctx.clip();
 
   if(im){
-    ctx.drawImage(im,Math.round(-cam.x),WH_Y0,WH.w,WH.h);
+    ctx.drawImage(im,Math.round(x0),WH_Y0,WH.w,WH.h);
   } else {
-    const x0=-cam.x;
-    ctx.fillStyle="#111820"; ctx.fillRect(x0,WH_TOP,WH.w,GROUND_Y-WH_TOP);
-    ctx.fillStyle="#202b33";
-    ctx.fillRect(x0,WH_F2-12,WH.w,18); ctx.fillRect(x0,WH_F3-12,WH.w,18);
-    ctx.strokeStyle="#5a6770"; ctx.lineWidth=4;
-    for(let x=120;x<WH.w;x+=240){const sx=x-cam.x;ctx.beginPath();ctx.moveTo(sx,WH_TOP);ctx.lineTo(sx,GROUND_Y);ctx.stroke();}
+    const air=ctx.createLinearGradient(0,WH_TOP,0,GROUND_Y);
+    air.addColorStop(0,"#101a22"); air.addColorStop(1,"#26343b");
+    ctx.fillStyle=air; ctx.fillRect(x0,WH_TOP,WH.w,GROUND_Y-WH_TOP);
+    ctx.fillStyle="#59656d";
+    ctx.fillRect(x0,WH_F2-10,WH.w,14);
+    ctx.fillRect(x0,WH_F3-10,WH.w,14);
+    ctx.strokeStyle="#46535c";ctx.lineWidth=6;
+    for(let x=120;x<WH.w;x+=240){const sx=x0+x;ctx.beginPath();ctx.moveTo(sx,WH_TOP);ctx.lineTo(sx,GROUND_Y);ctx.stroke();}
+    ctx.fillStyle="#17232a";
+    for(let x=180;x<WH.w-140;x+=380)ctx.fillRect(x0+x,GROUND_Y-180,240,180);
   }
 
-  const shx=WH.shaft.x1-cam.x, shw=WH.shaft.x2-WH.shaft.x1;
+  const shx=whGX(WH.shaft.x1)-cam.x, shw=WH.shaft.x2-WH.shaft.x1;
   if(shx<VW+80&&shx+shw>-80){
     const sy=WH_F3-18, sh=GROUND_Y-sy;
     const sg=ctx.createLinearGradient(shx,0,shx+shw,0);
-    sg.addColorStop(0,"rgba(2,4,7,0.92)"); sg.addColorStop(0.5,"rgba(8,12,16,0.70)"); sg.addColorStop(1,"rgba(2,4,7,0.92)");
+    sg.addColorStop(0,"rgba(2,4,7,0.82)");
+    sg.addColorStop(0.5,"rgba(8,12,16,0.58)");
+    sg.addColorStop(1,"rgba(2,4,7,0.82)");
     ctx.fillStyle=sg; ctx.fillRect(shx,sy,shw,sh);
-    ctx.strokeStyle="rgba(116,129,136,0.58)"; ctx.lineWidth=4;
-    ctx.strokeRect(shx+4,sy+2,shw-8,sh-4);
-    ctx.strokeStyle="rgba(105,118,126,0.34)"; ctx.lineWidth=2;
-    for(let yy=sy+24;yy<GROUND_Y;yy+=44){ctx.beginPath();ctx.moveTo(shx+6,yy);ctx.lineTo(shx+shw-6,yy+28);ctx.moveTo(shx+shw-6,yy);ctx.lineTo(shx+6,yy+28);ctx.stroke();}
+    ctx.strokeStyle="rgba(116,129,136,0.58)";ctx.lineWidth=4;ctx.strokeRect(shx+4,sy+2,shw-8,sh-4);
+    ctx.strokeStyle="rgba(105,118,126,0.34)";ctx.lineWidth=2;
+    for(let yy=sy+24;yy<GROUND_Y;yy+=44){
+      ctx.beginPath();ctx.moveTo(shx+6,yy);ctx.lineTo(shx+shw-6,yy+28);
+      ctx.moveTo(shx+shw-6,yy);ctx.lineTo(shx+6,yy+28);ctx.stroke();
+    }
     if(!whRoute.armed){
-      ctx.fillStyle="#303941"; ctx.fillRect(shx+4,WH_F2-9,shw-8,18);
+      ctx.fillStyle="#303941";ctx.fillRect(shx+4,WH_F2-9,shw-8,18);
       ctx.fillStyle="#d0a233";
-      for(let xx=shx+8,n=0;xx<shx+shw-8;xx+=18,n++)ctx.fillRect(xx,WH_F2-9,9,4);
+      for(let xx=shx+8;xx<shx+shw-8;xx+=18)ctx.fillRect(xx,WH_F2-9,9,4);
     }
   }
 
   if(!whRoute.done){
-    const gx=WH.gateX-cam.x, gw=165, gy=GROUND_Y-224;
+    const gx=whGX(WH.gateX)-cam.x,gw=165,gy=GROUND_Y-224;
     if(gx<VW+gw&&gx+gw>-80){
-      ctx.fillStyle="rgba(16,21,25,0.96)";ctx.fillRect(gx,gy,gw,224);
-      for(let yy=gy;yy<GROUND_Y;yy+=18){ctx.fillStyle=(Math.floor((yy-gy)/18)%2)?"#242c31":"#20272c";ctx.fillRect(gx,yy,gw,16);}
+      ctx.fillStyle="rgba(16,21,25,0.92)";ctx.fillRect(gx,gy,gw,224);
+      for(let yy=gy;yy<GROUND_Y;yy+=18){
+        ctx.fillStyle=(Math.floor((yy-gy)/18)%2)?"#242c31":"#20272c";
+        ctx.fillRect(gx,yy,gw,16);
+      }
       ctx.fillStyle="#8b6b1e";ctx.fillRect(gx,GROUND_Y-8,gw,8);
       ctx.strokeStyle="rgba(145,160,170,0.48)";ctx.lineWidth=3;ctx.strokeRect(gx+1,gy+1,gw-2,222);
     }
@@ -1609,7 +1624,7 @@ function drawWarehouse(){ if(!inWare())return;
 
   ctx.fillStyle="rgba(210,225,230,0.11)";
   for(let i=0;i<18;i++){
-    const wx=((i*337+now*0.010)%WH.w), sx=wx-cam.x;
+    const wx=((i*337+now*0.010)%WH.w),sx=x0+wx;
     if(sx<-10||sx>VW+10)continue;
     const yy=WH_TOP+70+((i*97+now*0.006)%(GROUND_Y-WH_TOP-100));
     ctx.fillRect(sx,yy,1.5,1.5);
@@ -1620,72 +1635,68 @@ function drawWarehouse(){ if(!inWare())return;
 function updateWarehouseRoute(){
   if(!inWare())return;
   if(whRoute.hintCd>0)whRoute.hintCd--;
+  const lx=player.x-WH_OFF;
 
-  if(!whRoute.armed && player.y<=WH_F3+18 && player.x>WH.shaft.x1-180){
+  if(!whRoute.armed&&player.y<=WH_F3+18&&lx>WH.shaft.x1-180){
     whRoute.armed=true;
     platforms=platforms.filter(p=>!p.whTrap);
     floatText(player.x,player.y-HERO_H-10,"FREIGHT SHAFT OPEN","#ffd86b");
-    shake=Math.max(shake,4); sfx("sfx_reload");
+    shake=Math.max(shake,4);sfx("sfx_reload");
   }
-  if(whRoute.armed&&!whRoute.done&&player.y>=GROUND_Y-2&&player.x>WH.shaft.x1-90&&player.x<WH.shaft.x2+90){
+  if(whRoute.armed&&!whRoute.done&&player.y>=GROUND_Y-2&&
+     lx>WH.shaft.x1-90&&lx<WH.shaft.x2+90){
     whRoute.done=true;
     floatText(player.x,player.y-HERO_H-12,"EXIT ACCESS OPEN","#5dffa6");
     sfx("sfx_pickup");
   }
-  if(!whRoute.done&&player.y>WH_F2+86&&player.x>WH.gateX){
-    player.x=WH.gateX; player.vx=Math.min(0,player.vx);
+  if(!whRoute.done&&player.y>WH_F2+86&&lx>WH.gateX){
+    player.x=whGX(WH.gateX);player.vx=Math.min(0,player.vx);
     if(whRoute.hintCd<=0){
       whRoute.hintCd=150;
-      floatText(WH.gateX-45,GROUND_Y-244,"CONTROL ROOM ABOVE","#ffd86b");
+      floatText(whGX(WH.gateX)-45,GROUND_Y-244,"CONTROL ROOM ABOVE","#ffd86b");
     }
   }
 }
 
-function buildWarehouse(){
-  seg=L2_WARE; mopedMode=false; boarded=false; fadeT=0; scene=null; shipDeck=null;
-  bossDefeated=false; bossActive=false; bossDeathT=0;
-  enemies=[]; projectiles=[]; pickups=[]; particles=[]; floaters=[]; ghosts=[];
-  slashArcs=[]; searchlights=[]; shadows=[]; gaps=[];
-  blockTutDone=true; djumpTutDone=true;
-  LEVEL_W=WH.w;
-  camTop=395; cam.x=0; cam.y=0;
+function appendWarehouseToHarbour(){
   whRoute={armed:false,done:false,hintCd:0};
-  player.x=110; player.y=GROUND_Y; player.vx=0; player.vy=0; player.onGround=true;
-  player._safe=110; player._safeY=GROUND_Y;
-
-  const P=[];
   const slab=(x1,x2,top,floor,opt)=>{
-    opt=opt||{}; if(x2-x1<8)return;
-    P.push(Object.assign({x:(x1+x2)/2,w:x2-x1,top,deck:1,hide:1,whFloor:floor},opt));
+    opt=opt||{};if(x2-x1<8)return;
+    platforms.push(Object.assign({
+      x:whGX((x1+x2)/2),w:x2-x1,top,deck:1,hide:1,whFloor:floor
+    },opt));
   };
   const stairs=(x1,x2,y1,y2,floor)=>{
-    const rise=Math.abs(y2-y1), n=Math.max(6,Math.ceil(rise/18));
+    const rise=Math.abs(y2-y1),n=Math.max(6,Math.ceil(rise/18));
     const tw=Math.abs(x2-x1)/n;
     for(let k=1;k<=n;k++){
       const t=k/n;
-      P.push({x:x1+(x2-x1)*t,w:tw+3,top:y1+(y2-y1)*t,step:1,hide:1,whFloor:floor});
+      platforms.push({
+        x:whGX(x1+(x2-x1)*t),w:tw+3,top:y1+(y2-y1)*t,
+        step:1,hide:1,whFloor:floor
+      });
     }
   };
 
   slab(325,WH.shaft.x1,WH_F2,2);
   slab(WH.shaft.x1,WH.shaft.x2,WH_F2,2,{whTrap:1});
   slab(WH.shaft.x2,2055,WH_F2,2);
-
   slab(650,WH.shaft.x1,WH_F3,3);
   slab(WH.shaft.x2,2140,WH_F3,3);
-
   stairs(2025,1705,WH_F1,WH_F2,2);
   stairs(390,665,WH_F2,WH_F3,3);
 
-  P.push({x:515,w:132,top:GROUND_Y-94,hide:1,cover:1});
-  P.push({x:860,w:118,top:GROUND_Y-82,hide:1,cover:1});
-  P.push({x:1125,w:148,top:GROUND_Y-108,hide:1,cover:1});
-  P.push({x:1835,w:112,top:GROUND_Y-88,hide:1,cover:1});
-  P.push({x:870,w:122,top:WH_F2-84,base:WH_F2,hide:1,cover:1,whFloor:2});
-  P.push({x:1870,w:108,top:WH_F2-90,base:WH_F2,hide:1,cover:1,whFloor:2});
-  platforms=P;
+  const box=(x,w,top,opt)=>platforms.push(Object.assign({
+    x:whGX(x),w,top,hide:1,cover:1
+  },opt||{}));
+  box(515,132,GROUND_Y-94);
+  box(860,118,GROUND_Y-82);
+  box(1125,148,GROUND_Y-108);
+  box(1835,112,GROUND_Y-88);
+  box(870,122,WH_F2-84,{base:WH_F2,whFloor:2});
+  box(1870,108,WH_F2-90,{base:WH_F2,whFloor:2});
 
-  waves=[
+  const ww=[
     [["crew",520,"aggro"],["goonA",780,"patrol"]],
     [["blade",1120,"aggro"],["bruiser",1380,"aggro"]],
     [["gunner",1900,"aggro","mid"],["crew",1760,"aggro","mid"]],
@@ -1696,12 +1707,31 @@ function buildWarehouse(){
     [["crew",1770,"aggro"],["goonB",1940,"aggro"]],
     [["bruiser",2140,"aggro"],["blade",2250,"aggro"]],
   ];
-  pickups=[
-    {x:1840,y:WH_F2-42,vy:null,kind:"herb",val:1,t:0},
-    {x:1030,y:WH_F3-42,vy:null,kind:"herb",val:1,t:0},
-    {x:1880,y:GROUND_Y-42,vy:null,kind:"herb",val:1,t:0}
-  ];
-  waveIdx=0; spawnWave();
+  for(const wave of ww){
+    waves.push(wave.map(w=>[w[0],whGX(w[1]),w[2],w[3]].filter(v=>v!==undefined)));
+  }
+  pickups.push(
+    {x:whGX(1840),y:WH_F2-42,vy:null,kind:"herb",val:1,t:0},
+    {x:whGX(1030),y:WH_F3-42,vy:null,kind:"herb",val:1,t:0},
+    {x:whGX(1880),y:GROUND_Y-42,vy:null,kind:"herb",val:1,t:0}
+  );
+
+  platforms.push(
+    {x:WH_END+165,w:96,top:GROUND_Y-58,sprite:"prop_oildrum",cover:1},
+    {x:WH_END+410,w:180,top:GROUND_Y-92,sprite:"prop_crates_ai",cover:1}
+  );
+  waves.push(
+    [["crew",WH_END+180,"aggro"],["goonB",WH_END+390,"aggro"]],
+    [["bruiser",WH_END+545,"aggro"]]
+  );
+}
+
+function buildWarehouse(){
+  buildHarbour();
+  blockTutDone=true;djumpTutDone=true;scene=null;boarded=false;
+  player.x=WH_OFF-220;player.y=GROUND_Y;player.vx=0;player.vy=0;player.onGround=true;
+  player._safe=player.x;player._safeY=GROUND_Y;
+  cam.x=Math.max(0,player.x-VW*0.38);cam.y=0;camTop=0;
 }
 
 function drawShipHold(){ if(!inHold())return;
@@ -1840,7 +1870,6 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   else if(level===5){ drawBgTile(images.bg_throne?"bg_throne":(images.bg_rooftop?"bg_rooftop":"bg_compound"),0.5,VW*1.45); ctx.fillStyle="rgba(6,7,14,0.3)"; ctx.fillRect(0,0,VW,VH); }
   else if(seg===L2_DECK){ /* weather deck is drawn by drawShipDeckBg() */ }
   else if(seg===L2_HOLD){ ctx.fillStyle="#070b10"; ctx.fillRect(0,0,VW,VH); }   // hold: drawShipHold paints it
-  else if(seg===L2_WARE){ ctx.fillStyle="#05080c"; ctx.fillRect(0,-camTop-40,VW,VH+camTop+80); } // warehouse: drawWarehouse paints it
   else { drawBgMirror("bg_harbour",0.5,VW*1.4); }
   if(onDeck()){ /* ship deck shown by the background image */ }
   else if(level===3&&seg===1){ const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH); dg.addColorStop(0,"#34373c"); dg.addColorStop(1,"#1a1d22"); ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y); ctx.fillStyle="#3a3f46"; ctx.fillRect(0,GROUND_Y,VW,6); ctx.fillStyle="rgba(0,0,0,0.3)"; ctx.fillRect(0,GROUND_Y+6,VW,3);
@@ -1849,7 +1878,7 @@ function drawBackground(){ const g=ctx.createLinearGradient(0,0,0,VH);
   else if(level===5){ const dg=ctx.createLinearGradient(0,GROUND_Y,0,VH); dg.addColorStop(0,"#23222c"); dg.addColorStop(1,"#0e0d14"); ctx.fillStyle=dg; ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y); ctx.fillStyle="#caa23a"; ctx.fillRect(0,GROUND_Y,VW,3); ctx.fillStyle="rgba(0,0,0,0.35)"; ctx.fillRect(0,GROUND_Y+3,VW,3); const tw=170,sx=-(((cam.x%tw)+tw)%tw); ctx.fillStyle="rgba(202,162,58,0.10)"; for(let x=sx;x<VW+tw;x+=tw)ctx.fillRect(x,GROUND_Y+6,2,VH-GROUND_Y-6); }
   else { const gim=(level===1)?(images.ground||images.dock_ground):((images.dock_ground)?images.dock_ground:images.ground); if(gim){const tw=160,th=128,sx=-(((cam.x%tw)+tw)%tw);for(let x=sx-tw;x<VW+tw;x+=tw)for(let yy=GROUND_Y;yy<VH+th;yy+=th)ctx.drawImage(gim,x,yy,tw,th);} else {ctx.fillStyle="#16202c";ctx.fillRect(0,GROUND_Y,VW,VH-GROUND_Y);} }
   drawWarehouse(); drawShipHold(); drawShipDeckBg();
-  if(onDock()&&sprites.prop_shipfront){ const s=sprites.prop_shipfront,H=GROUND_Y+30,W=s.w*(H/s.h),cx=8960-cam.x; if(cx>-W&&cx<VW+W)drawSpriteWH("prop_shipfront",cx,GROUND_Y+6,W,H,false,1); }
+  if(onDock()&&sprites.prop_shipfront){ const s=sprites.prop_shipfront,H=GROUND_Y+30,W=s.w*(H/s.h),cx=(LEVEL_W-420)-cam.x; if(cx>-W&&cx<VW+W)drawSpriteWH("prop_shipfront",cx,GROUND_Y+6,W,H,false,1); }
   for(const gp of gaps){ const x1=gp.x1-cam.x,x2=gp.x2-cam.x; if(x2<-30||x1>VW+30)continue; ctx.save();
     // a hole in the warehouse floor drops into the dark, not into the harbour
     if(dryPit(gp.x1+1)){ const Lx=Math.max(x1,-20),Rx=Math.min(x2,VW+20); const vv=ctx.createLinearGradient(0,GROUND_Y,0,VH); vv.addColorStop(0,"#0a0d12"); vv.addColorStop(1,"#050709"); ctx.fillStyle=vv; ctx.fillRect(Lx,GROUND_Y,Rx-Lx,VH-GROUND_Y); ctx.fillStyle="#2a2f36"; if(x1>-20)ctx.fillRect(x1-8,GROUND_Y-6,8,12); if(x2<VW+20)ctx.fillRect(x2,GROUND_Y-6,8,12); ctx.restore(); continue; }
@@ -2028,7 +2057,7 @@ function wrapCenter(t,cx,y,maxW,lh){ctx.textAlign="center";const words=t.split("
 // Dev hook: on localhost only, expose the live state so a scene can be jumped
 // to and inspected without playing the whole level up to it. Never active on
 // the deployed build.
-if(location.hostname==="localhost"||location.hostname==="127.0.0.1"){
+if(location.hostname==="localhost"||location.hostname==="127.0.0.1"||new URLSearchParams(location.search).has("dev")){
   window.__dbg={ get player(){return player;}, get cam(){return cam;},
     get platforms(){return platforms;}, get enemies(){return enemies;},
     get images(){return images;}, get sprites(){return sprites;},
@@ -2117,15 +2146,17 @@ function step(){
       else if(!scene&&player.y>=GROUND_Y-2){
         if(!djumpTutDone&&gaps[0]&&player.onGround&&player.x>gaps[0].x1-150&&player.x<gaps[0].x1+10){ startDjumpScene(); return; }
         else if(!blockTutDone&&player.onGround&&player.x>1880){ startBlockScene(); return; } } }
-    if(onDock()&&!scene&&!boarded&&player.x>LEVEL_W-300){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_warehouse,()=>{ state="shipfade"; fadeT=72; }); return; }
-    // out the far end of the warehouse and down to the freighter
-    if(inWare()&&!scene&&!boarded&&whRoute.done&&player.x>LEVEL_W-240&&player.y>=GROUND_Y-2){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
+    // Harbour -> warehouse -> outdoor apron is one continuous world. Fade only
+    // when NinjaClaat actually boards the freighter.
+    if(onDock()&&!scene&&!boarded&&whRoute.done&&player.x>LEVEL_W-260&&player.y>=GROUND_Y-2){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_board,()=>{ state="shipfade"; fadeT=72; }); return; }
     // top of the hold: the hatch out onto the weather deck (must be UP there)
     if(inHold()&&!scene&&!boarded&&player.x>4850&&player.y<=GROUND_Y-300){ boarded=true; player.cine=1; player.vx=0; setState("cutscene"); runDialogue(STR.level2_hatch,()=>{ state="shipfade"; fadeT=72; }); return; }
     if(level===3&&seg===1&&vendorX>-9999&&Math.abs(player.x-vendorX)<92&&player.onGround&&pressed.has("up")){ shopSel=0; setState("shop"); return; }
     if(level===4&&seg===1){ for(const gg of gaps){ if(!gg._hint&&player.x>gg.x1-320&&player.x<gg.x1-120){ gg._hint=1; floatText(player.x,player.y-HERO_H-22,"GAP! Press F to grapple across","#ffd86b"); } } }
     if(level===4&&seg===1&&!l4exit&&!scene&&player.onGround&&player.x>LEVEL_W-150){ l4exit=true; player.cine=1; player.vx=0; setState("recall"); runDialogue(STR.l4_mid,()=>{ state="shipfade"; fadeT=72; }); return; }
-    updatePlayer(); if(inWare())updateWarehouseRoute(); for(const e of enemies)updateEnemy(e);
+    updatePlayer();
+    if(level===2&&seg===L2_DOCK){ camTop=inWare()?395:0; if(inWare())updateWarehouseRoute(); }
+    for(const e of enemies)updateEnemy(e);
     if(level===3){ for(const pf of platforms){ if(pf.sprite==="prop_dumpster"&&!pf._cat&&player.onGround&&Math.abs(player.x-pf.x)<pf.w/2+8&&player.y<=pf.top+8){ pf._cat=1; cat.active=true; cat.t=0; cat.dir=(player.x>=pf.x?-1:1); cat.x=pf.x; } } if(cat.active){ cat.t++; cat.x+=cat.dir*1.7; if(cat.t>380||cat.x<cam.x-140||cat.x>cam.x+VW+140)cat.active=false; } }
     if(dred.t>0)dred.t--; if(lady.active){ lady.t++; lady.x+=3.4; if(lady.x-cam.x>VW+140||lady.t>280)lady.active=false; }
     let onShed=false; for(const pf of platforms){ if(pf.shed&&player.onGround&&Math.abs(player.x-pf.x)<pf.w/2&&Math.abs(player.y-pf.top)<10){ onShed=true; dred.x=pf.x; dred.door=pf.x-pf.w*0.09; dred.top=pf.top; dred.w=pf.w; } }
