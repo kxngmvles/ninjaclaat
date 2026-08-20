@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NinjaClaat — Warehouse V2 Test</title>
+<title>NinjaClaat — Continuous Warehouse Test</title>
 <style>
 html,body{margin:0;width:100%;height:100%;background:#05070b;color:#e8f3ed;font-family:Arial,sans-serif;overflow:hidden}
 #bar{height:52px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0b1118;border-bottom:1px solid #24343c;box-sizing:border-box}
@@ -12,20 +12,20 @@ html,body{margin:0;width:100%;height:100%;background:#05070b;color:#e8f3ed;font-
 </head>
 <body>
 <div id="bar">
-  <div id="title">NinjaClaat · Warehouse V2</div>
-  <div id="status">Loading integrated build…</div>
-  <button id="restart">Restart</button>
+  <div id="title">NinjaClaat · Harbour → Warehouse</div>
+  <div id="status">Loading test branch…</div>
+  <button id="restart">Restart Approach</button>
   <button id="quiet">Clear Enemies</button>
   <button id="boxes">Collision</button>
   <button id="full">Fullscreen</button>
 </div>
-<iframe id="game" src="../index.html?dev=warehouse-v2" allow="autoplay; fullscreen"></iframe>
+<iframe id="game" src="../index.html?dev=warehouse-v3" allow="autoplay; fullscreen"></iframe>
 <script>
 const frame=document.getElementById('game');
 const status=document.getElementById('status');
 let launched=false,boxes=false;
 function dbg(){try{return frame.contentWindow.__dbg||null}catch(e){return null}}
-function go(){const d=dbg();if(!d||!d.goto)return false;d.goto(2,2,120);status.textContent='Warehouse V2 ready';frame.contentWindow.focus();return true}
+function go(){const d=dbg();if(!d||!d.goto)return false;d.goto(2,2);status.textContent='Approach ready — walk right into the warehouse';frame.contentWindow.focus();return true}
 frame.addEventListener('load',()=>{
   const poll=setInterval(()=>{
     const d=dbg();
