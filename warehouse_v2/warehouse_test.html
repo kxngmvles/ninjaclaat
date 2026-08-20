@@ -3,40 +3,123 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NinjaClaat — Warehouse V2 Test</title>
+<title>NinjaClaat — Warehouse V2 Browser Test</title>
 <style>
 html,body{margin:0;width:100%;height:100%;background:#05070b;color:#e8f3ed;font-family:Arial,sans-serif;overflow:hidden}
 #bar{height:52px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0b1118;border-bottom:1px solid #24343c;box-sizing:border-box}
 #title{font-weight:800;letter-spacing:.5px;margin-right:auto}button{background:#17232c;color:#e8f3ed;border:1px solid #36505c;border-radius:7px;padding:8px 11px;font-weight:700;cursor:pointer}button:hover{background:#20313c}#status{font-size:12px;color:#9fcdb7;margin-right:8px}#game{width:100%;height:calc(100% - 52px);border:0;display:block;background:#000}
+#err{position:absolute;inset:52px 0 0 0;display:none;padding:28px;background:#090d12;color:#ffb4b4;white-space:pre-wrap;overflow:auto;z-index:5}
 </style>
 </head>
 <body>
 <div id="bar">
-  <div id="title">NinjaClaat · Warehouse V2 Test</div>
-  <div id="status">Loading game…</div>
-  <button id="restart">Restart Warehouse</button>
+  <div id="title">NinjaClaat · Warehouse V2</div>
+  <div id="status">Preparing browser build…</div>
+  <button id="restart">Restart</button>
   <button id="quiet">Clear Enemies</button>
-  <button id="boxes">Collision Overlay</button>
+  <button id="boxes">Collision</button>
   <button id="full">Fullscreen</button>
 </div>
-<iframe id="game" src="../index.html?dev=warehouse-v2" allow="autoplay; fullscreen"></iframe>
+<iframe id="game" allow="autoplay; fullscreen"></iframe>
+<pre id="err"></pre>
 <script>
 const frame=document.getElementById('game');
 const status=document.getElementById('status');
+const err=document.getElementById('err');
 let launched=false, boxes=false;
+
+function fail(msg){
+  status.textContent='Build failed';
+  err.style.display='block';
+  err.textContent='Warehouse V2 browser test could not start.\n\n'+msg;
+}
+
+function replaceOnce(src,a,b,label){
+  if(!src.includes(a)) throw new Error('Could not patch '+label+'. The game source changed.');
+  return src.replace(a,b);
+}
+
+async function makeBuild(){
+  const [indexRes,blockRes]=await Promise.all([
+    fetch('../index.html?whv2='+Date.now(),{cache:'no-store'}),
+    fetch('./warehouse_v2_block.js?whv2='+Date.now(),{cache:'no-store'})
+  ]);
+  if(!indexRes.ok) throw new Error('Could not load branch index.html ('+indexRes.status+').');
+  if(!blockRes.ok) throw new Error('Could not load Warehouse V2 code ('+blockRes.status+').');
+  let html=await indexRes.text();
+  const block=(await blockRes.text()).trim()+'\n\n';
+
+  // Replace the entire existing warehouse implementation inside the deployed HTML.
+  let start=html.indexOf('/* ============================ L2 seg 2: THE WAREHOUSE V2');
+  if(start<0) start=html.indexOf('/* ============================ L2 seg 2: THE WAREHOUSE');
+  const end=html.indexOf('function drawShipHold(){',start<0?0:start);
+  if(start<0||end<0) throw new Error('Could not locate the old warehouse code in index.html.');
+  html=html.slice(0,start)+block+html.slice(end);
+
+  // Point the existing warehouse image key at the V2 artwork stored on this branch.
+  html=html.replace(/("wh_plate"\s*:\s*)["'][^"']+["']/, '$1"./warehouse_v2/wh_plate_v2.jpg"');
+
+  // Floor-aware wave placement.
+  const oldPf='const pf=platforms.find(q=>!q.noland&&q.top<GROUND_Y-110&&Math.abs(q.x-sx)<q.w/2);';
+  const newPf='const pf=platforms.find(q=>!q.noland&&q.top<GROUND_Y-110&&Math.abs(q.x-sx)<q.w/2&&\\n          (w[3]==="top"?q.whFloor===3:w[3]==="mid"?q.whFloor===2:true));';
+  html=replaceOnce(html,oldPf,newPf,'warehouse enemy floor selection');
+
+  const oldSpawn='if(w[3]==="roof"||w[3]==="deck"){ for(const pf of platforms){ if(Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; } } e._safeX=w[1]; }';
+  const newSpawn='if(w[3]==="roof"||w[3]==="deck"||w[3]==="mid"||w[3]==="top"){\\n    for(const pf of platforms){\\n      const floorOK=w[3]==="top"?pf.whFloor===3:w[3]==="mid"?pf.whFloor===2:true;\\n      if(floorOK&&Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; break; }\\n    }\\n    e._safeX=w[1];\\n  }';
+  html=replaceOnce(html,oldSpawn,newSpawn,'warehouse enemy spawn height');
+
+  html=replaceOnce(
+    html,
+    'updatePlayer(); for(const e of enemies)updateEnemy(e);',
+    'updatePlayer(); if(inWare())updateWarehouseRoute(); for(const e of enemies)updateEnemy(e);',
+    'warehouse route updater'
+  );
+  html=replaceOnce(
+    html,
+    'if(inWare()&&!scene&&!boarded&&player.x>LEVEL_W-240&&player.y>=GROUND_Y-2){',
+    'if(inWare()&&!scene&&!boarded&&whRoute.done&&player.x>LEVEL_W-240&&player.y>=GROUND_Y-2){',
+    'warehouse route-gated exit'
+  );
+
+  // Relative art/audio URLs inside the generated srcdoc should resolve from branch root.
+  const branchRoot=new URL('../',location.href).href;
+  html=html.replace(/<head>/i,'<head><base href="'+branchRoot+'">');
+  return html;
+}
+
 function dbg(){try{return frame.contentWindow.__dbg||null}catch(e){return null}}
-function go(){const d=dbg();if(!d||!d.goto)return false;d.goto(2,2,120);status.textContent='Warehouse V2 ready';frame.contentWindow.focus();return true}
-const poll=setInterval(()=>{
+function go(){
   const d=dbg();
-  if(!d)return;
-  const ready=d.images&&d.images.wh_plate&&d.sprites&&d.sprites.nc_idle;
-  if(ready&&!launched){launched=true;setTimeout(()=>{go();clearInterval(poll)},350)}
-},100);
-setTimeout(()=>{if(!launched){status.textContent='Still loading assets…'}},4000);
+  if(!d||!d.goto)return false;
+  d.goto(2,2,120);
+  status.textContent='Warehouse V2 ready';
+  frame.contentWindow.focus();
+  return true;
+}
+
+async function boot(){
+  try{
+    const html=await makeBuild();
+    status.textContent='Loading game assets…';
+    frame.srcdoc=html;
+    const poll=setInterval(()=>{
+      const d=dbg();
+      if(!d)return;
+      const ready=d.images&&d.images.wh_plate&&d.sprites&&d.sprites.nc_idle;
+      if(ready&&!launched){
+        launched=true;
+        setTimeout(()=>{go();clearInterval(poll)},350);
+      }
+    },100);
+    setTimeout(()=>{if(!launched)status.textContent='Still loading assets…'},5000);
+  }catch(e){fail(e&&e.stack?e.stack:String(e));}
+}
+
 document.getElementById('restart').onclick=()=>go();
 document.getElementById('quiet').onclick=()=>{const d=dbg();if(d&&d.quiet){d.quiet();status.textContent='Enemies cleared'}};
-document.getElementById('boxes').onclick=()=>{const d=dbg();if(d&&d.boxes){boxes=!boxes;d.boxes(boxes);status.textContent=boxes?'Collision overlay ON':'Collision overlay OFF'}};
+document.getElementById('boxes').onclick=()=>{const d=dbg();if(d&&d.boxes){boxes=!boxes;d.boxes(boxes);status.textContent=boxes?'Collision ON':'Collision OFF'}};
 document.getElementById('full').onclick=()=>{if(frame.requestFullscreen)frame.requestFullscreen()};
+boot();
 </script>
 </body>
 </html>
