@@ -49,23 +49,27 @@ async function makeBuild(){
   let html=await indexRes.text();
   const block=(await blockRes.text()).trim()+'\n\n';
 
-  // Replace the entire existing warehouse implementation inside the deployed HTML.
   let start=html.indexOf('/* ============================ L2 seg 2: THE WAREHOUSE V2');
   if(start<0) start=html.indexOf('/* ============================ L2 seg 2: THE WAREHOUSE');
   const end=html.indexOf('function drawShipHold(){',start<0?0:start);
   if(start<0||end<0) throw new Error('Could not locate the old warehouse code in index.html.');
   html=html.slice(0,start)+block+html.slice(end);
 
-  // Point the existing warehouse image key at the V2 artwork stored on this branch.
   html=html.replace(/("wh_plate"\s*:\s*)["'][^"']+["']/, '$1"./warehouse_v2/wh_plate_v2.jpg"');
 
-  // Floor-aware wave placement.
   const oldPf='const pf=platforms.find(q=>!q.noland&&q.top<GROUND_Y-110&&Math.abs(q.x-sx)<q.w/2);';
-  const newPf='const pf=platforms.find(q=>!q.noland&&q.top<GROUND_Y-110&&Math.abs(q.x-sx)<q.w/2&&\\n          (w[3]==="top"?q.whFloor===3:w[3]==="mid"?q.whFloor===2:true));';
+  const newPf=`const pf=platforms.find(q=>!q.noland&&q.top<GROUND_Y-110&&Math.abs(q.x-sx)<q.w/2&&
+          (w[3]==="top"?q.whFloor===3:w[3]==="mid"?q.whFloor===2:true));`;
   html=replaceOnce(html,oldPf,newPf,'warehouse enemy floor selection');
 
   const oldSpawn='if(w[3]==="roof"||w[3]==="deck"){ for(const pf of platforms){ if(Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; } } e._safeX=w[1]; }';
-  const newSpawn='if(w[3]==="roof"||w[3]==="deck"||w[3]==="mid"||w[3]==="top"){\\n    for(const pf of platforms){\\n      const floorOK=w[3]==="top"?pf.whFloor===3:w[3]==="mid"?pf.whFloor===2:true;\\n      if(floorOK&&Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; break; }\\n    }\\n    e._safeX=w[1];\\n  }';
+  const newSpawn=`if(w[3]==="roof"||w[3]==="deck"||w[3]==="mid"||w[3]==="top"){
+    for(const pf of platforms){
+      const floorOK=w[3]==="top"?pf.whFloor===3:w[3]==="mid"?pf.whFloor===2:true;
+      if(floorOK&&Math.abs(pf.x-w[1])<pf.w/2&&pf.top<GROUND_Y-110){ e.y=pf.top; break; }
+    }
+    e._safeX=w[1];
+  }`;
   html=replaceOnce(html,oldSpawn,newSpawn,'warehouse enemy spawn height');
 
   html=replaceOnce(
@@ -81,7 +85,6 @@ async function makeBuild(){
     'warehouse route-gated exit'
   );
 
-  // Relative art/audio URLs inside the generated srcdoc should resolve from branch root.
   const branchRoot=new URL('../',location.href).href;
   html=html.replace(/<head>/i,'<head><base href="'+branchRoot+'">');
   return html;
