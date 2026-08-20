@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NinjaClaat — Warehouse V2 Test</title>
+<style>
+html,body{margin:0;width:100%;height:100%;background:#05070b;color:#e8f3ed;font-family:Arial,sans-serif;overflow:hidden}
+#bar{height:52px;display:flex;align-items:center;gap:10px;padding:0 14px;background:#0b1118;border-bottom:1px solid #24343c;box-sizing:border-box}
+#title{font-weight:800;letter-spacing:.5px;margin-right:auto}button{background:#17232c;color:#e8f3ed;border:1px solid #36505c;border-radius:7px;padding:8px 11px;font-weight:700;cursor:pointer}button:hover{background:#20313c}#status{font-size:12px;color:#9fcdb7;margin-right:8px}#game{width:100%;height:calc(100% - 52px);border:0;display:block;background:#000}
+</style>
+</head>
+<body>
+<div id="bar">
+  <div id="title">NinjaClaat · Warehouse V2 Test</div>
+  <div id="status">Loading game…</div>
+  <button id="restart">Restart Warehouse</button>
+  <button id="quiet">Clear Enemies</button>
+  <button id="boxes">Collision Overlay</button>
+  <button id="full">Fullscreen</button>
+</div>
+<iframe id="game" src="../index.html?dev=warehouse-v2" allow="autoplay; fullscreen"></iframe>
+<script>
+const frame=document.getElementById('game');
+const status=document.getElementById('status');
+let launched=false, boxes=false;
+function dbg(){try{return frame.contentWindow.__dbg||null}catch(e){return null}}
+function go(){const d=dbg();if(!d||!d.goto)return false;d.goto(2,2,120);status.textContent='Warehouse V2 ready';frame.contentWindow.focus();return true}
+const poll=setInterval(()=>{
+  const d=dbg();
+  if(!d)return;
+  const ready=d.images&&d.images.wh_plate&&d.sprites&&d.sprites.nc_idle;
+  if(ready&&!launched){launched=true;setTimeout(()=>{go();clearInterval(poll)},350)}
+},100);
+setTimeout(()=>{if(!launched){status.textContent='Still loading assets…'}},4000);
+document.getElementById('restart').onclick=()=>go();
+document.getElementById('quiet').onclick=()=>{const d=dbg();if(d&&d.quiet){d.quiet();status.textContent='Enemies cleared'}};
+document.getElementById('boxes').onclick=()=>{const d=dbg();if(d&&d.boxes){boxes=!boxes;d.boxes(boxes);status.textContent=boxes?'Collision overlay ON':'Collision overlay OFF'}};
+document.getElementById('full').onclick=()=>{if(frame.requestFullscreen)frame.requestFullscreen()};
+</script>
+</body>
+</html>
