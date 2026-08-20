@@ -506,7 +506,7 @@ window.AS = {
   "shotta_wk7": "./shotta_wk7.png",
   "shotta_wk8": "./shotta_wk8.png",
   "bg_warehouse": "./bg_warehouse.png",
-  "wh_plate": "./wh_plate.jpg",
+  "wh_plate": "./wh_plate_v2.jpg",
   "bg_deck": "./bg_deck.png",
   "prop_container_ai": "./prop_container_ai.png",
   "prop_crates_ai": "./prop_crates_ai.png",
