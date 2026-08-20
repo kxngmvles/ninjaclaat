@@ -29,7 +29,10 @@ WHAT THE BUILD CHANGES
 
 HOW TO APPLY
 ------------
-From the ROOT of the NinjaClaat repo run:
+The warehouse-v2-rebuild branch is automatically integrated by GitHub Actions.
+The installer remains here as a reproducible fallback and build record.
+
+Manual fallback from the ROOT of the NinjaClaat repo:
 
     python warehouse_v2/apply_warehouse_v2.py
 
