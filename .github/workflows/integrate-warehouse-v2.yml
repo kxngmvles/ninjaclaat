@@ -1,4 +1,4 @@
-name: Integrate Warehouse V2
+name: Integrate Warehouse V3
 
 on:
   push:
@@ -32,8 +32,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Apply and validate Warehouse V2
-        run: python warehouse_v2/apply_warehouse_v2.py
+      - name: Apply and validate continuous Warehouse V3
+        run: python warehouse_v2/apply_continuous_v3.py
 
       - name: Commit integrated playable build
         run: |
@@ -43,6 +43,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No integration changes to commit."
           else
-            git commit -m "Integrate Warehouse V2 into playable branch build"
+            git commit -m "Make Level 2 warehouse continuous with harbour"
             git push origin HEAD:warehouse-v2-rebuild
           fi
